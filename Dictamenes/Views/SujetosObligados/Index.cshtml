@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Dictamenes.Models.SujetoObligado>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Apellido)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RazonSocial)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoSujetoObligado)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EstaActivo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaModificacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdUsuarioModificacion)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Apellido)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RazonSocial)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TipoSujetoObligado.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstaActivo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaModificacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdUsuarioModificacion)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.CuilCuit">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.CuilCuit">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.CuilCuit">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

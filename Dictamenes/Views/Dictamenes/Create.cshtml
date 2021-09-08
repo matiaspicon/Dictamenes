@@ -1,0 +1,90 @@
+﻿@model Dictamenes.Models.Dictamen
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Dictamen</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="NroGDE" class="control-label"></label>
+                <input asp-for="NroGDE" class="form-control" />
+                <span asp-validation-for="NroGDE" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NroExpediente" class="control-label"></label>
+                <input asp-for="NroExpediente" class="form-control" />
+                <span asp-validation-for="NroExpediente" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaCarga" class="control-label"></label>
+                <input asp-for="FechaCarga" class="form-control" />
+                <span asp-validation-for="FechaCarga" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Detalle" class="control-label"></label>
+                <input asp-for="Detalle" class="form-control" />
+                <span asp-validation-for="Detalle" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="EsPublico" /> @Html.DisplayNameFor(model => model.EsPublico)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdArchivoLigado" class="control-label"></label>
+                <input asp-for="IdArchivoLigado" class="form-control" />
+                <span asp-validation-for="IdArchivoLigado" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdSujetoObligado" class="control-label"></label>
+                <select asp-for="IdSujetoObligado" class ="form-control" asp-items="ViewBag.IdSujetoObligado"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdAsunto" class="control-label"></label>
+                <select asp-for="IdAsunto" class ="form-control" asp-items="ViewBag.IdAsunto"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdTipoDictamen" class="control-label"></label>
+                <select asp-for="IdTipoDictamen" class ="form-control" asp-items="ViewBag.IdTipoDictamen"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdUsuarioGenerador" class="control-label"></label>
+                <input asp-for="IdUsuarioGenerador" class="form-control" />
+                <span asp-validation-for="IdUsuarioGenerador" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="EstaActivo" /> @Html.DisplayNameFor(model => model.EstaActivo)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaModificacion" class="control-label"></label>
+                <input asp-for="FechaModificacion" class="form-control" />
+                <span asp-validation-for="FechaModificacion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdUsuarioModificacion" class="control-label"></label>
+                <input asp-for="IdUsuarioModificacion" class="form-control" />
+                <span asp-validation-for="IdUsuarioModificacion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
