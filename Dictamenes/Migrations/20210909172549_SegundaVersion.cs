@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Dictamenes.Migrations
 {
-    public partial class PrimeraVersion : Migration
+    public partial class SegundaVersion : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -22,17 +22,18 @@ namespace Dictamenes.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Productos",
+                name: "Usuario",
                 columns: table => new
                 {
-                    Cuil = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    Cuil = table.Column<int>(nullable: false),
                     Nombre = table.Column<string>(maxLength: 50, nullable: true),
                     Apellido = table.Column<string>(maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Productos", x => x.Cuil);
+                    table.PrimaryKey("PK_Usuario", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -41,78 +42,79 @@ namespace Dictamenes.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    descripcion = table.Column<string>(maxLength: 50, nullable: true),
+                    Descripcion = table.Column<string>(maxLength: 50, nullable: true),
                     EstaHabilitado = table.Column<bool>(nullable: false),
                     EstaActivo = table.Column<bool>(nullable: false),
                     FechaModificacion = table.Column<DateTime>(nullable: false),
                     IdUsuarioModificacion = table.Column<int>(nullable: false),
-                    UsuarioModificacionCuil = table.Column<int>(nullable: true)
+                    UsuarioModificacionId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Asunto", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Asunto_Productos_UsuarioModificacionCuil",
-                        column: x => x.UsuarioModificacionCuil,
-                        principalTable: "Productos",
-                        principalColumn: "Cuil",
+                        name: "FK_Asunto_Usuario_UsuarioModificacionId",
+                        column: x => x.UsuarioModificacionId,
+                        principalTable: "Usuario",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Compras",
+                name: "TipoDictamen",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    descripcion = table.Column<string>(maxLength: 50, nullable: true),
+                    Descripcion = table.Column<string>(maxLength: 50, nullable: true),
                     EstaHabilitado = table.Column<bool>(nullable: false),
                     EstaActivo = table.Column<bool>(nullable: false),
                     FechaModificacion = table.Column<DateTime>(nullable: false),
                     IdUsuarioModificacion = table.Column<int>(nullable: false),
-                    UsuarioModificacionCuil = table.Column<int>(nullable: true)
+                    UsuarioModificacionId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Compras", x => x.Id);
+                    table.PrimaryKey("PK_TipoDictamen", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Compras_Productos_UsuarioModificacionCuil",
-                        column: x => x.UsuarioModificacionCuil,
-                        principalTable: "Productos",
-                        principalColumn: "Cuil",
+                        name: "FK_TipoDictamen_Usuario_UsuarioModificacionId",
+                        column: x => x.UsuarioModificacionId,
+                        principalTable: "Usuario",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Empleados",
+                name: "TipoSujetoObligado",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    descripcion = table.Column<string>(maxLength: 50, nullable: true),
+                    Descripcion = table.Column<string>(maxLength: 50, nullable: true),
                     EstaHabilitado = table.Column<bool>(nullable: false),
                     EstaActivo = table.Column<bool>(nullable: false),
                     FechaModificacion = table.Column<DateTime>(nullable: false),
                     IdUsuarioModificacion = table.Column<int>(nullable: false),
-                    UsuarioModificacionCuil = table.Column<int>(nullable: true)
+                    UsuarioModificacionId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Empleados", x => x.Id);
+                    table.PrimaryKey("PK_TipoSujetoObligado", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Empleados_Productos_UsuarioModificacionCuil",
-                        column: x => x.UsuarioModificacionCuil,
-                        principalTable: "Productos",
-                        principalColumn: "Cuil",
+                        name: "FK_TipoSujetoObligado_Usuario_UsuarioModificacionId",
+                        column: x => x.UsuarioModificacionId,
+                        principalTable: "Usuario",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Clientes",
+                name: "SujetoObligado",
                 columns: table => new
                 {
-                    CuilCuit = table.Column<int>(nullable: false)
+                    id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    CuilCuit = table.Column<int>(nullable: false),
                     Nombre = table.Column<string>(maxLength: 50, nullable: true),
                     Apellido = table.Column<string>(maxLength: 50, nullable: true),
                     RazonSocial = table.Column<string>(maxLength: 80, nullable: true),
@@ -120,27 +122,27 @@ namespace Dictamenes.Migrations
                     EstaActivo = table.Column<bool>(nullable: false),
                     FechaModificacion = table.Column<DateTime>(nullable: false),
                     IdUsuarioModificacion = table.Column<int>(nullable: false),
-                    UsuarioModificacionCuil = table.Column<int>(nullable: true)
+                    UsuarioModificacionId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clientes", x => x.CuilCuit);
+                    table.PrimaryKey("PK_SujetoObligado", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Clientes_Empleados_IdTipoSujetoObligado",
+                        name: "FK_SujetoObligado_TipoSujetoObligado_IdTipoSujetoObligado",
                         column: x => x.IdTipoSujetoObligado,
-                        principalTable: "Empleados",
+                        principalTable: "TipoSujetoObligado",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Clientes_Productos_UsuarioModificacionCuil",
-                        column: x => x.UsuarioModificacionCuil,
-                        principalTable: "Productos",
-                        principalColumn: "Cuil",
+                        name: "FK_SujetoObligado_Usuario_UsuarioModificacionId",
+                        column: x => x.UsuarioModificacionId,
+                        principalTable: "Usuario",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categorias",
+                name: "Dictamenes",
                 columns: table => new
                 {
                     id = table.Column<int>(nullable: false)
@@ -156,113 +158,113 @@ namespace Dictamenes.Migrations
                     IdAsunto = table.Column<int>(nullable: false),
                     IdTipoDictamen = table.Column<int>(nullable: false),
                     IdUsuarioGenerador = table.Column<int>(nullable: false),
-                    UsuarioGeneradorCuil = table.Column<int>(nullable: true),
+                    UsuarioGeneradorId = table.Column<int>(nullable: true),
                     EstaActivo = table.Column<bool>(nullable: false),
                     FechaModificacion = table.Column<DateTime>(nullable: false),
                     IdUsuarioModificacion = table.Column<int>(nullable: false),
-                    UsuarioModificacionCuil = table.Column<int>(nullable: true)
+                    UsuarioModificacionId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categorias", x => x.id);
+                    table.PrimaryKey("PK_Dictamenes", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Categorias_ArchivoPDF_ArchivoLigadoId",
+                        name: "FK_Dictamenes_ArchivoPDF_ArchivoLigadoId",
                         column: x => x.ArchivoLigadoId,
                         principalTable: "ArchivoPDF",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Categorias_Asunto_IdAsunto",
+                        name: "FK_Dictamenes_Asunto_IdAsunto",
                         column: x => x.IdAsunto,
                         principalTable: "Asunto",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Categorias_Clientes_IdSujetoObligado",
+                        name: "FK_Dictamenes_SujetoObligado_IdSujetoObligado",
                         column: x => x.IdSujetoObligado,
-                        principalTable: "Clientes",
-                        principalColumn: "CuilCuit",
+                        principalTable: "SujetoObligado",
+                        principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Categorias_Compras_IdTipoDictamen",
+                        name: "FK_Dictamenes_TipoDictamen_IdTipoDictamen",
                         column: x => x.IdTipoDictamen,
-                        principalTable: "Compras",
+                        principalTable: "TipoDictamen",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Categorias_Productos_UsuarioGeneradorCuil",
-                        column: x => x.UsuarioGeneradorCuil,
-                        principalTable: "Productos",
-                        principalColumn: "Cuil",
+                        name: "FK_Dictamenes_Usuario_UsuarioGeneradorId",
+                        column: x => x.UsuarioGeneradorId,
+                        principalTable: "Usuario",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Categorias_Productos_UsuarioModificacionCuil",
-                        column: x => x.UsuarioModificacionCuil,
-                        principalTable: "Productos",
-                        principalColumn: "Cuil",
+                        name: "FK_Dictamenes_Usuario_UsuarioModificacionId",
+                        column: x => x.UsuarioModificacionId,
+                        principalTable: "Usuario",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Asunto_UsuarioModificacionCuil",
+                name: "IX_Asunto_UsuarioModificacionId",
                 table: "Asunto",
-                column: "UsuarioModificacionCuil");
+                column: "UsuarioModificacionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categorias_ArchivoLigadoId",
-                table: "Categorias",
+                name: "IX_Dictamenes_ArchivoLigadoId",
+                table: "Dictamenes",
                 column: "ArchivoLigadoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categorias_IdAsunto",
-                table: "Categorias",
+                name: "IX_Dictamenes_IdAsunto",
+                table: "Dictamenes",
                 column: "IdAsunto");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categorias_IdSujetoObligado",
-                table: "Categorias",
+                name: "IX_Dictamenes_IdSujetoObligado",
+                table: "Dictamenes",
                 column: "IdSujetoObligado");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categorias_IdTipoDictamen",
-                table: "Categorias",
+                name: "IX_Dictamenes_IdTipoDictamen",
+                table: "Dictamenes",
                 column: "IdTipoDictamen");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categorias_UsuarioGeneradorCuil",
-                table: "Categorias",
-                column: "UsuarioGeneradorCuil");
+                name: "IX_Dictamenes_UsuarioGeneradorId",
+                table: "Dictamenes",
+                column: "UsuarioGeneradorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categorias_UsuarioModificacionCuil",
-                table: "Categorias",
-                column: "UsuarioModificacionCuil");
+                name: "IX_Dictamenes_UsuarioModificacionId",
+                table: "Dictamenes",
+                column: "UsuarioModificacionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Clientes_IdTipoSujetoObligado",
-                table: "Clientes",
+                name: "IX_SujetoObligado_IdTipoSujetoObligado",
+                table: "SujetoObligado",
                 column: "IdTipoSujetoObligado");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Clientes_UsuarioModificacionCuil",
-                table: "Clientes",
-                column: "UsuarioModificacionCuil");
+                name: "IX_SujetoObligado_UsuarioModificacionId",
+                table: "SujetoObligado",
+                column: "UsuarioModificacionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Compras_UsuarioModificacionCuil",
-                table: "Compras",
-                column: "UsuarioModificacionCuil");
+                name: "IX_TipoDictamen_UsuarioModificacionId",
+                table: "TipoDictamen",
+                column: "UsuarioModificacionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Empleados_UsuarioModificacionCuil",
-                table: "Empleados",
-                column: "UsuarioModificacionCuil");
+                name: "IX_TipoSujetoObligado_UsuarioModificacionId",
+                table: "TipoSujetoObligado",
+                column: "UsuarioModificacionId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Categorias");
+                name: "Dictamenes");
 
             migrationBuilder.DropTable(
                 name: "ArchivoPDF");
@@ -271,16 +273,16 @@ namespace Dictamenes.Migrations
                 name: "Asunto");
 
             migrationBuilder.DropTable(
-                name: "Clientes");
+                name: "SujetoObligado");
 
             migrationBuilder.DropTable(
-                name: "Compras");
+                name: "TipoDictamen");
 
             migrationBuilder.DropTable(
-                name: "Empleados");
+                name: "TipoSujetoObligado");
 
             migrationBuilder.DropTable(
-                name: "Productos");
+                name: "Usuario");
         }
     }
 }

@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dictamenes.Models
 {
-    public class Campo
+    public abstract class Campo
     {
         [Key]
         public int Id { get; set; }

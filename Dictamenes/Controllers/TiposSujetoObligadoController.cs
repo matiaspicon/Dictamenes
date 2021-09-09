@@ -22,7 +22,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoObligado
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Empleados.ToListAsync());
+            return View(await _context.TipoSujetoObligado.ToListAsync());
         }
 
         // GET: TiposSujetoObligado/Details/5
@@ -33,7 +33,7 @@ namespace Dictamenes.Controllers
                 return NotFound();
             }
 
-            var tipoSujetoObligado = await _context.Empleados
+            var tipoSujetoObligado = await _context.TipoSujetoObligado
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (tipoSujetoObligado == null)
             {
@@ -73,7 +73,7 @@ namespace Dictamenes.Controllers
                 return NotFound();
             }
 
-            var tipoSujetoObligado = await _context.Empleados.FindAsync(id);
+            var tipoSujetoObligado = await _context.TipoSujetoObligado.FindAsync(id);
             if (tipoSujetoObligado == null)
             {
                 return NotFound();
@@ -124,7 +124,7 @@ namespace Dictamenes.Controllers
                 return NotFound();
             }
 
-            var tipoSujetoObligado = await _context.Empleados
+            var tipoSujetoObligado = await _context.TipoSujetoObligado
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (tipoSujetoObligado == null)
             {
@@ -139,15 +139,15 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var tipoSujetoObligado = await _context.Empleados.FindAsync(id);
-            _context.Empleados.Remove(tipoSujetoObligado);
+            var tipoSujetoObligado = await _context.TipoSujetoObligado.FindAsync(id);
+            _context.TipoSujetoObligado.Remove(tipoSujetoObligado);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TipoSujetoObligadoExists(int id)
         {
-            return _context.Empleados.Any(e => e.Id == id);
+            return _context.TipoSujetoObligado.Any(e => e.Id == id);
         }
     }
 }

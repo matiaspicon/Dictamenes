@@ -22,7 +22,7 @@ namespace Dictamenes.Controllers
         // GET: TiposDictamen
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Compras.ToListAsync());
+            return View(await _context.TipoDictamen.ToListAsync());
         }
 
         // GET: TiposDictamen/Details/5
@@ -33,7 +33,7 @@ namespace Dictamenes.Controllers
                 return NotFound();
             }
 
-            var tipoDictamen = await _context.Compras
+            var tipoDictamen = await _context.TipoDictamen
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (tipoDictamen == null)
             {
@@ -73,7 +73,7 @@ namespace Dictamenes.Controllers
                 return NotFound();
             }
 
-            var tipoDictamen = await _context.Compras.FindAsync(id);
+            var tipoDictamen = await _context.TipoDictamen.FindAsync(id);
             if (tipoDictamen == null)
             {
                 return NotFound();
@@ -124,7 +124,7 @@ namespace Dictamenes.Controllers
                 return NotFound();
             }
 
-            var tipoDictamen = await _context.Compras
+            var tipoDictamen = await _context.TipoDictamen
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (tipoDictamen == null)
             {
@@ -139,15 +139,15 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var tipoDictamen = await _context.Compras.FindAsync(id);
-            _context.Compras.Remove(tipoDictamen);
+            var tipoDictamen = await _context.TipoDictamen.FindAsync(id);
+            _context.TipoDictamen.Remove(tipoDictamen);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TipoDictamenExists(int id)
         {
-            return _context.Compras.Any(e => e.Id == id);
+            return _context.TipoDictamen.Any(e => e.Id == id);
         }
     }
 }

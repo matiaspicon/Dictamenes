@@ -11,6 +11,9 @@ namespace Dictamenes.Models
     public class SujetoObligado
     {
         [Key]
+        public int id { get; set; }
+
+        [Required]
         public int CuilCuit { get; set; }
 
         [MaxLength(50, ErrorMessage = "{0} admite un máximo de {1} caracteres")]

@@ -22,7 +22,7 @@ namespace Dictamenes.Controllers
         // GET: Usuarios
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Productos.ToListAsync());
+            return View(await _context.Usuario.ToListAsync());
         }
 
         // GET: Usuarios/Details/5
@@ -33,7 +33,7 @@ namespace Dictamenes.Controllers
                 return NotFound();
             }
 
-            var usuario = await _context.Productos
+            var usuario = await _context.Usuario
                 .FirstOrDefaultAsync(m => m.Cuil == id);
             if (usuario == null)
             {
@@ -73,7 +73,7 @@ namespace Dictamenes.Controllers
                 return NotFound();
             }
 
-            var usuario = await _context.Productos.FindAsync(id);
+            var usuario = await _context.Usuario.FindAsync(id);
             if (usuario == null)
             {
                 return NotFound();
@@ -124,7 +124,7 @@ namespace Dictamenes.Controllers
                 return NotFound();
             }
 
-            var usuario = await _context.Productos
+            var usuario = await _context.Usuario
                 .FirstOrDefaultAsync(m => m.Cuil == id);
             if (usuario == null)
             {
@@ -139,15 +139,15 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var usuario = await _context.Productos.FindAsync(id);
-            _context.Productos.Remove(usuario);
+            var usuario = await _context.Usuario.FindAsync(id);
+            _context.Usuario.Remove(usuario);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool UsuarioExists(int id)
         {
-            return _context.Productos.Any(e => e.Cuil == id);
+            return _context.Usuario.Any(e => e.Cuil == id);
         }
     }
 }

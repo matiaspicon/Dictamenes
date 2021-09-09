@@ -20,7 +20,7 @@ namespace Dictamenes.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("Index","Dictamenes");
         }
 
         public IActionResult Privacy()

@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Dictamenes.Models
 {
-    public class BorradoLogico
+    public abstract class BorradoLogico
     {
         [Key]
         public int Id { get; set; }

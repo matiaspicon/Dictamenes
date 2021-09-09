@@ -6,9 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Dictamenes.Database;
-using Dictamenes.Models;
 
-namespace Dictamenes.Controllers
+namespace Dictamenes.Models
 {
     public class SujetosObligadosController : Controller
     {
@@ -22,7 +21,7 @@ namespace Dictamenes.Controllers
         // GET: SujetosObligados
         public async Task<IActionResult> Index()
         {
-            var dictamenesDbContext = _context.Clientes.Include(s => s.TipoSujetoObligado);
+            var dictamenesDbContext = _context.SujetoObligado.Include(s => s.TipoSujetoObligado);
             return View(await dictamenesDbContext.ToListAsync());
         }
 
@@ -34,9 +33,9 @@ namespace Dictamenes.Controllers
                 return NotFound();
             }
 
-            var sujetoObligado = await _context.Clientes
+            var sujetoObligado = await _context.SujetoObligado
                 .Include(s => s.TipoSujetoObligado)
-                .FirstOrDefaultAsync(m => m.CuilCuit == id);
+                .FirstOrDefaultAsync(m => m.id == id);
             if (sujetoObligado == null)
             {
                 return NotFound();
@@ -48,7 +47,7 @@ namespace Dictamenes.Controllers
         // GET: SujetosObligados/Create
         public IActionResult Create()
         {
-            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.Empleados, "Id", "Id");
+            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Id");
             return View();
         }
 
@@ -57,7 +56,7 @@ namespace Dictamenes.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
+        public async Task<IActionResult> Create([Bind("id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +64,7 @@ namespace Dictamenes.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.Empleados, "Id", "Id", sujetoObligado.IdTipoSujetoObligado);
+            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Id", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
@@ -77,12 +76,12 @@ namespace Dictamenes.Controllers
                 return NotFound();
             }
 
-            var sujetoObligado = await _context.Clientes.FindAsync(id);
+            var sujetoObligado = await _context.SujetoObligado.FindAsync(id);
             if (sujetoObligado == null)
             {
                 return NotFound();
             }
-            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.Empleados, "Id", "Id", sujetoObligado.IdTipoSujetoObligado);
+            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Id", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
@@ -91,9 +90,9 @@ namespace Dictamenes.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
+        public async Task<IActionResult> Edit(int id, [Bind("id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
         {
-            if (id != sujetoObligado.CuilCuit)
+            if (id != sujetoObligado.id)
             {
                 return NotFound();
             }
@@ -107,7 +106,7 @@ namespace Dictamenes.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SujetoObligadoExists(sujetoObligado.CuilCuit))
+                    if (!SujetoObligadoExists(sujetoObligado.id))
                     {
                         return NotFound();
                     }
@@ -118,7 +117,7 @@ namespace Dictamenes.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.Empleados, "Id", "Id", sujetoObligado.IdTipoSujetoObligado);
+            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Id", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
@@ -130,9 +129,9 @@ namespace Dictamenes.Controllers
                 return NotFound();
             }
 
-            var sujetoObligado = await _context.Clientes
+            var sujetoObligado = await _context.SujetoObligado
                 .Include(s => s.TipoSujetoObligado)
-                .FirstOrDefaultAsync(m => m.CuilCuit == id);
+                .FirstOrDefaultAsync(m => m.id == id);
             if (sujetoObligado == null)
             {
                 return NotFound();
@@ -146,15 +145,15 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var sujetoObligado = await _context.Clientes.FindAsync(id);
-            _context.Clientes.Remove(sujetoObligado);
+            var sujetoObligado = await _context.SujetoObligado.FindAsync(id);
+            _context.SujetoObligado.Remove(sujetoObligado);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool SujetoObligadoExists(int id)
         {
-            return _context.Clientes.Any(e => e.CuilCuit == id);
+            return _context.SujetoObligado.Any(e => e.id == id);
         }
     }
 }

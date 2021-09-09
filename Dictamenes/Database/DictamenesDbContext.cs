@@ -17,11 +17,11 @@ namespace Dictamenes.Database
 
         public DbSet<ArchivoPDF> ArchivoPDF { get; set; }
         public DbSet<Asunto> Asunto { get; set; }
-        public DbSet<Dictamen> Categorias { get; set; }
-        public DbSet<SujetoObligado> Clientes { get; set; }
-        public DbSet<TipoDictamen> Compras { get; set; }
-        public DbSet<TipoSujetoObligado> Empleados { get; set; }
-        public DbSet<Usuario> Productos { get; set; }
+        public DbSet<Dictamen> Dictamenes { get; set; }
+        public DbSet<SujetoObligado> SujetoObligado { get; set; }
+        public DbSet<TipoDictamen> TipoDictamen { get; set; }
+        public DbSet<TipoSujetoObligado> TipoSujetoObligado { get; set; }
+        public DbSet<Usuario> Usuario { get; set; }
     }
 
 }

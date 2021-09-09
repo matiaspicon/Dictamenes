@@ -10,6 +10,9 @@ namespace Dictamenes.Models
     public class Usuario
     {
         [Key]
+        public int Id { get; set; }
+
+        [Required]
         public int Cuil { get; set; }
 
         [MaxLength(50, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
@@ -17,7 +20,6 @@ namespace Dictamenes.Models
 
         [MaxLength(50, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string Apellido { get; set; }
-
 
     }
 }

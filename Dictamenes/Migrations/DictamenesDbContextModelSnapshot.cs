@@ -55,12 +55,12 @@ namespace Dictamenes.Migrations
                     b.Property<int>("IdUsuarioModificacion")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("UsuarioModificacionCuil")
+                    b.Property<int?>("UsuarioModificacionId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UsuarioModificacionCuil");
+                    b.HasIndex("UsuarioModificacionId");
 
                     b.ToTable("Asunto");
                 });
@@ -117,10 +117,10 @@ namespace Dictamenes.Migrations
                         .HasColumnType("TEXT")
                         .HasMaxLength(30);
 
-                    b.Property<int?>("UsuarioGeneradorCuil")
+                    b.Property<int?>("UsuarioGeneradorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("UsuarioModificacionCuil")
+                    b.Property<int?>("UsuarioModificacionId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("id");
@@ -133,22 +133,25 @@ namespace Dictamenes.Migrations
 
                     b.HasIndex("IdTipoDictamen");
 
-                    b.HasIndex("UsuarioGeneradorCuil");
+                    b.HasIndex("UsuarioGeneradorId");
 
-                    b.HasIndex("UsuarioModificacionCuil");
+                    b.HasIndex("UsuarioModificacionId");
 
-                    b.ToTable("Categorias");
+                    b.ToTable("Dictamenes");
                 });
 
             modelBuilder.Entity("Dictamenes.Models.SujetoObligado", b =>
                 {
-                    b.Property<int>("CuilCuit")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Apellido")
                         .HasColumnType("TEXT")
                         .HasMaxLength(50);
+
+                    b.Property<int>("CuilCuit")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("EstaActivo")
                         .HasColumnType("INTEGER");
@@ -170,16 +173,16 @@ namespace Dictamenes.Migrations
                         .HasColumnType("TEXT")
                         .HasMaxLength(80);
 
-                    b.Property<int?>("UsuarioModificacionCuil")
+                    b.Property<int?>("UsuarioModificacionId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("CuilCuit");
+                    b.HasKey("id");
 
                     b.HasIndex("IdTipoSujetoObligado");
 
-                    b.HasIndex("UsuarioModificacionCuil");
+                    b.HasIndex("UsuarioModificacionId");
 
-                    b.ToTable("Clientes");
+                    b.ToTable("SujetoObligado");
                 });
 
             modelBuilder.Entity("Dictamenes.Models.TipoDictamen", b =>
@@ -204,14 +207,14 @@ namespace Dictamenes.Migrations
                     b.Property<int>("IdUsuarioModificacion")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("UsuarioModificacionCuil")
+                    b.Property<int?>("UsuarioModificacionId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UsuarioModificacionCuil");
+                    b.HasIndex("UsuarioModificacionId");
 
-                    b.ToTable("Compras");
+                    b.ToTable("TipoDictamen");
                 });
 
             modelBuilder.Entity("Dictamenes.Models.TipoSujetoObligado", b =>
@@ -236,19 +239,19 @@ namespace Dictamenes.Migrations
                     b.Property<int>("IdUsuarioModificacion")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("UsuarioModificacionCuil")
+                    b.Property<int?>("UsuarioModificacionId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UsuarioModificacionCuil");
+                    b.HasIndex("UsuarioModificacionId");
 
-                    b.ToTable("Empleados");
+                    b.ToTable("TipoSujetoObligado");
                 });
 
             modelBuilder.Entity("Dictamenes.Models.Usuario", b =>
                 {
-                    b.Property<int>("Cuil")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -256,20 +259,23 @@ namespace Dictamenes.Migrations
                         .HasColumnType("TEXT")
                         .HasMaxLength(50);
 
+                    b.Property<int>("Cuil")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Nombre")
                         .HasColumnType("TEXT")
                         .HasMaxLength(50);
 
-                    b.HasKey("Cuil");
+                    b.HasKey("Id");
 
-                    b.ToTable("Productos");
+                    b.ToTable("Usuario");
                 });
 
             modelBuilder.Entity("Dictamenes.Models.Asunto", b =>
                 {
                     b.HasOne("Dictamenes.Models.Usuario", "UsuarioModificacion")
                         .WithMany()
-                        .HasForeignKey("UsuarioModificacionCuil");
+                        .HasForeignKey("UsuarioModificacionId");
                 });
 
             modelBuilder.Entity("Dictamenes.Models.Dictamen", b =>
@@ -298,11 +304,11 @@ namespace Dictamenes.Migrations
 
                     b.HasOne("Dictamenes.Models.Usuario", "UsuarioGenerador")
                         .WithMany()
-                        .HasForeignKey("UsuarioGeneradorCuil");
+                        .HasForeignKey("UsuarioGeneradorId");
 
                     b.HasOne("Dictamenes.Models.Usuario", "UsuarioModificacion")
                         .WithMany()
-                        .HasForeignKey("UsuarioModificacionCuil");
+                        .HasForeignKey("UsuarioModificacionId");
                 });
 
             modelBuilder.Entity("Dictamenes.Models.SujetoObligado", b =>
@@ -315,21 +321,21 @@ namespace Dictamenes.Migrations
 
                     b.HasOne("Dictamenes.Models.Usuario", "UsuarioModificacion")
                         .WithMany()
-                        .HasForeignKey("UsuarioModificacionCuil");
+                        .HasForeignKey("UsuarioModificacionId");
                 });
 
             modelBuilder.Entity("Dictamenes.Models.TipoDictamen", b =>
                 {
                     b.HasOne("Dictamenes.Models.Usuario", "UsuarioModificacion")
                         .WithMany()
-                        .HasForeignKey("UsuarioModificacionCuil");
+                        .HasForeignKey("UsuarioModificacionId");
                 });
 
             modelBuilder.Entity("Dictamenes.Models.TipoSujetoObligado", b =>
                 {
                     b.HasOne("Dictamenes.Models.Usuario", "UsuarioModificacion")
                         .WithMany()
-                        .HasForeignKey("UsuarioModificacionCuil");
+                        .HasForeignKey("UsuarioModificacionId");
                 });
 #pragma warning restore 612, 618
         }
