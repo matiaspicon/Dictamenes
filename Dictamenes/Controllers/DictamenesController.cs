@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -6,8 +7,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Dictamenes.Database;
 using Dictamenes.Models;
-using System.Collections.Generic;
+using System.IO;
 using Microsoft.AspNetCore.Http;
+using System.Text.RegularExpressions;
 
 namespace Dictamenes.Controllers
 {
@@ -23,7 +25,6 @@ namespace Dictamenes.Controllers
         // GET: Dictamenes
         public async Task<IActionResult> Index()
         {
-
             var dictamenesDbContext = _context.Dictamenes.Include(d => d.Asunto).Include(d => d.SujetoObligado).Include(d => d.TipoDictamen);
             return View(await dictamenesDbContext.ToListAsync());
         }
@@ -50,12 +51,8 @@ namespace Dictamenes.Controllers
         }
 
         // GET: Dictamenes/Create
-        public IActionResult Create()
+        public IActionResult CargarFile()
         {
-            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion");
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
-            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
-            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
             return View();
         }
 
@@ -64,35 +61,83 @@ namespace Dictamenes.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoLigado,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuarioGenerador,EstaActivo")] Dictamen dictamen, [Bind("CuilCuit, Nombre, Apellido, IdTipoSujetoObligado")] SujetoObligado sujetoObligado, [Bind("file")] List<IFormFile> file)
+        public async Task<IActionResult> CargarFile(IFormFile file)
         {
-            dictamen.IdUsuarioModificacion = 0;
-            //dictamen.IdUsuarioModificacion = _context.Usuario;
-            dictamen.FechaModificacion = DateTime.Now;
-            dictamen.EstaActivo = true;
+            var fileName = Path.GetFileNameWithoutExtension(file.FileName);
+            var extension = Path.GetExtension(file.FileName);
+            var fileModel1 = new FileOnDatabaseModel
+            {
+                CreatedOn = DateTime.UtcNow,
+                FileType = file.ContentType,
+                Extension = extension,
+                Name = fileName
+            };
+            using (var dataStream = new MemoryStream())
+            {
+                await file.CopyToAsync(dataStream);
+                fileModel1.Data = dataStream.ToArray();
+            }
+            _context.FilesOnDatabase.Add(fileModel1);
 
-            //dictamen.IdUsuarioGenerador = _context.Usuario
+            var basePath = Path.Combine(Directory.GetCurrentDirectory() + "\\Files\\");
+            bool basePathExists = System.IO.Directory.Exists(basePath);
+            if (!basePathExists) Directory.CreateDirectory(basePath);
+            var filePath = Path.Combine(basePath, file.FileName);
+            if (!System.IO.File.Exists(filePath))
+            {
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                var fileModel2 = new FileOnFileSystemModel
+                {
+                    CreatedOn = DateTime.Now,
+                    FileType = file.ContentType,
+                    Extension = extension,
+                    Name = fileName,
+                    FilePath = filePath
+                };
+                _context.FilesOnFileSystem.Add(fileModel2);
+                _context.SaveChanges();
+            }
+
+            var contenido = FileController.ExtractTextFromPdf(filePath);
 
 
-            //if(sujetoObligado.CuilCuit != 0)
-            //{
-            //    sujetoObligado.IdUsuarioModificacion = 0;
-            //    sujetoObligado.FechaModificacion = DateTime.Now;
-            //    sujetoObligado.EstaActivo = true;
-            //    _context.Add(sujetoObligado);
-            //}
+            var dictamen = ExtratDictamenFromString(contenido);
+
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Id", dictamen.IdAsunto);
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado, "id", "id", dictamen.IdSujetoObligado);
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Id", dictamen.IdTipoDictamen);
+            return RedirectToAction("Create", dictamen);
+        }
 
 
+        // GET: Dictamenes/Create
+        public IActionResult Create()
+        {
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Id");
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado, "id", "id");
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Id");
+            return View();
+        }
+
+        // POST: Dictamenes/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoLigado,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuarioGenerador,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen)
+        {
             if (ModelState.IsValid)
             {
                 _context.Add(dictamen);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion");
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
-            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
-            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Id", dictamen.IdAsunto);
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado, "id", "id", dictamen.IdSujetoObligado);
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Id", dictamen.IdTipoDictamen);
             return View(dictamen);
         }
 
@@ -110,7 +155,7 @@ namespace Dictamenes.Controllers
                 return NotFound();
             }
             ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Id", dictamen.IdAsunto);
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado, "CuilCuit", "CuilCuit", dictamen.IdSujetoObligado);
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado, "id", "id", dictamen.IdSujetoObligado);
             ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Id", dictamen.IdTipoDictamen);
             return View(dictamen);
         }
@@ -126,6 +171,7 @@ namespace Dictamenes.Controllers
             {
                 return NotFound();
             }
+
             if (ModelState.IsValid)
             {
                 try
@@ -146,9 +192,9 @@ namespace Dictamenes.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion", dictamen.IdAsunto);
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado, "CuilCuit", "RazonSocial", dictamen.IdSujetoObligado);
-            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion", dictamen.IdTipoDictamen);
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Id", dictamen.IdAsunto);
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado, "id", "id", dictamen.IdSujetoObligado);
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Id", dictamen.IdTipoDictamen);
             return View(dictamen);
         }
 
@@ -188,5 +234,42 @@ namespace Dictamenes.Controllers
         {
             return _context.Dictamenes.Any(e => e.id == id);
         }
+
+        private static Dictamen ExtratDictamenFromString(string contenido)
+        {
+            Regex numeroGDE = new Regex("IF-[0-9]{4}-[0-9]{7,8}-APN-(DARH|DCTA|CGN|GAJ|GTYN)#(M[TJH]|SSN)", RegexOptions.IgnoreCase);
+
+            MatchCollection matches = numeroGDE.Matches(contenido);
+
+            string nroGDE = matches[0].Value;
+
+            Regex numeroExpediente = new Regex("EX-[0-9]{4}-[0-9]{7,8}-APN-(DARH|DCTA|CGN|GA|GTYN)#(M[TJH]|SSN)", RegexOptions.IgnoreCase);
+
+            matches = numeroExpediente.Matches(contenido);
+
+            string nroExpediente = matches[0].Value;
+
+            Regex date = new Regex("[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", RegexOptions.IgnoreCase);
+
+            matches = date.Matches(contenido);
+            DateTime fechaCarga = DateTime.ParseExact(matches[0].Value, "yyyy.MM.dd HH:mm:ss", null);
+
+      
+
+            //matches = dateUsuarioGenerador.Matches(contenido);
+            //Console.WriteLine(matches.Count);
+            //string usuarioGenerador = matches[0].Value;
+            //Console.WriteLine(usuarioGenerador);
+
+            Dictamen dict = new Dictamen();
+
+            dict.NroGDE = nroGDE;
+            dict.NroExpediente = nroExpediente;
+            dict.FechaCarga = fechaCarga;
+            return dict;
+
+
+        }
+
     }
 }

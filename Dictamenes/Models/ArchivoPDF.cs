@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,11 +14,9 @@ namespace Dictamenes.Models
         [Key]
         public int Id { get; set; }
 
-        public string path { get; set; }
+        public string Path { get; set; }
 
-        public string contenido { get; set; }
-
-
+        public string Contenido { get; set; }
 
     }
 }

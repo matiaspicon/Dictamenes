@@ -14,6 +14,38 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore" Version="3.1.5" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\pdf\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="commons-logging">
+      <HintPath>lib\copy\commons-logging.dll</HintPath>
+    </Reference>
+    <Reference Include="fontbox-1.8.9">
+      <HintPath>lib\copy\fontbox-1.8.9.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Core">
+      <HintPath>lib\references\IKVM.OpenJDK.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.SwingAWT">
+      <HintPath>lib\references\IKVM.OpenJDK.SwingAWT.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Text">
+      <HintPath>lib\copy\IKVM.OpenJDK.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Util">
+      <HintPath>lib\copy\IKVM.OpenJDK.Util.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.Runtime">
+      <HintPath>lib\copy\IKVM.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="pdfbox-1.8.9">
+      <HintPath>lib\references\pdfbox-1.8.9.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

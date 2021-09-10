@@ -22,10 +22,10 @@ namespace Dictamenes.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("contenido")
+                    b.Property<string>("Contenido")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("path")
+                    b.Property<string>("Path")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -138,6 +138,70 @@ namespace Dictamenes.Migrations
                     b.HasIndex("UsuarioModificacionId");
 
                     b.ToTable("Dictamenes");
+                });
+
+            modelBuilder.Entity("Dictamenes.Models.FileOnDatabaseModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("Data")
+                        .HasColumnType("BLOB");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Extension")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FileType")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UploadedBy")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FilesOnDatabase");
+                });
+
+            modelBuilder.Entity("Dictamenes.Models.FileOnFileSystemModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("CreatedOn")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Extension")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FileType")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UploadedBy")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FilesOnFileSystem");
                 });
 
             modelBuilder.Entity("Dictamenes.Models.SujetoObligado", b =>

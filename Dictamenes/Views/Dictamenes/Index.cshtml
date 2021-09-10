@@ -7,38 +7,59 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="CargarFile">Create New</a>
 </p>
-<table class="table table-striped table-hover">
+<table class="table">
     <thead>
         <tr>
-            <th scope="col">
+            <th>
                 @Html.DisplayNameFor(model => model.NroGDE)
             </th>
-            <th scope="col">
+            <th>
                 @Html.DisplayNameFor(model => model.NroExpediente)
             </th>
-            <th scope="col">
+            <th>
                 @Html.DisplayNameFor(model => model.FechaCarga)
             </th>
-            <th scope="col">
+            <th>
                 @Html.DisplayNameFor(model => model.Detalle)
             </th>
-            <th scope="col">
+            <th>
+                @Html.DisplayNameFor(model => model.EsPublico)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdArchivoLigado)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SujetoObligado)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.Asunto)
-            </th>            
-            <th scope="col"></th>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoDictamen)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdUsuarioGenerador)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EstaActivo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaModificacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdUsuarioModificacion)
+            </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <th>
-                <a  asp-action="Details" asp-route-id="@item.id"
-                   class=" link-dark text-decoration-none">
-                    @Html.DisplayFor(modelItem => item.NroGDE)
-                </a>
-            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.NroGDE)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.NroExpediente)
             </td>
@@ -46,13 +67,39 @@
                 @Html.DisplayFor(modelItem => item.FechaCarga)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Asunto.Descripcion)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Detalle)
             </td>
             <td>
-                <a class="bi bi-pencil-square btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.id" ></a>
+                @Html.DisplayFor(modelItem => item.EsPublico)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdArchivoLigado)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SujetoObligado.id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Asunto.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TipoDictamen.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdUsuarioGenerador)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstaActivo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaModificacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdUsuarioModificacion)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
             </td>
         </tr>
 }
