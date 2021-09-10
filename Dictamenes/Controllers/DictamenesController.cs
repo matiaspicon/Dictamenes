@@ -104,21 +104,25 @@ namespace Dictamenes.Controllers
             var contenido = FileController.ExtractTextFromPdf(filePath);
 
 
-            var dictamen = ExtratDictamenFromString(contenido);
+            Dictamen dictamen = ExtratDictamenFromString(contenido);
 
-            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Id", dictamen.IdAsunto);
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado, "id", "id", dictamen.IdSujetoObligado);
-            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Id", dictamen.IdTipoDictamen);
-            return RedirectToAction("Create", dictamen);
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion");
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
+            ViewData["IdDenunciante"] = _context.TipoSujetoObligado.FirstOrDefault(m => m.Descripcion == "Denunciante").Id;
+            //ViewData["IdDenunciante"] = 3;
+            return View("Create", dictamen);
         }
 
 
         // GET: Dictamenes/Create
         public IActionResult Create()
         {
-            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Id");
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado, "id", "id");
-            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Id");
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion");
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
             return View();
         }
 
@@ -127,17 +131,37 @@ namespace Dictamenes.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoLigado,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuarioGenerador,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen)
+        public async Task<IActionResult> Create([Bind("id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoLigado,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuarioGenerador,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen, [Bind("CuilCuitSujeto, Nombre, Apellido, IdTipoSujetoObligado")] SujetoObligado sujetoObligado)
         {
+
+            dictamen.IdUsuarioModificacion = 0;
+            //dictamen.IdUsuarioModificacion = _context.Usuario;
+            dictamen.FechaModificacion = DateTime.Now;
+            dictamen.EstaActivo = true;
+
+            if (sujetoObligado.CuilCuit != 0)
+            {
+                sujetoObligado.IdUsuarioModificacion = 0;
+                sujetoObligado.FechaModificacion = DateTime.Now;
+                sujetoObligado.EstaActivo = true;
+                _context.Add(sujetoObligado);
+                await _context.SaveChangesAsync();
+
+                dictamen.IdSujetoObligado = sujetoObligado.id;
+
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(dictamen);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Id", dictamen.IdAsunto);
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado, "id", "id", dictamen.IdSujetoObligado);
-            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Id", dictamen.IdTipoDictamen);
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion");
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
+            ViewData["IdDenunciante"] = _context.TipoSujetoObligado.FirstOrDefault(m => m.Descripcion == "Denunciante").Id;
             return View(dictamen);
         }
 
@@ -154,9 +178,11 @@ namespace Dictamenes.Controllers
             {
                 return NotFound();
             }
-            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Id", dictamen.IdAsunto);
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado, "id", "id", dictamen.IdSujetoObligado);
-            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Id", dictamen.IdTipoDictamen);
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion");
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
+            ViewData["IdDenunciante"] = _context.TipoSujetoObligado.FirstOrDefault(m => m.Descripcion == "Denunciante").Id;
             return View(dictamen);
         }
 
@@ -192,9 +218,11 @@ namespace Dictamenes.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Id", dictamen.IdAsunto);
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado, "id", "id", dictamen.IdSujetoObligado);
-            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Id", dictamen.IdTipoDictamen);
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion");
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
+            ViewData["IdDenunciante"] = _context.TipoSujetoObligado.FirstOrDefault(m => m.Descripcion == "Denunciante").Id;
             return View(dictamen);
         }
 
@@ -243,11 +271,13 @@ namespace Dictamenes.Controllers
 
             string nroGDE = matches[0].Value;
 
-            Regex numeroExpediente = new Regex("EX-[0-9]{4}-[0-9]{7,8}-APN-(DARH|DCTA|CGN|GA|GTYN)#(M[TJH]|SSN)", RegexOptions.IgnoreCase);
+            Regex numeroExpediente = new Regex("[E][X] *-* *[0-9]{4} *- *[0-9]{7,9}? ?- ?-? ?APN *- *(DARH|DCTA|CGN|GA|GTYN|GAYR) *# *(M[TJH]|SSN)|[E][X] *-* *[0-9]{4} *- *[0-9]{7,9}", RegexOptions.IgnoreCase);
 
             matches = numeroExpediente.Matches(contenido);
 
-            string nroExpediente = matches[0].Value;
+            string nroExpediente = matches[0].Value.Replace(" ","").Replace("--", "-") ;
+
+
 
             Regex date = new Regex("[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", RegexOptions.IgnoreCase);
 
@@ -256,10 +286,7 @@ namespace Dictamenes.Controllers
 
       
 
-            //matches = dateUsuarioGenerador.Matches(contenido);
-            //Console.WriteLine(matches.Count);
-            //string usuarioGenerador = matches[0].Value;
-            //Console.WriteLine(usuarioGenerador);
+            
 
             Dictamen dict = new Dictamen();
 

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using org.apache.pdfbox.pdmodel;
 using org.apache.pdfbox.util;
+using UglyToad.PdfPig;
 
 namespace Dictamenes.Controllers
 {
@@ -142,21 +143,20 @@ namespace Dictamenes.Controllers
 
         public static string ExtractTextFromPdf(string path)
         {
-            PDDocument doc = null;
-            try
+            PdfDocument document = PdfDocument.Open(path);
+            var contenido = " ";
+            for (var i = 0; i < document.NumberOfPages; i++)
             {
-                doc = PDDocument.load(path);
+                // This starts at 1 rather than 0.
+                var page = document.GetPage(i + 1);
 
-                PDFTextStripper stripper = new PDFTextStripper();
-                return stripper.getText(doc);
-            }
-            finally
-            {
-                if (doc != null)
+                foreach (var word in page.GetWords())
                 {
-                    doc.close();
+                    contenido += ' ' + word.Text;
                 }
             }
+
+            return contenido;
         }
     }
 }
