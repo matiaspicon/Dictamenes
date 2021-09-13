@@ -41,15 +41,27 @@ namespace Dictamenes.Controllers
                 .Include(d => d.Asunto)
                 .Include(d => d.SujetoObligado)
                 .Include(d => d.TipoDictamen)
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (dictamen == null)
             {
                 return NotFound();
             }
-
+            ViewData["IdDenunciante"] = _context.TipoSujetoObligado.FirstOrDefault(m => m.Descripcion == "Denunciante").Id;
             return View(dictamen);
         }
+        public async Task<IActionResult> DownloadFileFromFileSystem(int id)
+        {
 
+            var file = await _context.ArchivoPDF.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if (file == null) return null;
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(file.Path, FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+            return File(memory, file.TipoArchivo, file.Nombre + file.Extension);
+        }
         // GET: Dictamenes/Create
         public IActionResult CargarFile()
         {
@@ -63,55 +75,49 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CargarFile(IFormFile file)
         {
+            Dictamen dictamen = new Dictamen();
+            //separo informacion del archivo
             var fileName = Path.GetFileNameWithoutExtension(file.FileName);
             var extension = Path.GetExtension(file.FileName);
-            var fileModel1 = new FileOnDatabaseModel
-            {
-                CreatedOn = DateTime.UtcNow,
-                FileType = file.ContentType,
-                Extension = extension,
-                Name = fileName
-            };
-            using (var dataStream = new MemoryStream())
-            {
-                await file.CopyToAsync(dataStream);
-                fileModel1.Data = dataStream.ToArray();
-            }
-            _context.FilesOnDatabase.Add(fileModel1);
-
+            
+            // compruebo directorio
             var basePath = Path.Combine(Directory.GetCurrentDirectory() + "\\Files\\");
             bool basePathExists = System.IO.Directory.Exists(basePath);
             if (!basePathExists) Directory.CreateDirectory(basePath);
+
             var filePath = Path.Combine(basePath, file.FileName);
             if (!System.IO.File.Exists(filePath))
             {
+                // si no existe en el directorio, lo copio
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await file.CopyToAsync(stream);
-                }
-                var fileModel2 = new FileOnFileSystemModel
-                {
-                    CreatedOn = DateTime.Now,
-                    FileType = file.ContentType,
-                    Extension = extension,
-                    Name = fileName,
-                    FilePath = filePath
-                };
-                _context.FilesOnFileSystem.Add(fileModel2);
-                _context.SaveChanges();
+                }               
             }
+            // creo el archivo para la base de datos
+            var archivo = new ArchivoPDF
+            {
+                FechaCarga = DateTime.Now,
+                TipoArchivo = file.ContentType,
+                Extension = extension,
+                Nombre = fileName,
+                Path = filePath,
+                Contenido = FileController.ExtractTextFromPdf(filePath),
+            };
+            _context.ArchivoPDF.Add(archivo);
+            _context.SaveChanges();    
+            // extraigo la informacion del PDF del dictamen y creo el objeto con la misma
+            dictamen = ExtratDictamenFromString(archivo.Contenido);
+            dictamen.IdArchivoPDF = archivo.Id;
+            dictamen.ArchivoPDF = archivo;
 
-            var contenido = FileController.ExtractTextFromPdf(filePath);
-
-
-            Dictamen dictamen = ExtratDictamenFromString(contenido);
-
+            // cargo la informacion para el formulario Create y devuelvo la VIEW del create con la informacion precargada
+            // o sin la informacion precargada si no se pudo obtener nada del PDF
             ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
             ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
             ViewData["IdDenunciante"] = _context.TipoSujetoObligado.FirstOrDefault(m => m.Descripcion == "Denunciante").Id;
-            //ViewData["IdDenunciante"] = 3;
             return View("Create", dictamen);
         }
 
@@ -123,6 +129,7 @@ namespace Dictamenes.Controllers
             ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
             ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
+            ViewData["IdDenunciante"] = _context.TipoSujetoObligado.FirstOrDefault(m => m.Descripcion == "Denunciante").Id;
             return View();
         }
 
@@ -131,7 +138,7 @@ namespace Dictamenes.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoLigado,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuarioGenerador,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen, [Bind("CuilCuitSujeto, Nombre, Apellido, IdTipoSujetoObligado")] SujetoObligado sujetoObligado)
+        public async Task<IActionResult> Create([Bind("id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuario,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen, [Bind("CuilCuit, Nombre, Apellido, IdTipoSujetoObligado")] SujetoObligado sujetoObligado)
         {
 
             dictamen.IdUsuarioModificacion = 0;
@@ -139,7 +146,7 @@ namespace Dictamenes.Controllers
             dictamen.FechaModificacion = DateTime.Now;
             dictamen.EstaActivo = true;
 
-            if (sujetoObligado.CuilCuit != 0)
+            if (sujetoObligado.CuilCuit > 0)
             {
                 sujetoObligado.IdUsuarioModificacion = 0;
                 sujetoObligado.FechaModificacion = DateTime.Now;
@@ -191,9 +198,9 @@ namespace Dictamenes.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoLigado,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuarioGenerador,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen)
+        public async Task<IActionResult> Edit(int id, [Bind("id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuario,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen)
         {
-            if (id != dictamen.id)
+            if (id != dictamen.Id)
             {
                 return NotFound();
             }
@@ -207,7 +214,7 @@ namespace Dictamenes.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!DictamenExists(dictamen.id))
+                    if (!DictamenExists(dictamen.Id))
                     {
                         return NotFound();
                     }
@@ -238,7 +245,7 @@ namespace Dictamenes.Controllers
                 .Include(d => d.Asunto)
                 .Include(d => d.SujetoObligado)
                 .Include(d => d.TipoDictamen)
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (dictamen == null)
             {
                 return NotFound();
@@ -260,13 +267,13 @@ namespace Dictamenes.Controllers
 
         private bool DictamenExists(int id)
         {
-            return _context.Dictamenes.Any(e => e.id == id);
+            return _context.Dictamenes.Any(e => e.Id == id);
         }
 
         private static Dictamen ExtratDictamenFromString(string contenido)
         {
             Regex numeroGDE = new Regex("IF-[0-9]{4}-[0-9]{7,8}-APN-(DARH|DCTA|CGN|GAJ|GTYN)#(M[TJH]|SSN)", RegexOptions.IgnoreCase);
-
+            // tpdo poner try catch para cuando no se encuentren resultados
             MatchCollection matches = numeroGDE.Matches(contenido);
 
             string nroGDE = matches[0].Value;

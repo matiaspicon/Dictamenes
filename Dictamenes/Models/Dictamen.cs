@@ -10,7 +10,7 @@ namespace Dictamenes.Models
     public class Dictamen
     {
         [Key]
-        public int id { get; set; }
+        public int Id { get; set; }
         
         [Required]
         [MaxLength(30, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
@@ -28,8 +28,8 @@ namespace Dictamenes.Models
         public bool EsPublico { get; set; }
 
         [ForeignKey(nameof(ArchivoPDF))]
-        public int IdArchivoLigado { get; set; }
-        public ArchivoPDF ArchivoLigado { get; set; }
+        public int IdArchivoPDF { get; set; }
+        public ArchivoPDF ArchivoPDF { get; set; }
 
         [ForeignKey(nameof(SujetoObligado))]
         public int IdSujetoObligado { get; set; }
@@ -41,11 +41,7 @@ namespace Dictamenes.Models
 
         [ForeignKey(nameof(TipoDictamen))]
         public int IdTipoDictamen { get; set; }
-        public TipoDictamen TipoDictamen { get; set; }
-
-        [ForeignKey(nameof(Usuario))]
-        public int IdUsuarioGenerador { get; set; }
-        public Usuario UsuarioGenerador { get; set; }
+        public TipoDictamen TipoDictamen { get; set; }  
 
 
         // valores necesarios para el borrado logico
@@ -54,7 +50,7 @@ namespace Dictamenes.Models
 
         public DateTime FechaModificacion { get; set; }
 
-        [ForeignKey(nameof(Usuario))]
+        [ForeignKey("Usuario")]
         public int IdUsuarioModificacion { get; set; }
         public Usuario UsuarioModificacion { get; set; }
 

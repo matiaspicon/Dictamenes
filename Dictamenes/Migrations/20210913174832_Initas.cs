@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Dictamenes.Migrations
 {
-    public partial class iit : Migration
+    public partial class Initas : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,50 +13,16 @@ namespace Dictamenes.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    Nombre = table.Column<string>(nullable: true),
+                    TipoArchivo = table.Column<string>(nullable: true),
+                    Extension = table.Column<string>(nullable: true),
                     Path = table.Column<string>(nullable: true),
+                    FechaCarga = table.Column<DateTime>(nullable: false),
                     Contenido = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ArchivoPDF", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "FilesOnDatabase",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true),
-                    FileType = table.Column<string>(nullable: true),
-                    Extension = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    UploadedBy = table.Column<string>(nullable: true),
-                    CreatedOn = table.Column<DateTime>(nullable: true),
-                    Data = table.Column<byte[]>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FilesOnDatabase", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "FilesOnFileSystem",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true),
-                    FileType = table.Column<string>(nullable: true),
-                    Extension = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    UploadedBy = table.Column<string>(nullable: true),
-                    CreatedOn = table.Column<DateTime>(nullable: true),
-                    FilePath = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_FilesOnFileSystem", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -183,20 +149,17 @@ namespace Dictamenes.Migrations
                 name: "Dictamenes",
                 columns: table => new
                 {
-                    id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     NroGDE = table.Column<string>(maxLength: 30, nullable: false),
                     NroExpediente = table.Column<string>(maxLength: 30, nullable: false),
                     FechaCarga = table.Column<DateTime>(nullable: false),
                     Detalle = table.Column<string>(nullable: true),
                     EsPublico = table.Column<bool>(nullable: false),
-                    IdArchivoLigado = table.Column<int>(nullable: false),
-                    ArchivoLigadoId = table.Column<int>(nullable: true),
+                    IdArchivoPDF = table.Column<int>(nullable: false),
                     IdSujetoObligado = table.Column<int>(nullable: false),
                     IdAsunto = table.Column<int>(nullable: false),
                     IdTipoDictamen = table.Column<int>(nullable: false),
-                    IdUsuarioGenerador = table.Column<int>(nullable: false),
-                    UsuarioGeneradorId = table.Column<int>(nullable: true),
                     EstaActivo = table.Column<bool>(nullable: false),
                     FechaModificacion = table.Column<DateTime>(nullable: false),
                     IdUsuarioModificacion = table.Column<int>(nullable: false),
@@ -204,13 +167,13 @@ namespace Dictamenes.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Dictamenes", x => x.id);
+                    table.PrimaryKey("PK_Dictamenes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Dictamenes_ArchivoPDF_ArchivoLigadoId",
-                        column: x => x.ArchivoLigadoId,
+                        name: "FK_Dictamenes_ArchivoPDF_IdArchivoPDF",
+                        column: x => x.IdArchivoPDF,
                         principalTable: "ArchivoPDF",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Dictamenes_Asunto_IdAsunto",
                         column: x => x.IdAsunto,
@@ -230,12 +193,6 @@ namespace Dictamenes.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Dictamenes_Usuario_UsuarioGeneradorId",
-                        column: x => x.UsuarioGeneradorId,
-                        principalTable: "Usuario",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Dictamenes_Usuario_UsuarioModificacionId",
                         column: x => x.UsuarioModificacionId,
                         principalTable: "Usuario",
@@ -249,9 +206,9 @@ namespace Dictamenes.Migrations
                 column: "UsuarioModificacionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Dictamenes_ArchivoLigadoId",
+                name: "IX_Dictamenes_IdArchivoPDF",
                 table: "Dictamenes",
-                column: "ArchivoLigadoId");
+                column: "IdArchivoPDF");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Dictamenes_IdAsunto",
@@ -267,11 +224,6 @@ namespace Dictamenes.Migrations
                 name: "IX_Dictamenes_IdTipoDictamen",
                 table: "Dictamenes",
                 column: "IdTipoDictamen");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Dictamenes_UsuarioGeneradorId",
-                table: "Dictamenes",
-                column: "UsuarioGeneradorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Dictamenes_UsuarioModificacionId",
@@ -303,12 +255,6 @@ namespace Dictamenes.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Dictamenes");
-
-            migrationBuilder.DropTable(
-                name: "FilesOnDatabase");
-
-            migrationBuilder.DropTable(
-                name: "FilesOnFileSystem");
 
             migrationBuilder.DropTable(
                 name: "ArchivoPDF");

@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dictamenes.Migrations
 {
     [DbContext(typeof(DictamenesDbContext))]
-    [Migration("20210910143953_iit")]
-    partial class iit
+    [Migration("20210913174832_Initas")]
+    partial class Initas
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,7 +27,19 @@ namespace Dictamenes.Migrations
                     b.Property<string>("Contenido")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Extension")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("FechaCarga")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Path")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TipoArchivo")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -69,11 +81,8 @@ namespace Dictamenes.Migrations
 
             modelBuilder.Entity("Dictamenes.Models.Dictamen", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("ArchivoLigadoId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Detalle")
@@ -91,7 +100,7 @@ namespace Dictamenes.Migrations
                     b.Property<DateTime>("FechaModificacion")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("IdArchivoLigado")
+                    b.Property<int>("IdArchivoPDF")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("IdAsunto")
@@ -101,9 +110,6 @@ namespace Dictamenes.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("IdTipoDictamen")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("IdUsuarioGenerador")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("IdUsuarioModificacion")
@@ -119,15 +125,12 @@ namespace Dictamenes.Migrations
                         .HasColumnType("TEXT")
                         .HasMaxLength(30);
 
-                    b.Property<int?>("UsuarioGeneradorId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<int?>("UsuarioModificacionId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
-                    b.HasIndex("ArchivoLigadoId");
+                    b.HasIndex("IdArchivoPDF");
 
                     b.HasIndex("IdAsunto");
 
@@ -135,75 +138,9 @@ namespace Dictamenes.Migrations
 
                     b.HasIndex("IdTipoDictamen");
 
-                    b.HasIndex("UsuarioGeneradorId");
-
                     b.HasIndex("UsuarioModificacionId");
 
                     b.ToTable("Dictamenes");
-                });
-
-            modelBuilder.Entity("Dictamenes.Models.FileOnDatabaseModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<byte[]>("Data")
-                        .HasColumnType("BLOB");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Extension")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FileType")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UploadedBy")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FilesOnDatabase");
-                });
-
-            modelBuilder.Entity("Dictamenes.Models.FileOnFileSystemModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Extension")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FilePath")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FileType")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UploadedBy")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("FilesOnFileSystem");
                 });
 
             modelBuilder.Entity("Dictamenes.Models.SujetoObligado", b =>
@@ -346,9 +283,11 @@ namespace Dictamenes.Migrations
 
             modelBuilder.Entity("Dictamenes.Models.Dictamen", b =>
                 {
-                    b.HasOne("Dictamenes.Models.ArchivoPDF", "ArchivoLigado")
+                    b.HasOne("Dictamenes.Models.ArchivoPDF", "ArchivoPDF")
                         .WithMany()
-                        .HasForeignKey("ArchivoLigadoId");
+                        .HasForeignKey("IdArchivoPDF")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Dictamenes.Models.Asunto", "Asunto")
                         .WithMany()
@@ -367,10 +306,6 @@ namespace Dictamenes.Migrations
                         .HasForeignKey("IdTipoDictamen")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("Dictamenes.Models.Usuario", "UsuarioGenerador")
-                        .WithMany()
-                        .HasForeignKey("UsuarioGeneradorId");
 
                     b.HasOne("Dictamenes.Models.Usuario", "UsuarioModificacion")
                         .WithMany()

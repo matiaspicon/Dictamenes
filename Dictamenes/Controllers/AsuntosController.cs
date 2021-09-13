@@ -56,6 +56,10 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
+            asunto.IdUsuarioModificacion = 0;
+            //asunto.IdUsuarioModificacion = _context.Usuario;
+            asunto.FechaModificacion = DateTime.Now;
+            asunto.EstaActivo = true;
             if (ModelState.IsValid)
             {
                 _context.Add(asunto);
@@ -96,7 +100,7 @@ namespace Dictamenes.Controllers
             if (ModelState.IsValid)
             {
                 try
-                {
+                {                    
                     _context.Update(asunto);
                     await _context.SaveChangesAsync();
                 }

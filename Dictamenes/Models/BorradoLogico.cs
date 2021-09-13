@@ -15,7 +15,7 @@ namespace Dictamenes.Models
 
         public DateTime FechaModificacion { get; set; }
 
-        [ForeignKey(nameof(Usuario))]
+        [ForeignKey("Usuario")]
         public int IdUsuarioModificacion { get; set; }
         public Usuario UsuarioModificacion { get; set; }
 

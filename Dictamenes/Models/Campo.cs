@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,11 +16,14 @@ namespace Dictamenes.Models
 
         public bool EstaHabilitado { get; set; }
 
+        [HiddenInput(DisplayValue = false)]
         public bool EstaActivo { get; set; }
 
+        [HiddenInput(DisplayValue = false)]
         public DateTime FechaModificacion { get; set; }
 
-        [ForeignKey(nameof(Usuario))]
+        [HiddenInput(DisplayValue = false)]
+        [ForeignKey("Usuario")]
         public int IdUsuarioModificacion { get; set; }
         public Usuario UsuarioModificacion { get; set; }
 

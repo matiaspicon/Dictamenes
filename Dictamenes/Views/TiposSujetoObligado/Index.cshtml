@@ -18,15 +18,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.EstaHabilitado)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EstaActivo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaModificacion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdUsuarioModificacion)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -40,18 +31,7 @@
                 @Html.DisplayFor(modelItem => item.EstaHabilitado)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EstaActivo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaModificacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdUsuarioModificacion)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
             </td>
         </tr>
 }

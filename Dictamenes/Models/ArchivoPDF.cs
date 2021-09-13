@@ -13,8 +13,11 @@ namespace Dictamenes.Models
     {
         [Key]
         public int Id { get; set; }
-
+        public string Nombre { get; set; }
+        public string TipoArchivo { get; set; }
+        public string Extension { get; set; }
         public string Path { get; set; }
+        public DateTime FechaCarga { get; set; }
 
         public string Contenido { get; set; }
 

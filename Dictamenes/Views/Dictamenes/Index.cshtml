@@ -4,61 +4,26 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
 <p>
-    <a asp-action="CargarFile">Create New</a>
+    <a class="btn btn-primary"  asp-action="CargarFile">Create New</a>
 </p>
-<table class="table">
+<table class="table table-striped table-hover">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NroGDE)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NroExpediente)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaCarga)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Detalle)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EsPublico)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdArchivoLigado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SujetoObligado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Asunto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TipoDictamen)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdUsuarioGenerador)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EstaActivo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaModificacion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IdUsuarioModificacion)
-            </th>
-            <th></th>
+        <tr class="table-primary">
+            <th scope="col">Nro GDE</th>
+            <th scope="col">Nro Expediente</th>
+            <th scope="col">Fecha creacion</th>
+            <th scope="col">Asunto</th>
+            <th scope="col">Detalle</th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        @foreach (var item in Model)
+        {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.NroGDE)
+                <a class=" link-dark text-decoration-none" asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.NroGDE)</a>                
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.NroExpediente)
@@ -67,41 +32,15 @@
                 @Html.DisplayFor(modelItem => item.FechaCarga)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Asunto.Descripcion)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Detalle)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EsPublico)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdArchivoLigado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SujetoObligado.id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Asunto.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipoDictamen.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdUsuarioGenerador)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EstaActivo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaModificacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IdUsuarioModificacion)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
+                <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
             </td>
         </tr>
-}
+        }
     </tbody>
 </table>

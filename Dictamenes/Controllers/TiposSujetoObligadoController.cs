@@ -56,6 +56,10 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoObligado tipoSujetoObligado)
         {
+            tipoSujetoObligado.IdUsuarioModificacion = 0;
+            //tipoSujetoObligado.IdUsuarioModificacion = _context.Usuario;
+            tipoSujetoObligado.FechaModificacion = DateTime.Now;
+            tipoSujetoObligado.EstaActivo = true;
             if (ModelState.IsValid)
             {
                 _context.Add(tipoSujetoObligado);

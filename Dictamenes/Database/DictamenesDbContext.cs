@@ -22,8 +22,6 @@ namespace Dictamenes.Database
         public DbSet<TipoDictamen> TipoDictamen { get; set; }
         public DbSet<TipoSujetoObligado> TipoSujetoObligado { get; set; }
         public DbSet<Usuario> Usuario { get; set; }
-        public DbSet<FileOnDatabaseModel> FilesOnDatabase { get; set; }
-        public DbSet<FileOnFileSystemModel> FilesOnFileSystem { get; set; }
     }
 
 }

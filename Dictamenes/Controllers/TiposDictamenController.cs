@@ -56,6 +56,10 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoDictamen tipoDictamen)
         {
+            tipoDictamen.IdUsuarioModificacion = 0;
+            //tipoDictamen.IdUsuarioModificacion = _context.Usuario;
+            tipoDictamen.FechaModificacion = DateTime.Now;
+            tipoDictamen.EstaActivo = true;
             if (ModelState.IsValid)
             {
                 _context.Add(tipoDictamen);
