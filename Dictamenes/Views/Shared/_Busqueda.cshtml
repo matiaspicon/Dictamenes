@@ -1,0 +1,119 @@
+﻿@model Dictamenes.Models.Busqueda
+
+    <script type="text/javascript">
+        function setForm(value) {
+            console.log(value);
+            if (value) {
+                document.getElementById('FormPersonas').style = 'display:block;';
+                document.getElementById('FormEmpresas').style = 'display:none;';
+                document.getElementById('InputEmpresas').value = '';
+            }
+            else {
+                document.getElementById('FormEmpresas').style = 'display:block;';
+                document.getElementById('FormPersonas').style = 'display:none;';
+                document.getElementById('InputNombre').value = '';
+                document.getElementById('InputApellido').value = '';
+            }
+        }
+    </script>   
+
+
+ <div class="collapse mx-2" id="navbarToggleExternalContent">
+
+        
+        <form asp-action="Buscar" asp-controller="Dictamenes" >
+            
+            <div class="row">
+                <div class="col-6">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label class="control-label">Numero de GDE</label>
+                        <input asp-for="NroGDE" class="form-control" placeholder="Ingrese Numero de GDE" />
+                        <span asp-validation-for="NroGDE" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Numero de Expediente</label>
+                        <input asp-for="NroExp" class="form-control" placeholder="Ingrese Numero de Expediente" />
+                        <span asp-validation-for="NroExp" class="text-danger"></span>
+                    </div>
+                    <label class="control-label">Fecha de Carga</label>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Desde:</label>
+                        <div class="col-sm-10">
+                            <input asp-for="FechaCargaInicio" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Hasta:</label>
+                        <div class="col-sm-10">
+                            <input asp-for="FechaCargaFinal" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Contenido" class="control-label"></label>
+                        <input asp-for="Contenido" class="form-control" placeholder="Ingrese Texto a buscar en el cuerpo de los dictamenes" />
+                        <span asp-validation-for="Contenido" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Detalle</label>
+                        <input type="text" class="form-control" placeholder="Ingrese el detalle del Dictamen" />
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="form-group">
+                        <label class="control-label">Tipo de Dictamen</label>
+                        @*<select name="IdTipoDictamen" class="form-control" asp-items="ViewBag.IdTipoDictamen"></select>*@
+                        @Html.DropDownList("IdTipoDictamen", (SelectList)ViewBag.IdTipoDictamen, "Elija uno", new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Asunto</label>
+                        @*<select name="IdAsunto" class="form-control" asp-items="ViewBag.IdAsunto"></select>*@
+                        @Html.DropDownList("IdAsunto", (SelectList)ViewBag.IdAsunto, "Elija uno", new { @class = "form-control" })
+                    </div>
+
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" name="EsPublico" checked /> Es publico
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">CUIL/CUIT </label>
+                        <input id="InputCuilCuit" asp-for="CuilCuit" type="number" class="form-control" placeholder="Ingrese el CUIL/CUIT del Sujeto Obligado">
+                    </div>
+
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input asp-for="EsDenunciante" class="form-check-input" id="esDenunciante" onclick="setForm(this.checked)" /> Sujeto Obligado es Denunciante
+                        </label>
+                    </div>
+
+                    <div id="FormEmpresas" style="display:block">
+                        <div class="form-group">
+                            <label class="control-label">Empresas</label>
+                            @*<select id="InputEmpresas" name="IdSujetoObligado" class="form-control" asp-items="ViewBag.IdSujetoObligado"></select>*@
+                            @Html.DropDownList("IdSujetoObligado", (SelectList)ViewBag.IdSujetoObligado, "Elija uno", new { id = "InputEmpresas", @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div id="FormPersonas" style="display:none">
+                        <label class="form-label">Nombre</label>
+                        <input id="InputNombre" asp-for="Nombre" type="text" class="form-control " placeholder="Ingrese el Nombre del Sujeto Obligado">
+                        <label class="form-label">Apellido</label>
+                        <input id="InputApellido" asp-for="Apellido" type="text" class="form-control " placeholder="Ingrese el Nombre del Sujeto Obligado">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group m-2 row justify-content-around">
+                <a class="btn btn-outline-danger col-3" asp-action="Index"> Restablecer </a>
+                <input type="submit" value="Buscar" class="btn btn-outline-success col-3" />
+            </div>
+            
+            
+        </form>           
+    </div>
+
+
+ <script>setForm(document.getElementById("esDenunciante").checked)</script>

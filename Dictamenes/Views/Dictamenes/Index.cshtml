@@ -4,9 +4,32 @@
     ViewData["Title"] = "Index";
 }
 
-<p>
-    <a class="btn btn-primary"  asp-action="CargarFile">Create New</a>
-</p>
+<div class="row">
+    <p class="col">
+        <a class="btn btn-primary" asp-action="CargarFile">Cargar nuevo</a>
+    </p>
+
+    <button class="navbar-toggler col" type="button" data-toggle="collapse"
+            data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <i class="bi bi-search"></i> Busqueda
+    </button>
+
+
+
+</div>
+@if (ViewBag.Busqueda != null)
+{
+    <partial name="_Busqueda" model="@(new Busqueda())" />
+}
+else
+{
+    <partial name="_Busqueda" model="ViewBag.Busqueda" />
+}
+
+
+
+
 <table class="table table-striped table-hover">
     <thead>
         <tr class="table-primary">
@@ -21,26 +44,35 @@
     <tbody>
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                <a class=" link-dark text-decoration-none" asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.NroGDE)</a>                
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NroExpediente)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaCarga)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Asunto.Descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Detalle)
-            </td>
-            <td>
-                <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    <a class=" link-dark text-decoration-none" asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.NroGDE)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NroExpediente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaCarga)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Asunto.Descripcion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Detalle)
+                </td>
+                <td>
+                    <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                </td>
+            </tr>
         }
     </tbody>
+
+
 </table>
+@if (Model.Count() < 1)
+{
+    <div class="row justify-content-center">
+        <h4>No se encontraron Dictamenes</h4>
+    </div>
+}
+

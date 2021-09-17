@@ -4,13 +4,31 @@
     ViewData["Title"] = "Edit";
 }
 
+<script type="text/javascript">
+    function setForm(value) {
+        console.log(value);
+        if (value) {
+            document.getElementById('FormPersonas').style = 'display:block;';
+            document.getElementById('FormEmpresas').style = 'display:none;';
+            document.getElementById('InputEmpresas').value = "-1";
+            document.getElementById('InputCuilCuit').value = '';
+        }
+        else {
+            document.getElementById('FormEmpresas').style = 'display:block;';
+            document.getElementById('FormPersonas').style = 'display:none;';
+            document.getElementById('InputEmpresas').value = "0";
+            document.getElementById('InputCuilCuit').value = -1;
+        }
+    }
+</script>
+
 <h1>Edit</h1>
 
 <h4>Dictamen</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
@@ -39,14 +57,8 @@
                 </label>
             </div>
             <div class="form-group">
-                <label asp-for="IdArchivoPDF" class="control-label"></label>
-                <input asp-for="IdArchivoPDF" class="form-control" />
-                <span asp-validation-for="IdArchivoPDF" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IdSujetoObligado" class="control-label"></label>
-                <select asp-for="IdSujetoObligado" class="form-control" asp-items="ViewBag.IdSujetoObligado"></select>
-                <span asp-validation-for="IdSujetoObligado" class="text-danger"></span>
+                <label class="control-label">Ingrese el nuevo Archivo PDF</label>
+                <input type="file" name="file" />
             </div>
             <div class="form-group">
                 <label asp-for="IdAsunto" class="control-label"></label>
@@ -59,25 +71,34 @@
                 <span asp-validation-for="IdTipoDictamen" class="text-danger"></span>
             </div>
             @*<div class="form-group">
-                <label asp-for="IdUsuario" class="control-label"></label>
-                <input asp-for="IdUsuario" class="form-control" />
-                <span asp-validation-for="IdUsuario" class="text-danger"></span>
-            </div>*@
+            <label asp-for="IdUsuario" class="control-label"></label>
+            <input asp-for="IdUsuario" class="form-control" />
+            <span asp-validation-for="IdUsuario" class="text-danger"></span>
+        </div>*@
+
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="EstaActivo" /> @Html.DisplayNameFor(model => model.EstaActivo)
+                    <input type="checkbox" class="form-check-input" id="esDenunciante" onclick="setForm(this.checked)" /> Sujeto Obligado es Denunciante
                 </label>
             </div>
-            <div class="form-group">
-                <label asp-for="FechaModificacion" class="control-label"></label>
-                <input asp-for="FechaModificacion" class="form-control" />
-                <span asp-validation-for="FechaModificacion" class="text-danger"></span>
+
+            <div id="FormEmpresas" style="display:block">
+                <div class="form-group">
+                    <label class="control-label">Empresas</label>
+                    <select id="InputEmpresas" asp-for="IdSujetoObligado" class="form-control" asp-items="ViewBag.IdSujetoObligado"></select>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="IdUsuarioModificacion" class="control-label"></label>
-                <input asp-for="IdUsuarioModificacion" class="form-control" />
-                <span asp-validation-for="IdUsuarioModificacion" class="text-danger"></span>
+
+
+            <div id="FormPersonas" style="display:none">
+                <label class="form-label">CUIL/CUIT </label>
+                <input id="InputCuilCuit" name="CuilCuit" type="number" class="form-control" value="-1" placeholder="Ingrese el CUIL/CUIT del Sujeto Obligado">
+                <label class="form-label">Nombre</label>
+                <input name="Nombre" type="text" class="form-control " placeholder="Ingrese el Nombre del Sujeto Obligado">
+                <label class="form-label">Apellido</label>
+                <input name="Apellido" type="text" class="form-control " placeholder="Ingrese el Nombre del Sujeto Obligado">
             </div>
+            <input type="hidden" asp-for="IdArchivoPDF" />
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -86,7 +107,7 @@
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Volver atras</a>
 </div>
 
 @section Scripts {

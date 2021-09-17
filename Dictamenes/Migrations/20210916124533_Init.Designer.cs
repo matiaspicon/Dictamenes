@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dictamenes.Migrations
 {
     [DbContext(typeof(DictamenesDbContext))]
-    [Migration("20210913174832_Initas")]
-    partial class Initas
+    [Migration("20210916124533_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -79,6 +79,50 @@ namespace Dictamenes.Migrations
                     b.ToTable("Asunto");
                 });
 
+            modelBuilder.Entity("Dictamenes.Models.Busqueda", b =>
+                {
+                    b.Property<string>("Apellido")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Contenido")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("CuilCuit")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("EsDenunciante")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("FechaCargaFinal")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("FechaCargaInicio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("IdAsunto")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("IdSujetoObligado")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("IdTipoDictamen")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("IdTipoSujetoObligado")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Nombre")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NroExp")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NroGDE")
+                        .HasColumnType("TEXT");
+
+                    b.ToTable("Busqueda");
+                });
+
             modelBuilder.Entity("Dictamenes.Models.Dictamen", b =>
                 {
                     b.Property<int>("Id")
@@ -145,7 +189,7 @@ namespace Dictamenes.Migrations
 
             modelBuilder.Entity("Dictamenes.Models.SujetoObligado", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -179,7 +223,7 @@ namespace Dictamenes.Migrations
                     b.Property<int?>("UsuarioModificacionId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.HasIndex("IdTipoSujetoObligado");
 

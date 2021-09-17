@@ -88,7 +88,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Cuil,Nombre,Apellido")] Usuario usuario)
         {
-            if (id != usuario.Cuil)
+            if (id != usuario.Id)
             {
                 return NotFound();
             }
@@ -102,7 +102,7 @@ namespace Dictamenes.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UsuarioExists(usuario.Cuil))
+                    if (!UsuarioExists(usuario.Id))
                     {
                         return NotFound();
                     }

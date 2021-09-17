@@ -30,6 +30,7 @@ namespace Dictamenes.Controllers
 
             var file = await context.ArchivoPDF.Where(x => x.Id == id).FirstOrDefaultAsync();
             if (file == null) return NotFound();
+            if (!System.IO.File.Exists(file.Path)) return NotFound();
             var memory = new MemoryStream();
             using (var stream = new FileStream(file.Path, FileMode.Open))
             {

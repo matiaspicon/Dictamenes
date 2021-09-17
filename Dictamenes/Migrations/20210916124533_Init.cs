@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Dictamenes.Migrations
 {
-    public partial class Initas : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -23,6 +23,28 @@ namespace Dictamenes.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ArchivoPDF", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Busqueda",
+                columns: table => new
+                {
+                    NroGDE = table.Column<string>(nullable: true),
+                    NroExp = table.Column<string>(nullable: true),
+                    FechaCargaInicio = table.Column<DateTime>(nullable: true),
+                    FechaCargaFinal = table.Column<DateTime>(nullable: true),
+                    Contenido = table.Column<string>(nullable: true),
+                    IdAsunto = table.Column<int>(nullable: true),
+                    IdTipoSujetoObligado = table.Column<int>(nullable: true),
+                    IdTipoDictamen = table.Column<int>(nullable: true),
+                    EsDenunciante = table.Column<bool>(nullable: false),
+                    IdSujetoObligado = table.Column<int>(nullable: true),
+                    CuilCuit = table.Column<int>(nullable: true),
+                    Nombre = table.Column<string>(nullable: true),
+                    Apellido = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
                 });
 
             migrationBuilder.CreateTable(
@@ -116,7 +138,7 @@ namespace Dictamenes.Migrations
                 name: "SujetoObligado",
                 columns: table => new
                 {
-                    id = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     CuilCuit = table.Column<int>(nullable: false),
                     Nombre = table.Column<string>(maxLength: 50, nullable: true),
@@ -130,7 +152,7 @@ namespace Dictamenes.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SujetoObligado", x => x.id);
+                    table.PrimaryKey("PK_SujetoObligado", x => x.Id);
                     table.ForeignKey(
                         name: "FK_SujetoObligado_TipoSujetoObligado_IdTipoSujetoObligado",
                         column: x => x.IdTipoSujetoObligado,
@@ -184,7 +206,7 @@ namespace Dictamenes.Migrations
                         name: "FK_Dictamenes_SujetoObligado_IdSujetoObligado",
                         column: x => x.IdSujetoObligado,
                         principalTable: "SujetoObligado",
-                        principalColumn: "id",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Dictamenes_TipoDictamen_IdTipoDictamen",
@@ -253,6 +275,9 @@ namespace Dictamenes.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Busqueda");
+
             migrationBuilder.DropTable(
                 name: "Dictamenes");
 

@@ -5,18 +5,19 @@
 }
 
 <script type="text/javascript">
-    function setForm(value) {        
-        if (value != @ViewBag.IdDenunciante) {
-            document.getElementById('FormEmpresas').style = 'display:block;';
-            document.getElementById('FormPersonas').style = 'display:none;';
-            document.getElementById('InputEmpresas').value = "0";
-            document.getElementById('InputCuilCuit').value = -1;
-        }
-        else {
+    function setForm(value) {
+        console.log(value);
+        if (value) {
             document.getElementById('FormPersonas').style = 'display:block;';
             document.getElementById('FormEmpresas').style = 'display:none;';
             document.getElementById('InputEmpresas').value = "-1";
             document.getElementById('InputCuilCuit').value = '';
+        }
+        else {
+            document.getElementById('FormEmpresas').style = 'display:block;';
+            document.getElementById('FormPersonas').style = 'display:none;';
+            document.getElementById('InputEmpresas').value = "0";
+            document.getElementById('InputCuilCuit').value = -1;
         }
     }
 </script>
@@ -59,13 +60,19 @@
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="EsPublico" /> @Html.DisplayNameFor(model => model.EsPublico)
+                    <input class="form-check-input" asp-for="EsPublico" checked /> @Html.DisplayNameFor(model => model.EsPublico)
                 </label>
             </div>
 
-            <div class="form-group">
+            @*<div class="form-group">
                 <label class="control-label">Tipo de Sujeto Obligado</label>
-                <select class="form-control" id="InputTipoSujetoObligado" name="IdTipoSujetoObligado" onchange="setForm(this.value)" asp-items="ViewBag.TipoSujetoObligado"></select>
+                <select class="form-control" id="InputTipoSujetoObligado" name="IdTipoSujetoObligado" asp-items="ViewBag.TipoSujetoObligado"></select>
+            </div>*@
+
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input type="checkbox" class="form-check-input" id="esDenunciante" onclick="setForm(this.checked)" /> Sujeto Obligado es Denunciante
+                </label>
             </div>
 
             <div id="FormEmpresas" style="display:block">
@@ -75,20 +82,22 @@
                 </div>
             </div>
 
+
             <div id="FormPersonas" style="display:none">
                 <label class="form-label">CUIL/CUIT </label>
-                <input id="InputCuilCuit" name="CuilCuit" type="number" class="form-control" placeholder="Ingrese el CUIL/CUIT del Sujeto Obligado">
+                <input id="InputCuilCuit" name="CuilCuit" type="number" class="form-control" value="-1" placeholder="Ingrese el CUIL/CUIT del Sujeto Obligado">
                 <label class="form-label">Nombre</label>
                 <input name="Nombre" type="text" class="form-control " placeholder="Ingrese el Nombre del Sujeto Obligado">
                 <label class="form-label">Apellido</label>
                 <input name="Apellido" type="text" class="form-control " placeholder="Ingrese el Nombre del Sujeto Obligado">
             </div>
 
+
             @*<div class="form-group">
-                <label class="control-label">Usuario generador</label>
-                <input asp-for="IdUsuario" class="form-control" />
-                <span asp-validation-for="IdUsuario" class="text-danger"></span>
-            </div>*@
+            <label class="control-label">Usuario generador</label>
+            <input asp-for="IdUsuario" class="form-control" />
+            <span asp-validation-for="IdUsuario" class="text-danger"></span>
+        </div>*@
             <input type="hidden" asp-for="IdArchivoPDF" />
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -97,10 +106,9 @@
     </div>
 </div>
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Volver atras</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    <script>setForm(document.getElementById("InputTipoSujetoObligado").value)</script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}    
 }

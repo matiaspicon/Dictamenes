@@ -22,6 +22,15 @@ namespace Dictamenes.Database
         public DbSet<TipoDictamen> TipoDictamen { get; set; }
         public DbSet<TipoSujetoObligado> TipoSujetoObligado { get; set; }
         public DbSet<Usuario> Usuario { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Busqueda>().HasNoKey();
+        }
+
+
+        public DbSet<Dictamenes.Models.Busqueda> Busqueda { get; set; }
     }
 
 }

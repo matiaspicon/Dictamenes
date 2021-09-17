@@ -22,7 +22,7 @@ namespace Dictamenes.Controllers
         // GET: TiposDictamen
         public async Task<IActionResult> Index()
         {
-            return View(await _context.TipoDictamen.ToListAsync());
+            return View(await _context.TipoDictamen.Where(s => s.EstaActivo).ToListAsync());
         }
 
         // GET: TiposDictamen/Details/5
@@ -101,8 +101,21 @@ namespace Dictamenes.Controllers
             {
                 try
                 {
+                    TipoDictamen tipoDictamenViejo = _context.TipoDictamen.AsNoTracking().First(d => d.Id == id);
+                    tipoDictamenViejo.EstaActivo = true;
+
+                    tipoDictamen.IdUsuarioModificacion = 3;
+                    //dictamen.IdUsuarioModificacion = _context.Usuario;
+                    tipoDictamen.FechaModificacion = DateTime.Now;
                     _context.Update(tipoDictamen);
+
+                    tipoDictamenViejo.EstaActivo = false;
+                    tipoDictamenViejo.Id = 0;
+
+                    _context.TipoDictamen.Add(tipoDictamenViejo);
                     await _context.SaveChangesAsync();
+
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {

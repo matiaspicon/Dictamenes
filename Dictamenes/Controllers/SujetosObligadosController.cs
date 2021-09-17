@@ -21,7 +21,8 @@ namespace Dictamenes.Models
         // GET: SujetosObligados
         public async Task<IActionResult> Index()
         {
-            var dictamenesDbContext = _context.SujetoObligado.Include(s => s.TipoSujetoObligado);
+            var dictamenesDbContext = _context.SujetoObligado.Where(s => s.EstaActivo).Include(s => s.TipoSujetoObligado).Where(s => s.TipoSujetoObligado.Descripcion != "Denunciante");
+
             return View(await dictamenesDbContext.ToListAsync());
         }
 
@@ -35,7 +36,7 @@ namespace Dictamenes.Models
 
             var sujetoObligado = await _context.SujetoObligado
                 .Include(s => s.TipoSujetoObligado)
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (sujetoObligado == null)
             {
                 return NotFound();
@@ -47,7 +48,7 @@ namespace Dictamenes.Models
         // GET: SujetosObligados/Create
         public IActionResult Create()
         {
-            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Id");
+            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado && m.Descripcion != "Denunciante"), "Id", "Descripcion");
             return View();
         }
 
@@ -56,15 +57,20 @@ namespace Dictamenes.Models
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
+        public async Task<IActionResult> Create([Bind("id,CuilCuit,RazonSocial,IdTipoSujetoObligado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
         {
+            sujetoObligado.IdUsuarioModificacion = 0;
+            //dictamen.IdUsuarioModificacion = _context.Usuario;
+            sujetoObligado.FechaModificacion = DateTime.Now;
+            sujetoObligado.EstaActivo = true;
+
             if (ModelState.IsValid)
             {
                 _context.Add(sujetoObligado);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Id", sujetoObligado.IdTipoSujetoObligado);
+            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado && m.Descripcion != "Denunciante"), "Id", "Id", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
@@ -92,7 +98,7 @@ namespace Dictamenes.Models
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
         {
-            if (id != sujetoObligado.id)
+            if (id != sujetoObligado.Id)
             {
                 return NotFound();
             }
@@ -101,12 +107,23 @@ namespace Dictamenes.Models
             {
                 try
                 {
+                    SujetoObligado sujetoObligadoViejo = _context.SujetoObligado.AsNoTracking().First(d => d.Id == id);
+                    sujetoObligadoViejo.EstaActivo = true;
+
+                    sujetoObligado.IdUsuarioModificacion = 3;
+                    //dictamen.IdUsuarioModificacion = _context.Usuario;
+                    sujetoObligado.FechaModificacion = DateTime.Now;
                     _context.Update(sujetoObligado);
+
+                    sujetoObligadoViejo.EstaActivo = false;
+                    sujetoObligadoViejo.Id = 0;
+
+                    _context.SujetoObligado.Add(sujetoObligadoViejo);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SujetoObligadoExists(sujetoObligado.id))
+                    if (!SujetoObligadoExists(sujetoObligado.Id))
                     {
                         return NotFound();
                     }
@@ -131,7 +148,7 @@ namespace Dictamenes.Models
 
             var sujetoObligado = await _context.SujetoObligado
                 .Include(s => s.TipoSujetoObligado)
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (sujetoObligado == null)
             {
                 return NotFound();
@@ -153,7 +170,7 @@ namespace Dictamenes.Models
 
         private bool SujetoObligadoExists(int id)
         {
-            return _context.SujetoObligado.Any(e => e.id == id);
+            return _context.SujetoObligado.Any(e => e.Id == id);
         }
     }
 }

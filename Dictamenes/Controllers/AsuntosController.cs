@@ -22,7 +22,7 @@ namespace Dictamenes.Controllers
         // GET: Asuntos
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Asunto.ToListAsync());
+            return View(await _context.Asunto.Where(s => s.EstaActivo).ToListAsync());
         }
 
         // GET: Asuntos/Details/5
@@ -100,8 +100,19 @@ namespace Dictamenes.Controllers
             if (ModelState.IsValid)
             {
                 try
-                {                    
+                {
+                    Asunto asuntoViejo = _context.Asunto.AsNoTracking().First(d => d.Id == id);
+
+                    asunto.IdUsuarioModificacion = 3;
+                    //dictamen.IdUsuarioModificacion = _context.Usuario;
+                    asunto.EstaActivo = true;
+                    asunto.FechaModificacion = DateTime.Now;                    
                     _context.Update(asunto);
+
+                    asuntoViejo.EstaActivo = false;
+                    asuntoViejo.Id = 0;                    
+
+                    _context.Asunto.Add(asuntoViejo);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

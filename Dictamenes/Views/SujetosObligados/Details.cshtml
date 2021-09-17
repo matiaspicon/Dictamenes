@@ -9,58 +9,29 @@
 <div>
     <h4>SujetoObligado</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
+    <div class="row">
+        <label class="form-label col-3">
             @Html.DisplayNameFor(model => model.CuilCuit)
-        </dt>
-        <dd class = "col-sm-10">
+        </label>
+        <p class="col-9 card p-2">
             @Html.DisplayFor(model => model.CuilCuit)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Apellido)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Apellido)
-        </dd>
-        <dt class = "col-sm-2">
+        </p>        
+        <label class="form-label col-3">
             @Html.DisplayNameFor(model => model.RazonSocial)
-        </dt>
-        <dd class = "col-sm-10">
+        </label>
+        <p class="col-9 card p-2">
             @Html.DisplayFor(model => model.RazonSocial)
-        </dd>
-        <dt class = "col-sm-2">
+        </p>
+        <label class="form-label col-3">
             @Html.DisplayNameFor(model => model.TipoSujetoObligado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TipoSujetoObligado.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EstaActivo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EstaActivo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaModificacion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaModificacion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IdUsuarioModificacion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IdUsuarioModificacion)
-        </dd>
-    </dl>
+        </label>
+        <p class="col-9 card p-2">
+            @Html.DisplayFor(model => model.TipoSujetoObligado.Descripcion)
+        </p>
+        
+    </div>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Volver atras</a>
 </div>

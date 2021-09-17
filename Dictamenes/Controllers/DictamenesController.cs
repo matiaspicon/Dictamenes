@@ -25,7 +25,11 @@ namespace Dictamenes.Controllers
         // GET: Dictamenes
         public async Task<IActionResult> Index()
         {
-            var dictamenesDbContext = _context.Dictamenes.Include(d => d.Asunto).Include(d => d.SujetoObligado).Include(d => d.TipoDictamen);
+            var dictamenesDbContext = _context.Dictamenes.Where(m => m.EstaActivo).Include(d => d.Asunto).Include(d => d.SujetoObligado).Include(d => d.TipoDictamen);
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.EstaActivo && m.RazonSocial != null), "Id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
             return View(await dictamenesDbContext.ToListAsync());
         }
 
@@ -41,6 +45,7 @@ namespace Dictamenes.Controllers
                 .Include(d => d.Asunto)
                 .Include(d => d.SujetoObligado)
                 .Include(d => d.TipoDictamen)
+                .Include(d => d.ArchivoPDF)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (dictamen == null)
             {
@@ -77,7 +82,7 @@ namespace Dictamenes.Controllers
         {
             Dictamen dictamen = new Dictamen();
             //separo informacion del archivo
-            var fileName = Path.GetFileNameWithoutExtension(file.FileName);
+            var fileName = Guid.NewGuid().ToString();
             var extension = Path.GetExtension(file.FileName);
             
             // compruebo directorio
@@ -85,7 +90,7 @@ namespace Dictamenes.Controllers
             bool basePathExists = System.IO.Directory.Exists(basePath);
             if (!basePathExists) Directory.CreateDirectory(basePath);
 
-            var filePath = Path.Combine(basePath, file.FileName);
+            var filePath = Path.Combine(basePath, fileName + extension);
             if (!System.IO.File.Exists(filePath))
             {
                 // si no existe en el directorio, lo copio
@@ -113,11 +118,10 @@ namespace Dictamenes.Controllers
 
             // cargo la informacion para el formulario Create y devuelvo la VIEW del create con la informacion precargada
             // o sin la informacion precargada si no se pudo obtener nada del PDF
-            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion");
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
-            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
-            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
-            ViewData["IdDenunciante"] = _context.TipoSujetoObligado.FirstOrDefault(m => m.Descripcion == "Denunciante").Id;
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.EstaActivo && m.RazonSocial != null), "Id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
             return View("Create", dictamen);
         }
 
@@ -125,11 +129,10 @@ namespace Dictamenes.Controllers
         // GET: Dictamenes/Create
         public IActionResult Create()
         {
-            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion");
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
-            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
-            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
-            ViewData["IdDenunciante"] = _context.TipoSujetoObligado.FirstOrDefault(m => m.Descripcion == "Denunciante").Id;
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto.Where(m => m.EstaActivo), "Id", "Descripcion");
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.EstaActivo && m.RazonSocial != null), "Id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen.Where(m => m.EstaActivo), "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado.Where(m => m.EstaActivo), "Id", "Descripcion");
             return View();
         }
 
@@ -138,7 +141,7 @@ namespace Dictamenes.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuario,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen, [Bind("CuilCuit, Nombre, Apellido, IdTipoSujetoObligado")] SujetoObligado sujetoObligado)
+        public async Task<IActionResult> Create([Bind("id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuario,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen, [Bind("CuilCuit, Nombre, Apellido")] SujetoObligado sujetoObligado)
         {
 
             dictamen.IdUsuarioModificacion = 0;
@@ -151,10 +154,11 @@ namespace Dictamenes.Controllers
                 sujetoObligado.IdUsuarioModificacion = 0;
                 sujetoObligado.FechaModificacion = DateTime.Now;
                 sujetoObligado.EstaActivo = true;
+                sujetoObligado.IdTipoSujetoObligado = _context.TipoSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
                 _context.Add(sujetoObligado);
                 await _context.SaveChangesAsync();
 
-                dictamen.IdSujetoObligado = sujetoObligado.id;
+                dictamen.IdSujetoObligado = sujetoObligado.Id;
 
             }
 
@@ -164,11 +168,10 @@ namespace Dictamenes.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion");
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
-            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
-            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
-            ViewData["IdDenunciante"] = _context.TipoSujetoObligado.FirstOrDefault(m => m.Descripcion == "Denunciante").Id;
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.EstaActivo && m.RazonSocial != null), "Id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
             return View(dictamen);
         }
 
@@ -185,11 +188,10 @@ namespace Dictamenes.Controllers
             {
                 return NotFound();
             }
-            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion");
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
-            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
-            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
-            ViewData["IdDenunciante"] = _context.TipoSujetoObligado.FirstOrDefault(m => m.Descripcion == "Denunciante").Id;
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.EstaActivo && m.RazonSocial != null), "Id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
             return View(dictamen);
         }
 
@@ -198,7 +200,7 @@ namespace Dictamenes.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuario,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuario,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen, IFormFile file)
         {
             if (id != dictamen.Id)
             {
@@ -208,9 +210,60 @@ namespace Dictamenes.Controllers
             if (ModelState.IsValid)
             {
                 try
-                {
+                {                    
+                    Dictamen dictamenViejo = _context.Dictamenes.AsNoTracking().First(d => d.Id == id);
+
+                    dictamen.IdUsuarioModificacion = 3;
+                    //dictamen.IdUsuarioModificacion = _context.Usuario;
+                    dictamen.EstaActivo = true;
+                    dictamen.FechaModificacion = DateTime.Now;
+
+                    if (file != null)
+                    {
+
+                        var fileName = Guid.NewGuid().ToString();
+                        var extension = Path.GetExtension(file.FileName);
+
+                        // compruebo directorio
+                        var basePath = Path.Combine(Directory.GetCurrentDirectory() + "\\Files\\");
+                        bool basePathExists = System.IO.Directory.Exists(basePath);
+                        if (!basePathExists) Directory.CreateDirectory(basePath);
+
+                        var filePath = Path.Combine(basePath, fileName + extension);
+                        if (!System.IO.File.Exists(filePath))
+                        {
+                            // si no existe en el directorio, lo copio
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await file.CopyToAsync(stream);
+                            }
+                        }
+                        // creo el archivo para la base de datos
+                        var archivo = new ArchivoPDF
+                        {
+                            FechaCarga = DateTime.Now,
+                            TipoArchivo = file.ContentType,
+                            Extension = extension,
+                            Nombre = fileName,
+                            Path = filePath,
+                            Contenido = FileController.ExtractTextFromPdf(filePath),
+                        };
+                        _context.ArchivoPDF.Add(archivo);
+                        await _context.SaveChangesAsync();
+                        dictamen.IdArchivoPDF = archivo.Id;
+
+                    }
+
                     _context.Update(dictamen);
+
+                    dictamenViejo.EstaActivo = false;
+                    dictamenViejo.Id = 0;
+
+                    _context.Dictamenes.Add(dictamenViejo);
                     await _context.SaveChangesAsync();
+
+
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -225,12 +278,81 @@ namespace Dictamenes.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdAsunto"] = new SelectList(_context.Asunto, "Id", "Descripcion");
-            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.RazonSocial != null), "id", "RazonSocial");
-            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen, "Id", "Descripcion");
-            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Descripcion");
-            ViewData["IdDenunciante"] = _context.TipoSujetoObligado.FirstOrDefault(m => m.Descripcion == "Denunciante").Id;
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.EstaActivo && m.RazonSocial != null), "Id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
             return View(dictamen);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Buscar([Bind("NroGDE", " NroExp", "FechaCargaInicio", "FechaCargaFinal", "Contenido", "Detalle", "IdAsunto", "IdTipoDictamen", "IdTipoSujetoObligado", "EsDenunciante","IdSujetoObligado", "CuilCuit", "Nombre", "Apellido")]Busqueda busqueda)
+        {
+            var dictDB = _context.Dictamenes
+                .Where(m => m.EstaActivo);
+
+            if(busqueda.NroGDE != null)
+            {
+                dictDB = dictDB.Where(d => d.NroGDE.Contains(busqueda.NroGDE));
+            }
+            if (busqueda.NroExp != null)
+            {
+                dictDB = dictDB.Where(d => d.NroExpediente.Contains(busqueda.NroExp));
+            }
+            if (busqueda.Detalle != null)
+            {
+                dictDB = dictDB.Where(d => d.Detalle.Contains(busqueda.Detalle));
+            }
+            if (busqueda.FechaCargaInicio != null)
+            {
+                dictDB = dictDB.Where(d => d.FechaCarga >= busqueda.FechaCargaInicio);
+            }
+            if (busqueda.FechaCargaFinal != null)
+            {
+                dictDB = dictDB.Where(d => d.FechaCarga <= busqueda.FechaCargaFinal);
+            }
+            if (busqueda.IdAsunto != null)
+            {
+                dictDB = dictDB.Where(d => d.IdAsunto == busqueda.IdAsunto);
+            }
+            if (busqueda.IdSujetoObligado != null)
+            {
+                dictDB = dictDB.Where(d => d.IdSujetoObligado == busqueda.IdSujetoObligado);
+            }
+            if (busqueda.IdTipoDictamen != null)
+            {
+                dictDB = dictDB.Where(d => d.IdTipoDictamen == busqueda.IdTipoDictamen);
+            }
+            if (busqueda.Contenido != null)
+            {
+                dictDB = dictDB.Include(d => d.ArchivoPDF).Where(d => d.ArchivoPDF.Contenido.Contains(busqueda.Contenido));
+            }
+            if (busqueda.IdTipoSujetoObligado != null)
+            {
+                dictDB = dictDB.Include(d => d.SujetoObligado).Where(d => d.SujetoObligado.IdTipoSujetoObligado == busqueda.IdTipoSujetoObligado);
+            }
+            if (busqueda.CuilCuit > 0)
+            {
+                dictDB = dictDB.Include(d => d.SujetoObligado).Where(d => d.SujetoObligado.CuilCuit == busqueda.CuilCuit);
+            }
+
+            if (busqueda.Nombre != null)
+            {
+                dictDB = dictDB.Include(d => d.SujetoObligado).Where(d => d.SujetoObligado.Nombre == busqueda.Nombre);
+            }
+
+            if (busqueda.Apellido != null)
+            {
+                dictDB = dictDB.Include(d => d.SujetoObligado).Where(d => d.SujetoObligado.Apellido == busqueda.Apellido);
+            }
+
+
+            ViewData["IdAsunto"] = new SelectList(_context.Asunto.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion","Seleccione uno");
+            ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.EstaActivo && m.RazonSocial != null), "Id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["Busqueda"] = busqueda;
+            return View("Index",await dictDB.ToListAsync());
         }
 
         // GET: Dictamenes/Delete/5
@@ -272,34 +394,45 @@ namespace Dictamenes.Controllers
 
         private static Dictamen ExtratDictamenFromString(string contenido)
         {
-            Regex numeroGDE = new Regex("IF-[0-9]{4}-[0-9]{7,8}-APN-(DARH|DCTA|CGN|GAJ|GTYN)#(M[TJH]|SSN)", RegexOptions.IgnoreCase);
-            // tpdo poner try catch para cuando no se encuentren resultados
-            MatchCollection matches = numeroGDE.Matches(contenido);
+            Dictamen dict = new Dictamen();
 
-            string nroGDE = matches[0].Value;
+            Regex numeroGDE = new Regex("IF-[0-9]{4}-[0-9]+-APN-[A-Z]+#[A-Z]+", RegexOptions.IgnoreCase);
+            
+            MatchCollection matches = numeroGDE.Matches(contenido);            
+            try
+            {
+                dict.NroGDE = matches[0].Value;
+            }
+            catch
+            {
+                
+            }            
 
-            Regex numeroExpediente = new Regex("[E][X] *-* *[0-9]{4} *- *[0-9]{7,9}? ?- ?-? ?APN *- *(DARH|DCTA|CGN|GA|GTYN|GAYR) *# *(M[TJH]|SSN)|[E][X] *-* *[0-9]{4} *- *[0-9]{7,9}", RegexOptions.IgnoreCase);
+            Regex numeroExpediente = new Regex("[E][X] *-* *[0-9]{4} *- *[0-9]+? ?- ?-? ?APN *- *[A-Z]+ *# *[A-Z]+|[E][X] *-* *[0-9]{4} *- *[0-9]+", RegexOptions.IgnoreCase);
 
             matches = numeroExpediente.Matches(contenido);
-
-            string nroExpediente = matches[0].Value.Replace(" ","").Replace("--", "-") ;
-
+           
+            try
+            {
+                dict.NroExpediente = matches[0].Value.Replace(" ", "").Replace("--", "-");
+            }
+            catch
+            {
+                
+            }
 
 
             Regex date = new Regex("[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", RegexOptions.IgnoreCase);
 
             matches = date.Matches(contenido);
-            DateTime fechaCarga = DateTime.ParseExact(matches[0].Value, "yyyy.MM.dd HH:mm:ss", null);
-
-      
-
-            
-
-            Dictamen dict = new Dictamen();
-
-            dict.NroGDE = nroGDE;
-            dict.NroExpediente = nroExpediente;
-            dict.FechaCarga = fechaCarga;
+            try
+            {
+                dict.FechaCarga = DateTime.ParseExact(matches[0].Value, "yyyy.MM.dd HH:mm:ss", null);
+            }
+            catch
+            {
+               
+            }    
             return dict;
 
 

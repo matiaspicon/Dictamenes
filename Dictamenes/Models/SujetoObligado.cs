@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
@@ -11,10 +12,10 @@ namespace Dictamenes.Models
     public class SujetoObligado
     {
         [Key]
-        public int id { get; set; }
+        public int Id { get; set; }
 
         [Required]
-        public int CuilCuit { get; set; }
+        public long CuilCuit { get; set; }
 
         [MaxLength(50, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string Nombre { get; set; }
@@ -22,6 +23,7 @@ namespace Dictamenes.Models
         [MaxLength(50, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string Apellido { get; set; }
 
+        [DisplayName("Razon Social")]
         [MaxLength(80, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string RazonSocial { get; set; }
 

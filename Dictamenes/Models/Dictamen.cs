@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -13,18 +14,24 @@ namespace Dictamenes.Models
         public int Id { get; set; }
         
         [Required]
+        [DisplayName("Numero de GDE")]
+        [RegularExpression("[iI][fF]-[0-9]{4}-[0-9]+-[aA][pP][nN]-[A-Za-z]+#[A-Za-z]+",
+         ErrorMessage = "El Numero de GDE ingresado no es valido.")]
         [MaxLength(30, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string NroGDE { get; set; }
 
         [Required]
+        [DisplayName("Numero de Expediente")]
         [MaxLength(30, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string NroExpediente { get; set; }
 
+        [DisplayName("Fecha de Carga")]
         [Required]
         public DateTime FechaCarga { get; set; }
 
         public string Detalle { get; set; }
 
+        [DisplayName("Es Publico")]
         public bool EsPublico { get; set; }
 
         [ForeignKey(nameof(ArchivoPDF))]
