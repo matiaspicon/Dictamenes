@@ -88,6 +88,9 @@ namespace Dictamenes.Migrations
                     b.Property<int?>("CuilCuit")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Detalle")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("EsDenunciante")
                         .HasColumnType("INTEGER");
 
@@ -127,6 +130,9 @@ namespace Dictamenes.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("Borrado")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Detalle")
                         .HasColumnType("TEXT");
 
@@ -142,7 +148,7 @@ namespace Dictamenes.Migrations
                     b.Property<DateTime>("FechaModificacion")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("IdArchivoPDF")
+                    b.Property<int?>("IdArchivoPDF")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("IdAsunto")
@@ -327,9 +333,7 @@ namespace Dictamenes.Migrations
                 {
                     b.HasOne("Dictamenes.Models.ArchivoPDF", "ArchivoPDF")
                         .WithMany()
-                        .HasForeignKey("IdArchivoPDF")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IdArchivoPDF");
 
                     b.HasOne("Dictamenes.Models.Asunto", "Asunto")
                         .WithMany()

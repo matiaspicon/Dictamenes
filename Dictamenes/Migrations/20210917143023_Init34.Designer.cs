@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dictamenes.Migrations
 {
     [DbContext(typeof(DictamenesDbContext))]
-    [Migration("20210916124533_Init")]
-    partial class Init
+    [Migration("20210917143023_Init34")]
+    partial class Init34
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -90,6 +90,9 @@ namespace Dictamenes.Migrations
                     b.Property<int?>("CuilCuit")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Detalle")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("EsDenunciante")
                         .HasColumnType("INTEGER");
 
@@ -129,6 +132,9 @@ namespace Dictamenes.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("Borrado")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Detalle")
                         .HasColumnType("TEXT");
 
@@ -144,7 +150,7 @@ namespace Dictamenes.Migrations
                     b.Property<DateTime>("FechaModificacion")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("IdArchivoPDF")
+                    b.Property<int?>("IdArchivoPDF")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("IdAsunto")
@@ -197,7 +203,7 @@ namespace Dictamenes.Migrations
                         .HasColumnType("TEXT")
                         .HasMaxLength(50);
 
-                    b.Property<int>("CuilCuit")
+                    b.Property<long>("CuilCuit")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("EstaActivo")
@@ -306,7 +312,7 @@ namespace Dictamenes.Migrations
                         .HasColumnType("TEXT")
                         .HasMaxLength(50);
 
-                    b.Property<int>("Cuil")
+                    b.Property<long>("Cuil")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Nombre")
@@ -329,9 +335,7 @@ namespace Dictamenes.Migrations
                 {
                     b.HasOne("Dictamenes.Models.ArchivoPDF", "ArchivoPDF")
                         .WithMany()
-                        .HasForeignKey("IdArchivoPDF")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IdArchivoPDF");
 
                     b.HasOne("Dictamenes.Models.Asunto", "Asunto")
                         .WithMany()

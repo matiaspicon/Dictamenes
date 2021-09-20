@@ -25,11 +25,11 @@ namespace Dictamenes.Controllers
         // GET: Dictamenes
         public async Task<IActionResult> Index()
         {
-            var dictamenesDbContext = _context.Dictamenes.Where(m => m.EstaActivo).Include(d => d.Asunto).Include(d => d.SujetoObligado).Include(d => d.TipoDictamen);
+            var dictamenesDbContext = _context.Dictamenes.Where(m => m.EstaActivo && !m.Borrado).Include(d => d.Asunto).Include(d => d.SujetoObligado).Include(d => d.TipoDictamen);
             ViewData["IdAsunto"] = new SelectList(_context.Asunto.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(_context.SujetoObligado.Where(m => m.EstaActivo && m.RazonSocial != null), "Id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(_context.TipoDictamen.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado && m.Descripcion != "Denunciante"), "Id", "Descripcion");
             return View(await dictamenesDbContext.ToListAsync());
         }
 
@@ -148,6 +148,10 @@ namespace Dictamenes.Controllers
             //dictamen.IdUsuarioModificacion = _context.Usuario;
             dictamen.FechaModificacion = DateTime.Now;
             dictamen.EstaActivo = true;
+            dictamen.NroGDE = dictamen.NroGDE.ToUpper();
+            dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
+            dictamen.Detalle = dictamen.Detalle.ToUpper();
+
 
             if (sujetoObligado.CuilCuit > 0)
             {
@@ -195,9 +199,6 @@ namespace Dictamenes.Controllers
             return View(dictamen);
         }
 
-        // POST: Dictamenes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuario,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen, IFormFile file)
@@ -217,42 +218,52 @@ namespace Dictamenes.Controllers
                     //dictamen.IdUsuarioModificacion = _context.Usuario;
                     dictamen.EstaActivo = true;
                     dictamen.FechaModificacion = DateTime.Now;
-
+                    dictamen.NroGDE = dictamen.NroGDE.ToUpper();
+                    dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
+                    dictamen.Detalle = dictamen.Detalle.ToUpper();
+                    //if (ArchivoBorrado)
+                    //{
+                    //    dictamen.IdArchivoPDF = null;
+                    //    dictamen.ArchivoPDF = null;
+                    //}
+                    //else
+                    //{
                     if (file != null)
-                    {
-
-                        var fileName = Guid.NewGuid().ToString();
-                        var extension = Path.GetExtension(file.FileName);
-
-                        // compruebo directorio
-                        var basePath = Path.Combine(Directory.GetCurrentDirectory() + "\\Files\\");
-                        bool basePathExists = System.IO.Directory.Exists(basePath);
-                        if (!basePathExists) Directory.CreateDirectory(basePath);
-
-                        var filePath = Path.Combine(basePath, fileName + extension);
-                        if (!System.IO.File.Exists(filePath))
                         {
-                            // si no existe en el directorio, lo copio
-                            using (var stream = new FileStream(filePath, FileMode.Create))
+
+                            var fileName = Guid.NewGuid().ToString();
+                            var extension = Path.GetExtension(file.FileName);
+
+                            // compruebo directorio
+                            var basePath = Path.Combine(Directory.GetCurrentDirectory() + "\\Files\\");
+                            bool basePathExists = System.IO.Directory.Exists(basePath);
+                            if (!basePathExists) Directory.CreateDirectory(basePath);
+
+                            var filePath = Path.Combine(basePath, fileName + extension);
+                            if (!System.IO.File.Exists(filePath))
                             {
-                                await file.CopyToAsync(stream);
+                                // si no existe en el directorio, lo copio
+                                using (var stream = new FileStream(filePath, FileMode.Create))
+                                {
+                                    await file.CopyToAsync(stream);
+                                }
                             }
-                        }
-                        // creo el archivo para la base de datos
-                        var archivo = new ArchivoPDF
-                        {
-                            FechaCarga = DateTime.Now,
-                            TipoArchivo = file.ContentType,
-                            Extension = extension,
-                            Nombre = fileName,
-                            Path = filePath,
-                            Contenido = FileController.ExtractTextFromPdf(filePath),
-                        };
-                        _context.ArchivoPDF.Add(archivo);
-                        await _context.SaveChangesAsync();
-                        dictamen.IdArchivoPDF = archivo.Id;
+                            // creo el archivo para la base de datos
+                            var archivo = new ArchivoPDF
+                            {
+                                FechaCarga = DateTime.Now,
+                                TipoArchivo = file.ContentType,
+                                Extension = extension,
+                                Nombre = fileName,
+                                Path = filePath,
+                                Contenido = FileController.ExtractTextFromPdf(filePath),
+                            };
+                            _context.ArchivoPDF.Add(archivo);
+                            await _context.SaveChangesAsync();
+                            dictamen.IdArchivoPDF = archivo.Id;
 
-                    }
+                        }
+                    //}
 
                     _context.Update(dictamen);
 
@@ -289,19 +300,19 @@ namespace Dictamenes.Controllers
         public async Task<IActionResult> Buscar([Bind("NroGDE", " NroExp", "FechaCargaInicio", "FechaCargaFinal", "Contenido", "Detalle", "IdAsunto", "IdTipoDictamen", "IdTipoSujetoObligado", "EsDenunciante","IdSujetoObligado", "CuilCuit", "Nombre", "Apellido")]Busqueda busqueda)
         {
             var dictDB = _context.Dictamenes
-                .Where(m => m.EstaActivo);
+                .Where(m => m.EstaActivo && !m.Borrado);
 
             if(busqueda.NroGDE != null)
             {
-                dictDB = dictDB.Where(d => d.NroGDE.Contains(busqueda.NroGDE));
+                dictDB = dictDB.Where(d => d.NroGDE.Contains(busqueda.NroGDE.ToUpper()));
             }
             if (busqueda.NroExp != null)
             {
-                dictDB = dictDB.Where(d => d.NroExpediente.Contains(busqueda.NroExp));
+                dictDB = dictDB.Where(d => d.NroExpediente.Contains(busqueda.NroExp.ToUpper()));
             }
             if (busqueda.Detalle != null)
             {
-                dictDB = dictDB.Where(d => d.Detalle.Contains(busqueda.Detalle));
+                dictDB = dictDB.Where(d => d.Detalle.Contains(busqueda.Detalle.ToUpper()));
             }
             if (busqueda.FechaCargaInicio != null)
             {
@@ -310,15 +321,12 @@ namespace Dictamenes.Controllers
             if (busqueda.FechaCargaFinal != null)
             {
                 dictDB = dictDB.Where(d => d.FechaCarga <= busqueda.FechaCargaFinal);
-            }
+            }     
+
             if (busqueda.IdAsunto != null)
             {
                 dictDB = dictDB.Where(d => d.IdAsunto == busqueda.IdAsunto);
-            }
-            if (busqueda.IdSujetoObligado != null)
-            {
-                dictDB = dictDB.Where(d => d.IdSujetoObligado == busqueda.IdSujetoObligado);
-            }
+            }            
             if (busqueda.IdTipoDictamen != null)
             {
                 dictDB = dictDB.Where(d => d.IdTipoDictamen == busqueda.IdTipoDictamen);
@@ -327,24 +335,39 @@ namespace Dictamenes.Controllers
             {
                 dictDB = dictDB.Include(d => d.ArchivoPDF).Where(d => d.ArchivoPDF.Contenido.Contains(busqueda.Contenido));
             }
-            if (busqueda.IdTipoSujetoObligado != null)
-            {
-                dictDB = dictDB.Include(d => d.SujetoObligado).Where(d => d.SujetoObligado.IdTipoSujetoObligado == busqueda.IdTipoSujetoObligado);
-            }
+            
             if (busqueda.CuilCuit > 0)
             {
                 dictDB = dictDB.Include(d => d.SujetoObligado).Where(d => d.SujetoObligado.CuilCuit == busqueda.CuilCuit);
             }
-
-            if (busqueda.Nombre != null)
+            if (busqueda.EsDenunciante)
             {
-                dictDB = dictDB.Include(d => d.SujetoObligado).Where(d => d.SujetoObligado.Nombre == busqueda.Nombre);
-            }
 
-            if (busqueda.Apellido != null)
-            {
-                dictDB = dictDB.Include(d => d.SujetoObligado).Where(d => d.SujetoObligado.Apellido == busqueda.Apellido);
+                dictDB = dictDB.Include(d => d.SujetoObligado).ThenInclude(s => s.TipoSujetoObligado).Where(d => d.SujetoObligado.TipoSujetoObligado.Descripcion == "Denunciante");
+
+                if (busqueda.Nombre != null)
+                {
+                    dictDB = dictDB.Include(d => d.SujetoObligado).Where(d => d.SujetoObligado.Nombre == busqueda.Nombre);
+                }
+
+                if (busqueda.Apellido != null)
+                {
+                    dictDB = dictDB.Include(d => d.SujetoObligado).Where(d => d.SujetoObligado.Apellido == busqueda.Apellido);
+                }
             }
+            else
+            {
+                if (busqueda.IdTipoSujetoObligado != null)
+                {
+                    dictDB = dictDB.Include(d => d.SujetoObligado).Where(d => d.SujetoObligado.IdTipoSujetoObligado == busqueda.IdTipoSujetoObligado);
+                }
+                if (busqueda.IdSujetoObligado != null)
+                {
+                    dictDB = dictDB.Where(d => d.IdSujetoObligado == busqueda.IdSujetoObligado);
+                }
+
+            }
+            
 
 
             ViewData["IdAsunto"] = new SelectList(_context.Asunto.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion","Seleccione uno");
@@ -367,6 +390,7 @@ namespace Dictamenes.Controllers
                 .Include(d => d.Asunto)
                 .Include(d => d.SujetoObligado)
                 .Include(d => d.TipoDictamen)
+                .Include(d => d.ArchivoPDF)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (dictamen == null)
             {
@@ -382,8 +406,40 @@ namespace Dictamenes.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var dictamen = await _context.Dictamenes.FindAsync(id);
-            _context.Dictamenes.Remove(dictamen);
-            await _context.SaveChangesAsync();
+
+            try
+            {
+                Dictamen dictamenViejo = _context.Dictamenes.AsNoTracking().First(d => d.Id == id);
+
+                dictamen.IdUsuarioModificacion = 3;
+                //dictamen.IdUsuarioModificacion = _context.Usuario;
+                dictamen.EstaActivo = true;
+                dictamen.FechaModificacion = DateTime.Now;
+                dictamen.Borrado = true;
+                
+
+                _context.Update(dictamen);
+
+                dictamenViejo.EstaActivo = false;
+                dictamenViejo.Id = 0;
+
+                _context.Dictamenes.Add(dictamenViejo);
+                await _context.SaveChangesAsync();
+
+
+
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!DictamenExists(dictamen.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
             return RedirectToAction(nameof(Index));
         }
 

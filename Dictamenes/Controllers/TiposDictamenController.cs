@@ -102,7 +102,8 @@ namespace Dictamenes.Controllers
                 try
                 {
                     TipoDictamen tipoDictamenViejo = _context.TipoDictamen.AsNoTracking().First(d => d.Id == id);
-                    tipoDictamenViejo.EstaActivo = true;
+                    
+                    tipoDictamen.EstaActivo = true;
 
                     tipoDictamen.IdUsuarioModificacion = 3;
                     //dictamen.IdUsuarioModificacion = _context.Usuario;

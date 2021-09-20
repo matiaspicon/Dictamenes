@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Dictamenes.Migrations
 {
-    public partial class Init : Migration
+    public partial class Init34 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -34,6 +34,7 @@ namespace Dictamenes.Migrations
                     FechaCargaInicio = table.Column<DateTime>(nullable: true),
                     FechaCargaFinal = table.Column<DateTime>(nullable: true),
                     Contenido = table.Column<string>(nullable: true),
+                    Detalle = table.Column<string>(nullable: true),
                     IdAsunto = table.Column<int>(nullable: true),
                     IdTipoSujetoObligado = table.Column<int>(nullable: true),
                     IdTipoDictamen = table.Column<int>(nullable: true),
@@ -53,7 +54,7 @@ namespace Dictamenes.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Cuil = table.Column<int>(nullable: false),
+                    Cuil = table.Column<long>(nullable: false),
                     Nombre = table.Column<string>(maxLength: 50, nullable: true),
                     Apellido = table.Column<string>(maxLength: 50, nullable: true)
                 },
@@ -140,7 +141,7 @@ namespace Dictamenes.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    CuilCuit = table.Column<int>(nullable: false),
+                    CuilCuit = table.Column<long>(nullable: false),
                     Nombre = table.Column<string>(maxLength: 50, nullable: true),
                     Apellido = table.Column<string>(maxLength: 50, nullable: true),
                     RazonSocial = table.Column<string>(maxLength: 80, nullable: true),
@@ -178,10 +179,11 @@ namespace Dictamenes.Migrations
                     FechaCarga = table.Column<DateTime>(nullable: false),
                     Detalle = table.Column<string>(nullable: true),
                     EsPublico = table.Column<bool>(nullable: false),
-                    IdArchivoPDF = table.Column<int>(nullable: false),
+                    IdArchivoPDF = table.Column<int>(nullable: true),
                     IdSujetoObligado = table.Column<int>(nullable: false),
                     IdAsunto = table.Column<int>(nullable: false),
                     IdTipoDictamen = table.Column<int>(nullable: false),
+                    Borrado = table.Column<bool>(nullable: false),
                     EstaActivo = table.Column<bool>(nullable: false),
                     FechaModificacion = table.Column<DateTime>(nullable: false),
                     IdUsuarioModificacion = table.Column<int>(nullable: false),
@@ -195,7 +197,7 @@ namespace Dictamenes.Migrations
                         column: x => x.IdArchivoPDF,
                         principalTable: "ArchivoPDF",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Dictamenes_Asunto_IdAsunto",
                         column: x => x.IdAsunto,

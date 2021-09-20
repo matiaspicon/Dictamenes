@@ -95,6 +95,12 @@
                             @*<select id="InputEmpresas" name="IdSujetoObligado" class="form-control" asp-items="ViewBag.IdSujetoObligado"></select>*@
                             @Html.DropDownList("IdSujetoObligado", (SelectList)ViewBag.IdSujetoObligado, "Elija uno", new { id = "InputEmpresas", @class = "form-control" })
                         </div>
+                        <div class="form-group">
+                            <label class="control-label">Tipo de Sujeto Obligado</label>
+                            @*<select id="InputEmpresas" name="IdSujetoObligado" class="form-control" asp-items="ViewBag.IdSujetoObligado"></select>*@
+                            @Html.DropDownList("TipoSujetoObligado", (SelectList)ViewBag.TipoSujetoObligado, "Elija uno", new { id = "InputEmpresasTipo", @class = "form-control" })
+                        </div>
+
                     </div>
 
                     <div id="FormPersonas" style="display:none">

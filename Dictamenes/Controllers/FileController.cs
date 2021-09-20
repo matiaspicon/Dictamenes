@@ -64,7 +64,7 @@ namespace Dictamenes.Controllers
 
                 foreach (var word in page.GetWords())
                 {
-                    contenido += ' ' + word.Text;
+                    contenido += ' ' + word.Text.ToUpper();
                 }
             }
 

@@ -35,7 +35,7 @@ namespace Dictamenes.Models
         public bool EsPublico { get; set; }
 
         [ForeignKey(nameof(ArchivoPDF))]
-        public int IdArchivoPDF { get; set; }
+        public int? IdArchivoPDF { get; set; }
         public ArchivoPDF ArchivoPDF { get; set; }
 
         [ForeignKey(nameof(SujetoObligado))]
@@ -48,10 +48,11 @@ namespace Dictamenes.Models
 
         [ForeignKey(nameof(TipoDictamen))]
         public int IdTipoDictamen { get; set; }
-        public TipoDictamen TipoDictamen { get; set; }  
+        public TipoDictamen TipoDictamen { get; set; }
 
 
         // valores necesarios para el borrado logico
+        public bool Borrado{ get; set; }
 
         public bool EstaActivo { get; set; }
 
