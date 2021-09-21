@@ -8,8 +8,6 @@ using Dictamenes.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using org.apache.pdfbox.pdmodel;
-using org.apache.pdfbox.util;
 using UglyToad.PdfPig;
 
 namespace Dictamenes.Controllers

@@ -2,7 +2,6 @@
 
     <script type="text/javascript">
         function setForm(value) {
-            console.log(value);
             if (value) {
                 document.getElementById('FormPersonas').style = 'display:block;';
                 document.getElementById('FormEmpresas').style = 'display:none;';
@@ -90,12 +89,12 @@
                     </div>
 
                     <div id="FormEmpresas" style="display:block">
-                        <div class="form-group">
+                        <div class="form-group m-0">
                             <label class="control-label">Empresas</label>
                             @*<select id="InputEmpresas" name="IdSujetoObligado" class="form-control" asp-items="ViewBag.IdSujetoObligado"></select>*@
                             @Html.DropDownList("IdSujetoObligado", (SelectList)ViewBag.IdSujetoObligado, "Elija uno", new { id = "InputEmpresas", @class = "form-control" })
                         </div>
-                        <div class="form-group">
+                        <div class="form-group m-0">
                             <label class="control-label">Tipo de Sujeto Obligado</label>
                             @*<select id="InputEmpresas" name="IdSujetoObligado" class="form-control" asp-items="ViewBag.IdSujetoObligado"></select>*@
                             @Html.DropDownList("TipoSujetoObligado", (SelectList)ViewBag.TipoSujetoObligado, "Elija uno", new { id = "InputEmpresasTipo", @class = "form-control" })

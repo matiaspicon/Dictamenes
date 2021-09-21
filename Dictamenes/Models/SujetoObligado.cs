@@ -15,6 +15,7 @@ namespace Dictamenes.Models
         public int Id { get; set; }
 
         [Required]
+        [DisplayName("Cuil/Cuit")]
         public long CuilCuit { get; set; }
 
         [MaxLength(50, ErrorMessage = "{0} admite un máximo de {1} caracteres")]

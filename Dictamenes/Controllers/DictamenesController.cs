@@ -141,7 +141,7 @@ namespace Dictamenes.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuario,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen, [Bind("CuilCuit, Nombre, Apellido")] SujetoObligado sujetoObligado)
+        public async Task<IActionResult> Create([Bind("Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,IdUsuario,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen, [Bind("CuilCuit, Nombre, Apellido")] SujetoObligado sujetoObligado)
         {
 
             dictamen.IdUsuarioModificacion = 0;
@@ -150,7 +150,14 @@ namespace Dictamenes.Controllers
             dictamen.EstaActivo = true;
             dictamen.NroGDE = dictamen.NroGDE.ToUpper();
             dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
-            dictamen.Detalle = dictamen.Detalle.ToUpper();
+            if(dictamen.Detalle != null)
+            {
+                dictamen.Detalle = dictamen.Detalle.ToUpper();
+            }
+            else
+            {
+                dictamen.Detalle = ".";
+            }
 
 
             if (sujetoObligado.CuilCuit > 0)

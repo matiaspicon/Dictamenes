@@ -44,24 +44,24 @@
         @Html.DisplayFor(model => model.EsPublico)
     </p>
     <label class="form-label col-3">
-        @Html.DisplayNameFor(model => model.SujetoObligado.CuilCuit)
-    </label>
-    <p class="col-9 card p-2">
-        @Html.DisplayFor(model => model.SujetoObligado.CuilCuit)
-    </p>
-    <label class="col-3 col-form-label">
         @Html.DisplayNameFor(model => model.Asunto)
     </label>
     <p class="col-9 card p-2">
         @Html.DisplayFor(model => model.Asunto.Descripcion)
     </p>
-    <label class="col-3 col-form-label">
+    <label class="form-label col-3">
         @Html.DisplayNameFor(model => model.TipoDictamen)
     </label>
     <p class="col-9 card p-2">
         @Html.DisplayFor(model => model.TipoDictamen.Descripcion)
     </p>
-    <h5 class="col-3">Sujeto Obligado</h5>
+    <h5 class="col-12 pb-1">Sujeto Obligado</h5>
+    <label class="form-label col-3">
+        @Html.DisplayNameFor(model => model.SujetoObligado.CuilCuit)
+    </label>
+    <p class="col-9 card p-2">
+        @Html.DisplayFor(model => model.SujetoObligado.CuilCuit)
+    </p>
     @if (Model.SujetoObligado.IdTipoSujetoObligado == ViewBag.IdDenunciante)
     {
         <label class="form-label col-3">
@@ -86,10 +86,10 @@
             @Html.DisplayFor(model => model.SujetoObligado.RazonSocial)
         </p>
     }
-    <h5 class="form-label col-3">
+    <h5 class="form-label col-12 pb-1">
         Archivo
     </h5>
-
+    <br />
 </div>
 @{  if (Model.ArchivoPDF == null)
     {

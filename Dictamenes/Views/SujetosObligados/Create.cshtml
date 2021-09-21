@@ -26,16 +26,14 @@
                 <label class="control-label">Tipo de Sujeto Obligado</label>
                 <select asp-for="IdTipoSujetoObligado" class ="form-control" asp-items="ViewBag.IdTipoSujetoObligado"></select>
             </div>            
-            <div class="form-group">
+            <div class="form-group m-1">
+                <a class="col-5 btn btn-secondary" asp-action="Index">Volver atras</a>
                 <input type="submit" value="Crear" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Volver atras</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

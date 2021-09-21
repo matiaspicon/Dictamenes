@@ -15,8 +15,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore" Version="3.1.5" />
+    <PackageReference Include="netstandard-System.Data.Linq" Version="1.0.1" />
     <PackageReference Include="PdfPig" Version="0.1.4" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.12" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,29 +26,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="commons-logging">
-      <HintPath>lib\copy\commons-logging.dll</HintPath>
+    <Reference Include="BEUU">
+      <HintPath>..\lib\references\BEUU.dll</HintPath>
     </Reference>
-    <Reference Include="fontbox-1.8.9">
-      <HintPath>lib\copy\fontbox-1.8.9.dll</HintPath>
+    <Reference Include="DaoUU">
+      <HintPath>..\lib\references\DaoUU.dll</HintPath>
     </Reference>
-    <Reference Include="IKVM.OpenJDK.Core">
-      <HintPath>lib\references\IKVM.OpenJDK.Core.dll</HintPath>
+    <Reference Include="NegUU">
+      <HintPath>..\lib\references\NegUU.dll</HintPath>
     </Reference>
-    <Reference Include="IKVM.OpenJDK.SwingAWT">
-      <HintPath>lib\references\IKVM.OpenJDK.SwingAWT.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.Text">
-      <HintPath>lib\copy\IKVM.OpenJDK.Text.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.Util">
-      <HintPath>lib\copy\IKVM.OpenJDK.Util.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.Runtime">
-      <HintPath>lib\copy\IKVM.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="pdfbox-1.8.9">
-      <HintPath>lib\references\pdfbox-1.8.9.dll</HintPath>
+    <Reference Include="WCFLogLogin">
+      <HintPath>..\lib\references\WCFLogLogin.dll</HintPath>
     </Reference>
   </ItemGroup>
 

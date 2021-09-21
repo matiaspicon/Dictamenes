@@ -57,7 +57,7 @@ namespace Dictamenes.Models
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,CuilCuit,RazonSocial,IdTipoSujetoObligado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
+        public async Task<IActionResult> Create([Bind("Id,CuilCuit,RazonSocial,IdTipoSujetoObligado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
         {
             sujetoObligado.IdUsuarioModificacion = 0;
             //dictamen.IdUsuarioModificacion = _context.Usuario;
@@ -87,7 +87,7 @@ namespace Dictamenes.Models
             {
                 return NotFound();
             }
-            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Id", sujetoObligado.IdTipoSujetoObligado);
+            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado && m.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
@@ -96,7 +96,7 @@ namespace Dictamenes.Models
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
         {
             if (id != sujetoObligado.Id)
             {
@@ -108,7 +108,7 @@ namespace Dictamenes.Models
                 try
                 {
                     SujetoObligado sujetoObligadoViejo = _context.SujetoObligado.AsNoTracking().First(d => d.Id == id);
-                    sujetoObligadoViejo.EstaActivo = true;
+                    sujetoObligado.EstaActivo = true;
 
                     sujetoObligado.IdUsuarioModificacion = 3;
                     //dictamen.IdUsuarioModificacion = _context.Usuario;
@@ -134,7 +134,7 @@ namespace Dictamenes.Models
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado, "Id", "Id", sujetoObligado.IdTipoSujetoObligado);
+            ViewData["IdTipoSujetoObligado"] = new SelectList(_context.TipoSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado && m.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
