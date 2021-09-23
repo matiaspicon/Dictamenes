@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Dictamenes.Models.SujetoObligado>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Sujetos Obligados</h1>
+
+<p>
+    <a asp-action="Create">Crear Nuevo</a>
+</p>
+<table class="table table-striped table-hover">
+    <thead>
+        <tr class="table-primary">
+            <th>
+                @Html.DisplayNameFor(model => model.CuilCuit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RazonSocial)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoSujetoObligado)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">@Html.DisplayFor(modelItem => item.CuilCuit)</a>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RazonSocial)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TipoSujetoObligado.Descripcion)
+                </td>
+                <td>
+                    <a class="btn btn-outline-warning" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (Model.Count() < 1)
+{
+    <div class="row justify-content-center">
+        <h4>No se encontraron Sujetos Obligados</h4>
+    </div>
+}

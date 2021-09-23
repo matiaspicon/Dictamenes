@@ -1,0 +1,122 @@
+﻿@model Dictamenes.Models.Dictamen
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1> Detalles</h1>
+
+
+<div>
+
+    <hr />
+    @*<h4 class="col">Dictamen</h4>*@
+
+<div class="row align-content-center">
+    <label class="form-label align-self-center col-3">
+        @Html.DisplayNameFor(model => model.NroGDE)
+    </label>
+    <p class="col-9 card p-2">
+        @Html.DisplayFor(model => model.NroGDE)
+    </p>
+    <label class="form-label col-3">
+        @Html.DisplayNameFor(model => model.NroExpediente)
+    </label>
+    <p class="col-9 card p-2">
+        @Html.DisplayFor(model => model.NroExpediente)
+    </p>
+    <label class="form-label col-3">
+        @Html.DisplayNameFor(model => model.FechaCarga)
+    </label>
+    <p class="col-9 card p-2">
+        @Html.DisplayFor(model => model.FechaCarga)
+    </p>
+    <label class="form-label col-3">
+        @Html.DisplayNameFor(model => model.Detalle)
+    </label>
+    <p class="col-9 card p-2">
+        @Html.DisplayFor(model => model.Detalle)
+    </p>
+    <label class="form-label col-3">
+        @Html.DisplayNameFor(model => model.EsPublico)
+    </label>
+    <p class="col-9 card p-2">
+        @Html.DisplayFor(model => model.EsPublico)
+    </p>
+    <label class="form-label col-3">
+        @Html.DisplayNameFor(model => model.SujetoObligado.CuilCuit)
+    </label>
+    <p class="col-9 card p-2">
+        @Html.DisplayFor(model => model.SujetoObligado.CuilCuit)
+    </p>
+    <label class="col-3 col-form-label">
+        @Html.DisplayNameFor(model => model.Asunto)
+    </label>
+    <p class="col-9 card p-2">
+        @Html.DisplayFor(model => model.Asunto.Descripcion)
+    </p>
+    <label class="col-3 col-form-label">
+        @Html.DisplayNameFor(model => model.TipoDictamen)
+    </label>
+    <p class="col-9 card p-2">
+        @Html.DisplayFor(model => model.TipoDictamen.Descripcion)
+    </p>
+    <h5 class="col-3">Sujeto Obligado</h5>
+    @if (Model.SujetoObligado.IdTipoSujetoObligado == ViewBag.IdDenunciante)
+    {
+        <label class="form-label col-3">
+            @Html.DisplayNameFor(model => model.SujetoObligado.Nombre)
+        </label>
+        <p class="col-9 card p-2">
+            @Html.DisplayFor(model => model.SujetoObligado.Nombre)
+        </p>
+        <label class="form-label col-3">
+            @Html.DisplayNameFor(model => model.SujetoObligado.Apellido)
+        </label>
+        <p class="col-9 card p-2">
+            @Html.DisplayFor(model => model.SujetoObligado.Apellido)
+        </p>
+    }
+    else
+    {
+        <label class="form-label col-3">
+            @Html.DisplayNameFor(model => model.SujetoObligado.RazonSocial)
+        </label>
+        <p class="col-9 card p-2">
+            @Html.DisplayFor(model => model.SujetoObligado.RazonSocial)
+        </p>
+    }
+    <h5 class="form-label col-3">
+        Archivo
+    </h5>
+
+</div>
+@{  if (Model.ArchivoPDF == null)
+    {
+        <div class="row justify-content-center">
+            <h4 class="p-2 col-auto">Este dictamen no tiene un archivo</h4>
+        </div> 
+    }
+    else
+    {
+        if (!System.IO.File.Exists(Model.ArchivoPDF.Path))
+        {
+            <div class="row justify-content-center">
+                <h4 class="alert-danger rounded p-2 col-auto">Hubo un error con la carga del archivo</h4>
+            </div>
+        }
+        else
+        {
+            <div class="embed-responsive embed-responsive-16by9">
+                <embed src="@Url.Action("DownloadFile", "File", new { id = Model.IdArchivoPDF })" class="embed-responsive-item" />
+            </div>
+        }
+    }
+}
+</div>
+<br />
+<div class="col m-2 row justify-content-between">
+    <a class="col-3 btn btn-secondary" asp-action="Index">Volver atras</a>
+    <a class="col-3 btn btn-danger" asp-action="Delete"  asp-route-id="@Model.Id">Borrar</a>
+    <a class="col-3 btn btn-warning" asp-action="Edit" asp-route-id="@Model.Id">Editar</a>
+</div>
