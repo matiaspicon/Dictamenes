@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Dictamenes.Models.Dictamen>
+@using Dictamenes.Models
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<div class="row">
+    <p class="col">
+        <a class="btn btn-primary" href="@Url.Action("CargarFile")">Cargar nuevo</a>
+    </p>
+
+    <button class="navbar-toggler col" type="button" data-toggle="collapse"
+            data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <i class="bi bi-search"></i> Busqueda
+    </button>
+</div>
+
+@if (ViewBag.Busqueda == null)
+{
+    @Html.Partial("_busqueda", new Busqueda())
+}
+else
+{
+    @Html.Partial("_busqueda", (Busqueda)ViewBag.Busqueda)
+}
+
+<table class="table">
+    <tr>
+
+        <th>
+            @Html.DisplayNameFor(model => model.NroGDE)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NroExpediente)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Asunto.Descripcion)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Detalle)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <a class=" link-dark text-decoration-none" href="@Url.Action("Details", new { id = item.Id })">@Html.DisplayFor(modelItem => item.NroGDE)</a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NroExpediente)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Asunto.Descripcion)
+            </td>
+            <td>
+                @(item != null && item.Detalle.Length > 30 ? item.Detalle.Substring(0, 30) : item.Detalle)
+            </td>
+            <td>
+                <a class="btn btn-outline-warning" href="@Url.Action("Edit", new { id = item.Id })"><i class="bi bi-pencil-square"></i></a>
+            </td>
+        </tr>
+    }
+
+</table>

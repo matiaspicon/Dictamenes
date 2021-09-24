@@ -18,7 +18,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoObligado
         public ActionResult Index()
         {
-            var tipoSujetoObligado = db.TiposSujetoObligado.Include(t => t.Usuario);
+            var tipoSujetoObligado = db.TiposSujetoObligado.Where(d => d.EstaActivo && d.EstaHabilitado).Include(t => t.Usuario);
             return View(tipoSujetoObligado.ToList());
         }
 

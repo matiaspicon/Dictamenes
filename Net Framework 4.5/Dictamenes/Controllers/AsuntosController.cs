@@ -18,7 +18,7 @@ namespace Dictamenes.Controllers
         // GET: Asuntos
         public ActionResult Index()
         {
-            var asunto = db.Asuntos.Include(a => a.Usuario);
+            var asunto = db.Asuntos.Where(d => d.EstaActivo && d.EstaHabilitado).Include(a => a.Usuario);
             return View(asunto.ToList());
         }
 

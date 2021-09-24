@@ -18,7 +18,7 @@ namespace Dictamenes.Controllers
         // GET: TiposDictamen
         public ActionResult Index()
         {
-            var tipoDictamen = db.TiposDictamen.Include(t => t.Usuario);
+            var tipoDictamen = db.TiposDictamen.Where(d => d.EstaActivo && d.EstaHabilitado).Include(t => t.Usuario);
             return View(tipoDictamen.ToList());
         }
 

@@ -1,0 +1,43 @@
+﻿
+
+
+<div class="container">
+    <div class="row justify-content-center">
+
+        <div class="col-md-6 form-group align-items-center">
+            <div class="card bg-light">
+                <h5 class="card-header">Asuntos</h5>
+                <br />
+                <div class="row justify-content-center  ">
+                    <a class="btn btn-primary m-1" href="@Url.Action("Index","Asuntos")" asp-area="" asp-controller="Asuntos" asp-action="">Ver asuntos</a>
+                    <a class="btn btn-outline-primary m-1" href="@Url.Action("Create","Asuntos")" asp-area="" asp-controller="Asuntos" asp-action="Create">Nuevo asuntos</a>
+                </div>
+                <br />
+            </div>
+        </div>
+
+        <div class="col-md-6 form-group align-items-center">
+            <div class="card bg-light">
+                <h5 class="card-header">Tipos de Sujetos Obligados</h5>
+                <br />
+                <div class="row justify-content-center  ">
+                    <a class="btn btn-primary m-1" href="@Url.Action("Index","TiposSujetoObligado")" asp-area="" asp-controller="TiposSujetoObligado" asp-action="">Ver Sujetos Obligados</a>
+                    <a class="btn btn-outline-primary m-1" href="@Url.Action("Create","TiposSujetoObligado")" asp-area="" asp-controller="TiposSujetoObligado" asp-action="Create">Nuevo Sujeto Obligado</a>
+                </div>
+                <br />
+            </div>
+        </div>
+
+        <div class="col-md-6 form-group align-items-center">
+            <div class="card bg-light">
+                <h5 class="card-header">Tipos de Dictamenes</h5>
+                <br />
+                <div class="row justify-content-center  ">
+                    <a class="btn btn-primary m-1" href="@Url.Action("Index","TiposDictamen")" asp-area="" asp-controller="TiposDictamen" asp-action="">Ver tipos de Dictamenes</a>
+                    <a class="btn btn-outline-primary m-1" href="@Url.Action("Create","TiposDictamen")" asp-area="" asp-controller="TiposDictamen" asp-action="Create">Nueva tipos de Dictamen</a>
+                </div>
+                <br />
+            </div>
+        </div>
+    </div>
+</div>   

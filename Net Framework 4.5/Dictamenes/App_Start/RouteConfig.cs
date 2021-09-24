@@ -16,7 +16,7 @@ namespace Dictamenes
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Dictamen", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Dictamenes", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

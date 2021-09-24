@@ -23,11 +23,13 @@ namespace Dictamenes.Models
 
         [Required]
         [DisplayName("Numero de Expediente")]
+        [RegularExpression("[eE][xX]-[0-9]{4}-[0-9]+-[aA][pP][nN]-[A-Za-z]+#[A-Za-z]+",
+         ErrorMessage = "El Numero de Expediente ingresado no es valido.")]
         [MaxLength(30, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string NroExpediente { get; set; }
 
+        [DataType(DataType.DateTime), Required]
         [DisplayName("Fecha de Carga")]
-        [Required]
         public DateTime FechaCarga { get; set; }
 
         public string Detalle { get; set; }
