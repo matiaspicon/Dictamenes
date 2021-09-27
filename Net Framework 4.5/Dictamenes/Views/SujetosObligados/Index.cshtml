@@ -18,7 +18,10 @@
             @Html.DisplayNameFor(model => model.RazonSocial)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.TipoSujetoObligado.Descripcion)
+            @Html.DisplayNameFor(model => model.TipoSujetoObligado)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EstaHabilitado)
         </th>
         <th></th>
     </tr>
@@ -35,6 +38,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.TipoSujetoObligado.Descripcion)
             </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstaHabilitado)
+             </td>
             <td>
                 <a class="btn btn-outline-warning" href="@Url.Action("Edit", new { id = item.Id })"><i class="bi bi-pencil-square"></i></a>
             </td>

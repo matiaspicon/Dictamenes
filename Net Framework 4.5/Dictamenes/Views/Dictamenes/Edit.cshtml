@@ -78,7 +78,7 @@
 
         <div class="form-group form-check row">
             <label class="form-check-label control-label col-md-6 align-self-end">
-                <input type="checkbox" class="form-check-input" id="esDenunciante" onclick="setForm(this.checked)" /> Sujeto Obligado es Denunciante
+                <input type="checkbox" class="form-check-input" id="esDenunciante" onclick="setForm(this.checked)" @(Model.SujetoObligado.Nombre != null ? "checked" : " ") /> Sujeto Obligado es Denunciante
             </label>
         </div>
 
@@ -86,31 +86,59 @@
             <div class="form-group row">
                 @Html.LabelFor(model => model.IdSujetoObligado, "Sujetos Obligados", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
                 <div class="col-md-9">
-                    @Html.DropDownList("IdSujetoObligado", null, htmlAttributes: new { @class = "form-control col-auto", id = "InputEmpresas" })
+                    @Html.DropDownList("IdSujetoObligado",null, htmlAttributes: new { @class = "form-control col-auto", id = "InputEmpresas" })
                     @Html.ValidationMessageFor(model => model.IdSujetoObligado, "", new { @class = "text-danger" })
                 </div>
             </div>
         </div>
 
         <div id="FormPersonas" style="display:none">
-            <div class="form-group row">
-                <label class="form-label col-md-3 align-self-end">CUIL/CUIT </label>
-                <div class="col-md-9">
-                    <input id="InputCuilCuit" name="CuilCuit" type="number" class="form-control col-auto" value="-1" placeholder="Ingrese el CUIL/CUIT del Sujeto Obligado">
+
+            @if (Model.SujetoObligado.Nombre != null)
+            {
+                <div class="form-group row">
+                    <label class="form-label col-md-3 align-self-end">CUIL/CUIT </label>
+                    <div class="col-md-9">
+                        @Html.EditorFor(model => model.SujetoObligado.CuilCuit, new { htmlAttributes = new { @class = "form-control col-auto", id = "InputCuilCui", placeholder = "Ingrese el CUIL/CUIT del Sujeto Obligado" } })
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label class="form-label col-md-3 align-self-end">Nombre</label>
-                <div class="col-md-9">
-                    <input name="Nombre" type="text" class="form-control col-auto" placeholder="Ingrese el Nombre del Sujeto Obligado">
+                <div class="form-group row">
+                    <label class="form-label col-md-3 align-self-end">Nombre</label>
+                    <div class="col-md-9">
+                        @Html.EditorFor(model => model.SujetoObligado.Nombre, new { htmlAttributes = new { @class = "form-control col-auto", placeholder = "Ingrese el Nombre del Sujeto Obligado" } })
+                    </div>
                 </div>
-            </div>
-            <div class="form-group row">
-                <label class="form-label col-md-3 align-self-end">Apellido</label>
-                <div class="col-md-9">
-                    <input name="Apellido" type="text" class="form-control col-auto" placeholder="Ingrese el Nombre del Sujeto Obligado">
+                <div class="form-group row">
+                    <label class="form-label col-md-3 align-self-end">Apellido</label>
+                    <div class="col-md-9">
+                        @Html.EditorFor(model => model.SujetoObligado.Apellido, new { htmlAttributes = new { @class = "form-control col-auto", placeholder = "Ingrese el Apellido del Sujeto Obligado" } })
+                    </div>
                 </div>
-            </div>
+
+            }
+            else
+            {
+                <div class="form-group row">
+                    <label class="form-label col-md-3 align-self-end">CUIL/CUIT </label>
+                    <div class="col-md-9">
+                        <input id="InputCuilCuit" name="CuilCuit" type="number" class="form-control col-auto" value="-1" placeholder="Ingrese el CUIL/CUIT del Sujeto Obligado">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="form-label col-md-3 align-self-end">Nombre</label>
+                    <div class="col-md-9">
+                        <input name="Nombre" type="text" class="form-control col-auto" placeholder="Ingrese el Nombre del Sujeto Obligado">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="form-label col-md-3 align-self-end">Apellido</label>
+                    <div class="col-md-9">
+                        <input name="Apellido" type="text" class="form-control col-auto" placeholder="Ingrese el Apellido del Sujeto Obligado">
+                    </div>
+                </div>
+            }
+
+
         </div>
 
         <div class="form-group">
@@ -130,14 +158,13 @@
                 document.getElementById('FormPersonas').style = 'display:block;';
                 document.getElementById('FormEmpresas').style = 'display:none;';
                 document.getElementById('InputEmpresas').value = "-1";
-                document.getElementById('InputCuilCuit').value = '';
             }
             else {
                 document.getElementById('FormEmpresas').style = 'display:block;';
                 document.getElementById('FormPersonas').style = 'display:none;';
-                document.getElementById('InputEmpresas').value = "0";
-                document.getElementById('InputCuilCuit').value = -1;
+                document.getElementById('InputCuilCuit').value = 0;
             }
         }
     </script>
+    <script>setForm(document.getElementById("esDenunciante").checked)</script>
 }

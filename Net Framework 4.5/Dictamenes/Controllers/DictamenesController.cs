@@ -39,10 +39,12 @@ namespace Dictamenes.Controllers
             Dictamen dictamen = db.Dictamenes.Include(d => d.ArchivoPDF).Include(d => d.Asunto).Include(d => d.SujetoObligado).Include(d => d.TipoDictamen).Include(d => d.UsuarioModificacion).FirstOrDefault(d => d.Id == id);
             if (dictamen == null)
             {
-                return HttpNotFound();
+                dictamen = db.Dictamenes.Include(d => d.Asunto).Include(d => d.SujetoObligado).Include(d => d.TipoDictamen).Include(d => d.UsuarioModificacion).FirstOrDefault(d => d.Id == id);
+                if (dictamen == null)
+                {
+                    return HttpNotFound();
+                }
             }
-
-            
 
             ViewData["IdDenunciante"] = db.TiposSujetoObligado.FirstOrDefault(m =>m.EstaActivo && m.Descripcion == "Denunciante").Id;
             return View(dictamen);
@@ -156,7 +158,7 @@ namespace Dictamenes.Controllers
         }
 
         [HttpPost]
-        public ActionResult Buscar(Busqueda busqueda)
+        public ActionResult Buscar( Busqueda busqueda)
         {
             var dictDB = db.Dictamenes
                 .Where(m => m.EstaActivo && !m.Borrado);
@@ -243,16 +245,15 @@ namespace Dictamenes.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Dictamen dictamen = db.Dictamenes.Find(id);
+            Dictamen dictamen = db.Dictamenes.Include(d => d.SujetoObligado).FirstOrDefault(d => d.Id == id);
             if (dictamen == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.IdArchivoPDF = new SelectList(db.ArchivosPDF, "Id", "Nombre", dictamen.IdArchivoPDF);
-            ViewBag.IdAsunto = new SelectList(db.Asuntos, "Id", "Descripcion", dictamen.IdAsunto);
-            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados, "Id", "Nombre", dictamen.IdSujetoObligado);
-            ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen, "Id", "Descripcion", dictamen.IdTipoDictamen);
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", dictamen.IdUsuarioModificacion);
+            ViewBag.IdAsunto = new SelectList(db.Asuntos.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion", dictamen.IdAsunto);
+            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados.Where(m => m.EstaActivo && m.RazonSocial != null), "Id", "RazonSocial", dictamen.IdSujetoObligado);
+            ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion", dictamen.IdTipoDictamen);
+
             return View(dictamen);
         }
 
@@ -263,71 +264,84 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen, SujetoObligado sujetoObligado , HttpPostedFileBase file)
         {
+            sujetoObligado.Id = dictamen.IdSujetoObligado;
+            dictamen.SujetoObligado = sujetoObligado;
             if (ModelState.IsValid)
             {
-                    Dictamen dictamenViejo = db.Dictamenes.AsNoTracking().First(d => d.Id == dictamen.Id);
+                Dictamen dictamenViejo = db.Dictamenes.AsNoTracking().First(d => d.Id == dictamen.Id);
 
-                    dictamen.IdUsuarioModificacion = 3;
-                    //dictamen.IdUsuarioModificacion = _context.Usuario;
-                    dictamen.EstaActivo = true;
-                    dictamen.FechaModificacion = DateTime.Now;
-                    dictamen.NroGDE = dictamen.NroGDE.ToUpper();
-                    dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
-                    dictamen.Detalle = dictamen.Detalle.ToUpper();
-                    //if (borrarArchivo)
-                    //{
-                    //    dictamen.IdArchivoPDF = null;
-                    //    dictamen.ArchivoPDF = null;
-                    //}
-                    //else
-                    //{
-                    if (file != null)
+                dictamen.IdUsuarioModificacion = 3;
+                //dictamen.IdUsuarioModificacion = _context.Usuario;
+                dictamen.EstaActivo = true;
+                dictamen.FechaModificacion = DateTime.Now;
+                dictamen.NroGDE = dictamen.NroGDE.ToUpper();
+                dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
+                dictamen.Detalle = dictamen.Detalle.ToUpper();
+                //if (borrarArchivo)
+                //{
+                //    dictamen.IdArchivoPDF = null;
+                //    dictamen.ArchivoPDF = null;
+                //}
+                //else
+                //{
+                if (file != null)
+                {
+
+                var fileName = Guid.NewGuid().ToString();
+                var extension = Path.GetExtension(file.FileName);
+                // compruebo directorio
+                var basePath = Server.MapPath("~/Files");
+                var filePath = Path.Combine("~", "Files", fileName + extension);
+
+                bool basePathExists = System.IO.Directory.Exists(basePath);
+                if (!basePathExists) Directory.CreateDirectory(basePath);
+
+                if (!System.IO.File.Exists(Server.MapPath(filePath)))
+                {
+                    file.SaveAs(Server.MapPath(filePath));
+                }
+                // creo el archivo para la base de datos
+                var archivo = new ArchivoPDF
                     {
-
-                    var fileName = Guid.NewGuid().ToString();
-                    var extension = Path.GetExtension(file.FileName);
-                    // compruebo directorio
-                    var basePath = Server.MapPath("~/Files");
-                    var filePath = Path.Combine("~", "Files", fileName + extension);
-
-                    bool basePathExists = System.IO.Directory.Exists(basePath);
-                    if (!basePathExists) Directory.CreateDirectory(basePath);
-
-                    if (!System.IO.File.Exists(Server.MapPath(filePath)))
-                    {
-                        file.SaveAs(Server.MapPath(filePath));
-                    }
-                    // creo el archivo para la base de datos
-                    var archivo = new ArchivoPDF
-                        {
-                            FechaCarga = DateTime.Now,
-                            TipoArchivo = file.ContentType,
-                            Extension = extension,
-                            Nombre = fileName,
-                            Path = filePath,
-                            Contenido = FileController.ExtractTextFromPdf(filePath),
-                        };
-                        db.ArchivosPDF.Add(archivo);
-                        db.SaveChanges();
-                        dictamen.IdArchivoPDF = archivo.Id;
-
-                    } 
-                    //}
-
-                    db.Entry(dictamen).State = EntityState.Modified;
-
-                    dictamenViejo.EstaActivo = false;
-                    dictamenViejo.Id = 0;
-
-                    db.Dictamenes.Add(dictamenViejo);
+                        FechaCarga = DateTime.Now,
+                        TipoArchivo = file.ContentType,
+                        Extension = extension,
+                        Nombre = fileName,
+                        Path = filePath,
+                        Contenido = FileController.ExtractTextFromPdf(filePath),
+                    };
+                    db.ArchivosPDF.Add(archivo);
                     db.SaveChanges();
-                    return RedirectToAction("Index");
+                    dictamen.IdArchivoPDF = archivo.Id;
+
+                }
+                //}
+
+                if (sujetoObligado.CuilCuit > 0)
+                {                    
+                    sujetoObligado.IdUsuarioModificacion = 0;
+                    sujetoObligado.FechaModificacion = DateTime.Now;
+                    sujetoObligado.EstaActivo = true;
+                    sujetoObligado.EstaHabilitado = true;
+                    sujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
+                    dictamen.SujetoObligado = null;
+                    db.SujetosObligados.Add(sujetoObligado);
+                    db.SaveChanges();
+                    dictamen.IdSujetoObligado = sujetoObligado.Id;
+                }
+
+                db.Entry(dictamen).State = EntityState.Modified;
+
+                dictamenViejo.EstaActivo = false;
+                dictamenViejo.Id = 0;
+
+                db.Dictamenes.Add(dictamenViejo);
+                db.SaveChanges();
+                return RedirectToAction("Index");
             }
-            ViewBag.IdArchivoPDF = new SelectList(db.ArchivosPDF, "Id", "Nombre", dictamen.IdArchivoPDF);
-            ViewBag.IdAsunto = new SelectList(db.Asuntos, "Id", "Descripcion", dictamen.IdAsunto);
-            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados, "Id", "Nombre", dictamen.IdSujetoObligado);
-            ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen, "Id", "Descripcion", dictamen.IdTipoDictamen);
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", dictamen.IdUsuarioModificacion);
+            ViewBag.IdAsunto = new SelectList(db.Asuntos.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion", dictamen.IdAsunto);
+            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados.Where(m => m.EstaActivo && m.RazonSocial != null), "Id", "RazonSocial", dictamen.IdSujetoObligado);
+            ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion", dictamen.IdTipoDictamen);
             return View(dictamen);
         }
 

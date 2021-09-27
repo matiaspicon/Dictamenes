@@ -25,14 +25,19 @@ namespace Dictamenes.Models
         [MaxLength(50, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string Apellido { get; set; }
 
+        [DisplayName("Razon Social")]
         [MaxLength(80, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string RazonSocial { get; set; }
 
-
+        [DisplayName("Tipo de Sujeto Obligado")]
         [ForeignKey(nameof(TipoSujetoObligado))]
         public int IdTipoSujetoObligado { get; set; }
 
+        [DisplayName("Tipo de Sujeto Obligado")]
         public TipoSujetoObligado TipoSujetoObligado { get; set; }
+        
+        [DisplayName("Esta habilitado")]
+        public bool EstaHabilitado { get; set; }
 
 
         // valores necesarios para el borrado logico

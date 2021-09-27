@@ -51,6 +51,11 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
+            asunto.EstaActivo = true;
+            asunto.FechaModificacion = DateTime.Now;
+            asunto.IdUsuarioModificacion = 0;
+
+
             if (ModelState.IsValid)
             {
                 db.Asuntos.Add(asunto);

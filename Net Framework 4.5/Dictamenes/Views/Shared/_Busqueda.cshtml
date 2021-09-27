@@ -2,6 +2,21 @@
 
 <div class="collapse mx-2" id="navbarToggleExternalContent">
 
+    <script type="text/javascript">
+        function setForm(value) {
+            if (value) {
+                document.getElementById('FormPersonas').style = 'display:block;';
+                document.getElementById('FormEmpresas').style = 'display:none;';
+                document.getElementById('InputEmpresas').value = '';
+            }
+            else {
+                document.getElementById('FormEmpresas').style = 'display:block;';
+                document.getElementById('FormPersonas').style = 'display:none;';
+                document.getElementById('InputNombre').value = '';
+                document.getElementById('InputApellido').value = '';
+            }
+        }
+    </script>
 
 
     @using (Html.BeginForm("Buscar", "Dictamenes"))
@@ -66,7 +81,7 @@
 
                 <div class="form-group form-check">
                     <label class="form-check-label">
-                        @Html.CheckBox("EsPublico", true, new { @class = "form-check-input", id = "esDenunciante", onclick = "setForm(this.checked)" }) Sujeto Obligado es Denunciante
+                        @Html.CheckBox("EsDenunciante", new { @class = "form-check-input", id = "esDenunciante", onclick = "setForm(this.checked)" }) Sujeto Obligado es Denunciante
                     </label>
                 </div>
 
@@ -100,21 +115,6 @@
 
 @section Scripts{
     <script>setForm(document.getElementById("esDenunciante").checked)</script>
-    <script type="text/javascript">
-        function setForm(value) {
-            if (value) {
-                document.getElementById('FormPersonas').style = 'display:block;';
-                document.getElementById('FormEmpresas').style = 'display:none;';
-                document.getElementById('InputEmpresas').value = '';
-            }
-            else {
-                document.getElementById('FormEmpresas').style = 'display:block;';
-                document.getElementById('FormPersonas').style = 'display:none;';
-                document.getElementById('InputNombre').value = '';
-                document.getElementById('InputApellido').value = '';
-            }
-        }
-    </script>
 }
 
 

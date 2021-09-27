@@ -11,43 +11,50 @@
 {
     @Html.AntiForgeryToken()
     
-    <div class="form-horizontal">
-        <h4>SujetoObligado</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
+<div class="form-horizontal">
+    <h4>SujetoObligado</h4>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.Id)
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.CuilCuit, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.CuilCuit, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CuilCuit, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group row">
+        @Html.LabelFor(model => model.CuilCuit, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+        <div class="col-md-9">
+            @Html.EditorFor(model => model.CuilCuit, new { htmlAttributes = new { @class = "form-control col-auto" } })
+            @Html.ValidationMessageFor(model => model.CuilCuit, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.RazonSocial, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.RazonSocial, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RazonSocial, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group row">
+        @Html.LabelFor(model => model.RazonSocial, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+        <div class="col-md-9">
+            @Html.EditorFor(model => model.RazonSocial, new { htmlAttributes = new { @class = "form-control col-auto" } })
+            @Html.ValidationMessageFor(model => model.RazonSocial, "", new { @class = "text-danger" })
         </div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.IdTipoSujetoObligado, "IdTipoSujetoObligado", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("IdTipoSujetoObligado", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.IdTipoSujetoObligado, "", new { @class = "text-danger" })
-            </div>
+    <div class="form-group row">
+        @Html.LabelFor(model => model.IdTipoSujetoObligado, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+        <div class="col-md-9">
+            @Html.DropDownList("IdTipoSujetoObligado", null, htmlAttributes: new { @class = "form-control col-auto" })
+            @Html.ValidationMessageFor(model => model.IdTipoSujetoObligado, "", new { @class = "text-danger" })
         </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-9">
-                <a class="col-3 btn btn-secondary"  onclick="history.go(-1);">Volver atras</a>
-                <input type="submit" value="Guardar" class="btn btn-primary m-1" />
+    </div>
+    <div class="form-group row">
+        <div class="col-md-9">
+            <div class="checkbox">
+                @Html.CheckBox("EstaHabilitado") @Html.LabelFor(model => model.EstaHabilitado, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
             </div>
         </div>
     </div>
+
+    <div class="form-group row">
+        <div class="col-md-offset-3 align-self-end col-md-9">
+            <a class="col-3 btn btn-secondary" onclick="history.go(-1);">Volver atras</a>
+            <input type="submit" value="Guardar" class="btn btn-primary m-1" />
+        </div>
+    </div>
+</div>
 }
 
 @section Scripts {

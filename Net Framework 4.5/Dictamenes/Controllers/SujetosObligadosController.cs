@@ -40,8 +40,7 @@ namespace Dictamenes.Controllers
         // GET: SujetosObligados/Create
         public ActionResult Create()
         {
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado, "Id", "Descripcion");
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre");
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaActivo && d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion");
             return View();
         }
 
@@ -50,8 +49,13 @@ namespace Dictamenes.Controllers
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
+        public ActionResult Create([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
         {
+            sujetoObligado.EstaActivo = true;
+            sujetoObligado.EstaHabilitado = true;
+            sujetoObligado.FechaModificacion = DateTime.Now;
+            sujetoObligado.IdUsuarioModificacion = 0;
+
             if (ModelState.IsValid)
             {
                 db.SujetosObligados.Add(sujetoObligado);
@@ -59,8 +63,7 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado, "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", sujetoObligado.IdUsuarioModificacion);
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaActivo && d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
@@ -76,8 +79,7 @@ namespace Dictamenes.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado, "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", sujetoObligado.IdUsuarioModificacion);
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaActivo && d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
@@ -86,13 +88,13 @@ namespace Dictamenes.Controllers
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
+        public ActionResult Edit([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado, EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
         {
             if (ModelState.IsValid)
             {
                 SujetoObligado sujetoObligadoViejo = db.SujetosObligados.AsNoTracking().First(d => d.Id == sujetoObligado.Id);
-                sujetoObligadoViejo.EstaActivo = true;
 
+                sujetoObligado.EstaActivo = true;
                 sujetoObligado.IdUsuarioModificacion = 3;
                 //dictamen.IdUsuarioModificacion = _context.Usuario;
                 sujetoObligado.FechaModificacion = DateTime.Now;
@@ -105,8 +107,7 @@ namespace Dictamenes.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado, "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", sujetoObligado.IdUsuarioModificacion);
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaActivo && d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
