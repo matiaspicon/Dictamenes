@@ -36,7 +36,7 @@ else
             @Html.DisplayNameFor(model => model.NroExpediente)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Asunto.Descripcion)
+            @Html.DisplayNameFor(model => model.Asunto)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Detalle)
@@ -66,3 +66,10 @@ else
     }
 
 </table>
+
+@if (Model.Count() < 1)
+{
+    <div class="row justify-content-center">
+        <h4>No se encontraron Dictamenes</h4>
+    </div>
+}

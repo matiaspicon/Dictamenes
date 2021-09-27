@@ -94,7 +94,7 @@
     }
     else
     {
-        if (!System.IO.File.Exists(Model.ArchivoPDF.Path))
+        if (!System.IO.File.Exists(Server.MapPath(Model.ArchivoPDF.Path)))
         {
             <div class="row justify-content-center">
                 <h4 class="alert-danger rounded p-2 col-auto">Hubo un error con la carga del archivo</h4>

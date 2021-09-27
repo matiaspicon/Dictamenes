@@ -48,20 +48,6 @@ namespace Dictamenes.Controllers
             return View(dictamen);
         }
 
-        public async Task<ActionResult> DownloadFileFromFileSystem(int id)
-        {
-
-            var file = await db.ArchivosPDF.Where(x => x.Id == id).FirstOrDefaultAsync();
-            if (file == null) return null;
-            var memory = new MemoryStream();
-            using (var stream = new FileStream(file.Path, FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-            memory.Position = 0;
-            return File(memory, file.TipoArchivo, file.Nombre + file.Extension);
-        }
-
 
         // GET: Dictamenes/Create
         public ActionResult CargarFile()
@@ -79,15 +65,16 @@ namespace Dictamenes.Controllers
             var extension = Path.GetExtension(file.FileName);
             // compruebo directorio
             var basePath = Server.MapPath("~/Files");
-            var filePath = Path.Combine(basePath, fileName + extension);
+            var filePath = Path.Combine("~","Files", fileName + extension);
             
             bool basePathExists = System.IO.Directory.Exists(basePath);
             if (!basePathExists) Directory.CreateDirectory(basePath);
             
-            if (!System.IO.File.Exists(filePath))
+            if (!System.IO.File.Exists(Server.MapPath(filePath)))
             {
-                file.SaveAs(filePath);
-            }
+                file.SaveAs(Server.MapPath(filePath));
+            }            
+
             // creo el archivo para la base de datos
             var archivo = new ArchivoPDF
             {
@@ -169,7 +156,7 @@ namespace Dictamenes.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Buscar(Busqueda busqueda)
+        public ActionResult Buscar(Busqueda busqueda)
         {
             var dictDB = db.Dictamenes
                 .Where(m => m.EstaActivo && !m.Borrado);
@@ -297,21 +284,21 @@ namespace Dictamenes.Controllers
                     if (file != null)
                     {
 
-                        var fileName = Guid.NewGuid().ToString();
-                        var extension = Path.GetExtension(file.FileName);
-                        // compruebo directorio
-                        var basePath = Server.MapPath("~/Files");
-                        var filePath = Path.Combine(basePath, fileName + extension);
+                    var fileName = Guid.NewGuid().ToString();
+                    var extension = Path.GetExtension(file.FileName);
+                    // compruebo directorio
+                    var basePath = Server.MapPath("~/Files");
+                    var filePath = Path.Combine("~", "Files", fileName + extension);
 
-                        bool basePathExists = System.IO.Directory.Exists(basePath);
-                        if (!basePathExists) Directory.CreateDirectory(basePath);
+                    bool basePathExists = System.IO.Directory.Exists(basePath);
+                    if (!basePathExists) Directory.CreateDirectory(basePath);
 
-                        if (!System.IO.File.Exists(filePath))
-                        {
-                            file.SaveAs(filePath);
-                        }
-                        // creo el archivo para la base de datos
-                        var archivo = new ArchivoPDF
+                    if (!System.IO.File.Exists(Server.MapPath(filePath)))
+                    {
+                        file.SaveAs(Server.MapPath(filePath));
+                    }
+                    // creo el archivo para la base de datos
+                    var archivo = new ArchivoPDF
                         {
                             FechaCarga = DateTime.Now,
                             TipoArchivo = file.ContentType,
