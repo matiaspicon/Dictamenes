@@ -87,7 +87,20 @@ namespace Dictamenes.Controllers
         {
             if (ModelState.IsValid)
             {
+                TipoDictamen tipoDictamenViejo = db.TiposDictamen.AsNoTracking().First(d => d.Id == tipoDictamen.Id);
+
+                tipoDictamen.EstaActivo = true;
+
+                tipoDictamen.IdUsuarioModificacion = 3;
+                //dictamen.IdUsuarioModificacion = db.Usuario;
+                tipoDictamen.FechaModificacion = DateTime.Now;
+
                 db.Entry(tipoDictamen).State = EntityState.Modified;
+
+                tipoDictamenViejo.EstaActivo = false;
+                tipoDictamenViejo.Id = 0;
+
+                db.TiposDictamen.Add(tipoDictamenViejo);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

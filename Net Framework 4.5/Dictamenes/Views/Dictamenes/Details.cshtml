@@ -108,14 +108,11 @@
         }
     }
 }
-</div>
 <br />
 <div class="col m-2 row justify-content-between">
-    <a class="col-3 btn btn-secondary" asp-action="Index">Volver atras</a>
-    <a class="col-3 btn btn-danger" asp-action="Delete" asp-route-id="@Model.Id">Borrar</a>
-    <a class="col-3 btn btn-warning" asp-action="Edit" asp-route-id="@Model.Id">Editar</a>
+    <a class="col-3 btn btn-secondary"  onclick="history.go(-1);">Volver atras</a>
+    <a class="col-3 btn btn-danger" href="@Url.Action("Delete", new { id = Model.Id })">Borrar</a>
+    <a class="col-3 btn btn-warning" href="@Url.Action("Edit", new { id = Model.Id })">Editar</a>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+
+

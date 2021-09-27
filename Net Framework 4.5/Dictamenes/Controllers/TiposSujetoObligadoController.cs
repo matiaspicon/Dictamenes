@@ -87,7 +87,18 @@ namespace Dictamenes.Controllers
         {
             if (ModelState.IsValid)
             {
+                TipoSujetoObligado tipoSujetoObligadoViejo = db.TiposSujetoObligado.AsNoTracking().First(d => d.Id == tipoSujetoObligado.Id);
+
+                tipoSujetoObligado.EstaActivo = true;
+                tipoSujetoObligado.IdUsuarioModificacion = 3;
+                //dictamen.IdUsuarioModificacion = db.Usuario;
+                tipoSujetoObligado.FechaModificacion = DateTime.Now;
                 db.Entry(tipoSujetoObligado).State = EntityState.Modified;
+
+                tipoSujetoObligadoViejo.EstaActivo = false;
+                tipoSujetoObligadoViejo.Id = 0;
+
+                db.TiposSujetoObligado.Add(tipoSujetoObligadoViejo);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
