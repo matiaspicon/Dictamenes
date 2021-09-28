@@ -16,6 +16,8 @@ namespace Dictamenes.Models
 
         public DateTime? FechaCargaFinal { get; set; }
 
+        //public bool EsPublico { get; set; }
+
         public string Contenido { get; set; }
         
         public string Detalle { get; set; }

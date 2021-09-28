@@ -229,10 +229,10 @@ namespace Dictamenes.Controllers
             }
 
 
-            ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion", "Seleccione uno");
+            ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.EstaActivo && m.RazonSocial != null), "Id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["TipoSujetoObligado"] = new SelectList(db.TiposSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["TipoSujetoObligado"] = new SelectList(db.TiposSujetoObligado.Where(m => m.EstaActivo && m.EstaHabilitado && m.Descripcion != "Denunciante"), "Id", "Descripcion");
             ViewData["Busqueda"] = busqueda;
             return View("Index", dictDB.ToList());
         }
@@ -352,11 +352,11 @@ namespace Dictamenes.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Dictamen dictamen = db.Dictamenes.Find(id);
-            if (dictamen == null)
+            Dictamen dictamen = db.Dictamenes.Include(d => d.ArchivoPDF).Include(d => d.Asunto).Include(d => d.SujetoObligado).Include(d => d.TipoDictamen).Include(d => d.UsuarioModificacion).FirstOrDefault(d => d.Id == id);            if (dictamen == null)
             {
                 return HttpNotFound();
             }
+            ViewData["IdDenunciante"] = db.TiposSujetoObligado.FirstOrDefault(m => m.EstaActivo && m.Descripcion == "Denunciante").Id;
             return View(dictamen);
         }
 
@@ -365,8 +365,22 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Dictamen dictamen = db.Dictamenes.Find(id);
-            db.Dictamenes.Remove(dictamen);
+            var dictamen =  db.Dictamenes.Find(id);
+
+            Dictamen dictamenViejo = db.Dictamenes.AsNoTracking().First(d => d.Id == id);
+
+            dictamen.IdUsuarioModificacion = 3;
+            //dictamen.IdUsuarioModificacion = _context.Usuario;
+            dictamen.EstaActivo = true;
+            dictamen.FechaModificacion = DateTime.Now;
+            dictamen.Borrado = true;
+
+            db.Entry(dictamen).State = EntityState.Modified;
+
+            dictamenViejo.EstaActivo = false;
+            dictamenViejo.Id = 0;
+
+            db.Dictamenes.Add(dictamenViejo);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
