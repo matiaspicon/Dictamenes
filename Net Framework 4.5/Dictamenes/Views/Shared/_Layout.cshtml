@@ -18,17 +18,59 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" href="@Url.Action("Index","Dictamenes")">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" href="@Url.Action("Menu", "Campos")">Administracion de Campos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" href="@Url.Action("Index", "SujetosObligados")">Administracion de Sujetos Obligados</a>
-                    </li>
+                    @if (User.IsInRole("Consulta"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="@Url.Action("Index","Dictamenes")">Home</a>
+                        </li>
+                    }
+                    else if (User.IsInRole("Carga"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="@Url.Action("Index","Dictamenes")">Home</a>
+                        </li>
+                    }
+                    else if (User.IsInRole("Edicion"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="@Url.Action("Index","Dictamenes")">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="@Url.Action("Menu", "Campos")">Administracion de Campos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="@Url.Action("Index", "SujetosObligados")">Administracion de Sujetos Obligados</a>
+                        </li>
+                    }
+
                 </ul>
             </div>
+            <div class="float-right">
+                <ul class="navbar-nav mr-auto">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="dropdown">
+                            <button class="btn dropdown-toggle" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @User.Identity.Name<span class="caret ml-1"></span>
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="menuOpciones">                                
+                                <div class="dropdown-divider"></div>
+                                <a href="@Url.Action("Logout", "Login")" class="dropdown-item">
+                                    <i class="fas fa-sign-out-alt"></i> Salir
+                                </a>
+                            </div>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="ml-1">
+                            <a href="@Url.Action("Login", "Login")" class="btn btn-success">
+                                Ingresar
+                            </a>
+                        </li>
+                    }
+                </ul>
+                </div>
         </nav>
     </header>
     <div class="container">

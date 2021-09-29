@@ -14,6 +14,7 @@ using Dictamenes.Models;
 
 namespace Dictamenes.Controllers
 {
+    [Authorize]
     public class DictamenesController : Controller
     {
         private DictamenesDbContext db = new DictamenesDbContext();
@@ -270,8 +271,8 @@ namespace Dictamenes.Controllers
             {
                 Dictamen dictamenViejo = db.Dictamenes.AsNoTracking().First(d => d.Id == dictamen.Id);
 
-                dictamen.IdUsuarioModificacion = 3;
-                //dictamen.IdUsuarioModificacion = _context.Usuario;
+
+                dictamen.IdUsuarioModificacion = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(((System.Web.Security.FormsIdentity)User.Identity).Ticket.UserData).cuil;
                 dictamen.EstaActivo = true;
                 dictamen.FechaModificacion = DateTime.Now;
                 dictamen.NroGDE = dictamen.NroGDE.ToUpper();

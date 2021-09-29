@@ -81,6 +81,8 @@
       <HintPath>..\packages\System.Data.SQLite.Linq.1.0.115.0\lib\net45\System.Data.SQLite.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -134,9 +136,6 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="WCFLogLogin">
-      <HintPath>D:\Todo lo del trabajo\Dictamenes\Dictamenes\lib\references\WCFLogLogin.dll</HintPath>
-    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -159,6 +158,7 @@
     <Compile Include="Controllers\CamposController.cs" />
     <Compile Include="Controllers\DictamenesController.cs" />
     <Compile Include="Controllers\FileController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\SujetosObligadosController.cs" />
     <Compile Include="Controllers\TiposDictamenController.cs" />
     <Compile Include="Controllers\TiposSujetoObligadoController.cs" />
@@ -166,6 +166,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Login\ILogLogin.cs" />
+    <Compile Include="Login\LogLoginService.cs" />
+    <Compile Include="Login\MenuHelper.cs" />
+    <Compile Include="Login\Nodo.cs" />
+    <Compile Include="Login\PregFrec.cs" />
+    <Compile Include="Login\PregFrecDao.cs" />
     <Compile Include="Models\ArchivoPDF.cs" />
     <Compile Include="Models\Asunto.cs" />
     <Compile Include="Models\Busqueda.cs" />
@@ -338,18 +344,12 @@
     <Content Include="Views\SujetosObligados\Edit.cshtml" />
     <Content Include="Views\SujetosObligados\Index.cshtml" />
     <Content Include="Views\TiposDictamen\Create.cshtml" />
-    <Content Include="Views\TiposDictamen\Delete.cshtml" />
-    <Content Include="Views\TiposDictamen\Details.cshtml" />
     <Content Include="Views\TiposDictamen\Edit.cshtml" />
     <Content Include="Views\TiposDictamen\Index.cshtml" />
     <Content Include="Views\Asuntos\Create.cshtml" />
-    <Content Include="Views\Asuntos\Delete.cshtml" />
-    <Content Include="Views\Asuntos\Details.cshtml" />
     <Content Include="Views\Asuntos\Edit.cshtml" />
     <Content Include="Views\Asuntos\Index.cshtml" />
     <Content Include="Views\TiposSujetoObligado\Create.cshtml" />
-    <Content Include="Views\TiposSujetoObligado\Delete.cshtml" />
-    <Content Include="Views\TiposSujetoObligado\Details.cshtml" />
     <Content Include="Views\TiposSujetoObligado\Edit.cshtml" />
     <Content Include="Views\TiposSujetoObligado\Index.cshtml" />
     <Content Include="Views\Dictamenes\Create.cshtml" />
@@ -375,6 +375,7 @@
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Dictamenes\CargarFile.cshtml" />
     <Content Include="ViewsViejas\_ViewImports.cshtml" />
+    <Content Include="Views\Login\login.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />
