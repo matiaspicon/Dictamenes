@@ -46,7 +46,7 @@
                 @Html.ValidationMessageFor(model => model.Detalle, "", new { @class = "text-danger" })
             </div>
         </div>
-
+        @Html.HiddenFor(model => model.IdArchivoPDF)
         <div class="form-group row">
             <p class="col-md-3">Ingrese el Archivo PDF</p>
             <input type="file" class="col-md-9" accept=".pdf" name="file" />
@@ -96,6 +96,7 @@
 
             @if (Model.SujetoObligado.Nombre != null)
             {
+                @Html.HiddenFor(model => model.IdSujetoObligado)
                 <div class="form-group row">
                     <label class="form-label col-md-3 align-self-end">CUIL/CUIT </label>
                     <div class="col-md-9">
@@ -118,6 +119,7 @@
             }
             else
             {
+
                 <div class="form-group row">
                     <label class="form-label col-md-3 align-self-end">CUIL/CUIT </label>
                     <div class="col-md-9">

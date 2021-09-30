@@ -55,7 +55,11 @@ namespace Dictamenes.Controllers
         // GET: Dictamenes/Create
         public ActionResult CargarFile()
         {
-            return View();
+            if((string)Session["rol"] == "CARGAR" || (string)Session["rol"] == "EDITAR_CAMPOS")
+            {
+                return View();
+            }
+            return RedirectToAction("ErrorNoPermisos", "Login");
         }
 
         [HttpPost]
@@ -138,6 +142,7 @@ namespace Dictamenes.Controllers
                 sujetoObligado.FechaModificacion = DateTime.Now;
                 sujetoObligado.EstaActivo = true;
                 sujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
+                sujetoObligado.Guid = Guid.NewGuid().ToString();
                 db.SujetosObligados.Add(sujetoObligado);
                 db.SaveChanges();
                 dictamen.IdSujetoObligado = sujetoObligado.Id;
@@ -265,14 +270,18 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen, SujetoObligado sujetoObligado , HttpPostedFileBase file)
         {
-            sujetoObligado.Id = dictamen.IdSujetoObligado;
-            dictamen.SujetoObligado = sujetoObligado;
+            if (dictamen.IdSujetoObligado.HasValue)
+            {
+                sujetoObligado.Id = dictamen.IdSujetoObligado.Value;
+                dictamen.SujetoObligado = sujetoObligado;
+
+            }
             if (ModelState.IsValid)
             {
-                Dictamen dictamenViejo = db.Dictamenes.AsNoTracking().First(d => d.Id == dictamen.Id);
+                Dictamen dictamenViejo = db.Dictamenes.Include(d => d.SujetoObligado).AsNoTracking().First(d => d.Id == dictamen.Id);
 
 
-                dictamen.IdUsuarioModificacion = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(((System.Web.Security.FormsIdentity)User.Identity).Ticket.UserData).cuil;
+                dictamen.IdUsuarioModificacion = 3;
                 dictamen.EstaActivo = true;
                 dictamen.FechaModificacion = DateTime.Now;
                 dictamen.NroGDE = dictamen.NroGDE.ToUpper();
@@ -318,13 +327,22 @@ namespace Dictamenes.Controllers
                 }
                 //}
 
-                if (sujetoObligado.CuilCuit > 0)
-                {                    
-                    sujetoObligado.IdUsuarioModificacion = 0;
-                    sujetoObligado.FechaModificacion = DateTime.Now;
-                    sujetoObligado.EstaActivo = true;
-                    sujetoObligado.EstaHabilitado = true;
+                if (sujetoObligado.CuilCuit != dictamenViejo.SujetoObligado.CuilCuit || sujetoObligado.Nombre != dictamenViejo.SujetoObligado.Nombre || sujetoObligado.Apellido != dictamenViejo.SujetoObligado.Apellido)
+                    
+                {
+                    SujetoObligado sujetoObligadoViejo = db.SujetosObligados.AsNoTracking().First(d => d.Id == sujetoObligado.Id);
+
                     sujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
+                    sujetoObligado.EstaActivo = true;
+                    sujetoObligado.IdUsuarioModificacion = 3;
+                    //dictamen.IdUsuarioModificacion = _context.Usuario;
+                    sujetoObligado.FechaModificacion = DateTime.Now;
+                    db.Entry(sujetoObligado).State = EntityState.Modified;
+
+                    sujetoObligadoViejo.EstaActivo = false;
+                    sujetoObligadoViejo.Id = 0;
+                    db.SujetosObligados.Add(sujetoObligadoViejo);
+
                     dictamen.SujetoObligado = null;
                     db.SujetosObligados.Add(sujetoObligado);
                     db.SaveChanges();

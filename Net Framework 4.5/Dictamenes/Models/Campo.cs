@@ -12,7 +12,7 @@ namespace Dictamenes.Models
         [Key]
         public int Id { get; set; }
 
-        [MaxLength(50, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
+        [MaxLength(100, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string Descripcion { get; set; }
 
         public bool EstaHabilitado { get; set; }

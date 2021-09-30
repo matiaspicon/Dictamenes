@@ -13,7 +13,7 @@ namespace Dictamenes.Models
     {
         [Key]
         public int Id { get; set; }
-        
+
         [Required]
         [DisplayName("Numero de GDE")]
         [RegularExpression("[iI][fF]-[0-9]{4}-[0-9]+-[aA][pP][nN]-[A-Za-z]+#[A-Za-z]+",
@@ -42,7 +42,7 @@ namespace Dictamenes.Models
         public ArchivoPDF ArchivoPDF { get; set; }
 
         [ForeignKey(nameof(SujetoObligado))]
-        public int IdSujetoObligado { get; set; }
+        public int? IdSujetoObligado { get; set; }
         public SujetoObligado SujetoObligado { get; set; }
 
         [ForeignKey(nameof(Asunto))]
@@ -50,7 +50,7 @@ namespace Dictamenes.Models
         public Asunto Asunto { get; set; }
 
         [ForeignKey(nameof(TipoDictamen))]
-        public int IdTipoDictamen { get; set; }
+        public int? IdTipoDictamen { get; set; }
         public TipoDictamen TipoDictamen { get; set; }
 
 

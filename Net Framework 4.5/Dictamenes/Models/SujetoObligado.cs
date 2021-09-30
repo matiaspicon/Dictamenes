@@ -41,6 +41,7 @@ namespace Dictamenes.Models
 
 
         // valores necesarios para el borrado logico
+        public string Guid { get; set; }
 
         public bool EstaActivo { get; set; }
 

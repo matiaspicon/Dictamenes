@@ -6,41 +6,38 @@
     <title>@ViewData["Title"] - Dictamenes</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
-
+    @using Dictamenes.Models
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 </head>
 <body class="p-0">
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="@Url.Action("Index","Dictamenes")">Dictamenes</a>
+            <a class="navbar-brand" >Dictamenes</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    @if (User.IsInRole("Consulta"))
+                    @if (Session["rol"] != null && (string)Session["rol"] == Rol.CONSULTAR.ToString())
                     {
                         <li class="nav-item">
                             <a class="nav-link text-dark" href="@Url.Action("Index","Dictamenes")">Home</a>
                         </li>
                     }
-                    else if (User.IsInRole("Carga"))
+                    else if (Session["rol"] != null && (string)Session["rol"] == Rol.CARGAR.ToString())
                     {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="@Url.Action("Index","Dictamenes")">Home</a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="@Url.Action("Index","Dictamenes")">Home</a>
+                    </li>
                     }
-                    else if (User.IsInRole("Edicion"))
+                    else if (Session["rol"] != null && (string)Session["rol"] == Rol.EDITAR_CAMPOS.ToString())
                     {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="@Url.Action("Index","Dictamenes")">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="@Url.Action("Menu", "Campos")">Administracion de Campos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" href="@Url.Action("Index", "SujetosObligados")">Administracion de Sujetos Obligados</a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="@Url.Action("Menu", "Campos")">Administracion de Campos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="@Url.Action("Index", "SujetosObligados")">Administracion de Sujetos Obligados</a>
+                    </li>
                     }
 
                 </ul>

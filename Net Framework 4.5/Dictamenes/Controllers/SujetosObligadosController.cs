@@ -55,7 +55,7 @@ namespace Dictamenes.Controllers
             sujetoObligado.EstaHabilitado = true;
             sujetoObligado.FechaModificacion = DateTime.Now;
             sujetoObligado.IdUsuarioModificacion = 0;
-
+            sujetoObligado.Guid = Guid.NewGuid().ToString();
             if (ModelState.IsValid)
             {
                 db.SujetosObligados.Add(sujetoObligado);
@@ -88,7 +88,7 @@ namespace Dictamenes.Controllers
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado, EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
+        public ActionResult Edit([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado, EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion, Guid")] SujetoObligado sujetoObligado)
         {
             if (ModelState.IsValid)
             {

@@ -6,29 +6,44 @@ using System.Web.Mvc;
 using WCFLoginUniversal;
 using System.Web.Security;
 using Newtonsoft.Json;
+using BEUU;
+using System.Security.Claims;
+using Microsoft.Owin.Security.Cookies;
+using System.Net;
 
-namespace WebApplication3.Controllers
+namespace Dictamenes.Controllers
 {
     public class LoginController : Controller
     {
 
         LogLoginService loginService = new LogLoginService();
         // GET: Login
+        [AllowAnonymous]
         public ActionResult Login()
-        {            
-            return View();
-        }
+        {
+            if (User.Identity.IsAuthenticated && Session["rol"] == null)
+            {
+                try
+                {
+                    Session["rol"] = (string)JsonConvert.DeserializeObject<dynamic>(((FormsIdentity)User.Identity).Ticket.UserData).rol;                    
+                    return RedirectToAction("Index", "Dictamenes");
+                }
+                catch { }                
+            }
 
+            return View();           
+        }
+        [AllowAnonymous]
         [HttpPost]
         public ActionResult Login(string cuil, string idcomp, string Nombre, string Pass)
         {
             WCFUsuarioLogeado usuarioLogeado = loginService.LogeoUsuario(cuil, idcomp, Nombre, Pass, "1", false);
+                        
 
-            if(usuarioLogeado == null)
-            {
-
-                string userData = JsonConvert.SerializeObject(new { cuil, idcomp });
-
+            if (usuarioLogeado == null)
+            {                
+                string userData = JsonConvert.SerializeObject(new { cuil, idcomp, rol = Nombre });
+                Session["rol"] = Nombre;
                 FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1,
                 Nombre,
                 DateTime.Now,
@@ -50,82 +65,17 @@ namespace WebApplication3.Controllers
             return View();
         }
 
+        [Authorize]
         public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
             return RedirectToAction("Login");
         }
 
-        // GET: Login/Details/5
-        public ActionResult Details(int id)
+        public ActionResult ErrorNoPermisos()
         {
             return View();
         }
 
-        // GET: Login/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Login/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Login/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Login/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Login/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Login/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

@@ -5,12 +5,14 @@
 }
 
 
-<div class="row">
-    <p class="col">
-        <a class="btn btn-primary" href="@Url.Action("CargarFile")">Cargar nuevo</a>
-    </p>
-
-    <button class="navbar-toggler col" type="button" data-toggle="collapse"
+<div class="row justify-content-between">
+    @if (Session["rol"] != null && (string)Session["rol"] == "CARGAR")
+    {
+        <p class="col">
+            <a class="btn btn-primary" href="@Url.Action("CargarFile")">Cargar nuevo</a>
+        </p>
+    }
+    <button class="navbar-toggler col m-2" type="button" data-toggle="collapse"
             data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent"
             aria-expanded="false" aria-label="Toggle navigation">
         <i class="bi bi-search"></i> Busqueda
@@ -59,9 +61,14 @@ else
             <td>
                 @(item != null && item.Detalle.Length > 30 ? item.Detalle.Substring(0, 30) : item.Detalle)
             </td>
-            <td>
-                <a class="btn btn-outline-warning" href="@Url.Action("Edit", new { id = item.Id })"><i class="bi bi-pencil-square"></i></a>
-            </td>
+
+            @if (Session["rol"] != null && (string)Session["rol"] == "CARGAR")
+            {
+                <td>
+                    <a class="btn btn-outline-warning" href="@Url.Action("Edit", new { id = item.Id })"><i class="bi bi-pencil-square"></i></a>
+                </td>
+            }
+
         </tr>
     }
 
