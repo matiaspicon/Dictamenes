@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace Dictamenes.Models
 {
-    [Table("Dictamenes")]
-    public class Dictamen
+    [Table("DictamenesLog")]
+    public class DictamenLog
     {
         [Key]
         public int Id { get; set; }
@@ -54,6 +54,20 @@ namespace Dictamenes.Models
         public TipoDictamen TipoDictamen { get; set; }
 
         public string Guid { get; set; } 
+
+        // valores necesarios para el borrado logico
+        public bool Borrado{ get; set; }
+
+        public DateTime FechaModificacion { get; set; }
+
+        [ForeignKey("UsuarioModificacion")]
+        public int IdUsuarioModificacion { get; set; }
+        public Usuario UsuarioModificacion { get; set; }
+
+
+
+
+
 
     }
 

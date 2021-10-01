@@ -20,7 +20,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            var asunto = db.Asuntos.Where(d => d.EstaActivo && d.EstaHabilitado).Include(a => a.Usuario);
+            var asunto = db.Asuntos.Where(d =>d.EstaHabilitado);
             return View(asunto.ToList());
         }
 
@@ -55,19 +55,12 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
-            asunto.EstaActivo = true;
-            asunto.FechaModificacion = DateTime.Now;
-            asunto.IdUsuarioModificacion = 0;
-
-
             if (ModelState.IsValid)
             {
                 db.Asuntos.Add(asunto);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", asunto.IdUsuarioModificacion);
             return View(asunto);
         }
 
@@ -87,9 +80,6 @@ namespace Dictamenes.Controllers
                 Asunto asunto = new Asunto
                 {
                     EstaHabilitado = true,
-                    EstaActivo = true,
-                    FechaModificacion = DateTime.Now,
-                    IdUsuarioModificacion = 0,
                     Descripcion = a
                 };
 
@@ -138,17 +128,20 @@ namespace Dictamenes.Controllers
             {
                 Asunto asuntoViejo = db.Asuntos.AsNoTracking().First(d => d.Id == asunto.Id);
 
-                asunto.IdUsuarioModificacion = 3;
-                //dictamen.IdUsuarioModificacion = db.Usuario;
-                asunto.EstaActivo = true;
-                asunto.FechaModificacion = DateTime.Now;
-                db.Entry(asunto).State = EntityState.Modified;
+                AsuntoLog asuntoLog = new AsuntoLog 
+                { 
+                    Descripcion = asunto.Descripcion,
+                    EstaHabilitado = asunto.EstaHabilitado,
+                    FechaModificacion = DateTime.Now,
+                    IdUsuarioModificacion = 3,
 
-                asuntoViejo.EstaActivo = false;
-                asuntoViejo.Id = 0;
+                };               
+            db.Entry(asunto).State = EntityState.Modified;
 
-                db.Asuntos.Add(asuntoViejo);
-                db.SaveChanges();
+            asuntoViejo.Id = 0;
+
+            db.Asuntos.Add(asuntoViejo);
+            db.SaveChanges();
                 return RedirectToAction("Index");
             }
             ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", asunto.IdUsuarioModificacion);

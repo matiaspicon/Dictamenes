@@ -188,6 +188,12 @@
     <Compile Include="Models\Asunto.cs" />
     <Compile Include="Models\Busqueda.cs" />
     <Compile Include="Models\Campo.cs" />
+    <Compile Include="Models\ModelLOG\AsuntoLog.cs" />
+    <Compile Include="Models\ModelLOG\CampoLog.cs" />
+    <Compile Include="Models\ModelLOG\DictamenLog.cs" />
+    <Compile Include="Models\ModelLOG\SujetoObligadoLog.cs" />
+    <Compile Include="Models\ModelLOG\TipoDictamenLog.cs" />
+    <Compile Include="Models\ModelLOG\TipoSujetoObligadoLog.cs" />
     <Compile Include="Models\Rol.cs" />
     <Compile Include="Models\Dictamen.cs" />
     <Compile Include="Models\ErrorViewModel.cs" />

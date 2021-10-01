@@ -7,7 +7,7 @@ using System.Web.Mvc;
 
 namespace Dictamenes.Models
 {
-    public abstract class Campo
+    public abstract class CampoLog
     {
         [Key]
         public int Id { get; set; }
@@ -16,6 +16,13 @@ namespace Dictamenes.Models
         public string Descripcion { get; set; }
 
         public bool EstaHabilitado { get; set; }
+
+        public DateTime FechaModificacion { get; set; }
+
+        [ForeignKey("Usuario")]
+        public int IdUsuarioModificacion { get; set; }
+        
+        public Usuario Usuario { get; set; }
 
     }
 }
