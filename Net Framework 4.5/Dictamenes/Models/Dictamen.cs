@@ -53,6 +53,7 @@ namespace Dictamenes.Models
         public int? IdTipoDictamen { get; set; }
         public TipoDictamen TipoDictamen { get; set; }
 
+        public string Guid { get; set; } 
 
         // valores necesarios para el borrado logico
         public bool Borrado{ get; set; }

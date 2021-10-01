@@ -390,6 +390,8 @@
     <Content Include="Views\Login\login.cshtml" />
     <Content Include="Views\Login\ErrorNoPermisos.cshtml" />
     <Content Include="Views\_ViewImports.cshtml" />
+    <Content Include="Views\Asuntos\CargarAsuntos.cshtml" />
+    <Content Include="Views\Dictamenes\CargarDictamenes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.Entity;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -135,6 +137,7 @@ namespace Dictamenes.Controllers
             dictamen.NroGDE = dictamen.NroGDE.ToUpper();
             dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
             dictamen.Detalle = dictamen.Detalle != null ? dictamen.Detalle.ToUpper() : ".";
+            dictamen.Guid = Guid.NewGuid().ToString();
 
             if (sujetoObligado.CuilCuit > 0)
             {
@@ -332,6 +335,7 @@ namespace Dictamenes.Controllers
                 {
                     SujetoObligado sujetoObligadoViejo = db.SujetosObligados.AsNoTracking().First(d => d.Id == sujetoObligado.Id);
 
+                    sujetoObligado.Guid = sujetoObligado.Guid;
                     sujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
                     sujetoObligado.EstaActivo = true;
                     sujetoObligado.IdUsuarioModificacion = 3;
@@ -403,6 +407,73 @@ namespace Dictamenes.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+
+        public ActionResult CargarDictamenes()
+        {
+            return View();
+        }
+
+
+        class DictamenData
+        {
+            [RegularExpression("[iI][fF]-[0-9]{4}-[0-9]+-[aA][pP][nN]-[A-Za-z]+#[A-Za-z]+",
+            ErrorMessage = "El Numero de GDE ingresado no es valido.")]
+            [MaxLength(30, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
+            public string NroGDE { get; set; }
+
+            [Required]
+            [RegularExpression("[eE][xX]-[0-9]{4}-[0-9]+-[aA][pP][nN]-[A-Za-z]+#[A-Za-z]+",
+             ErrorMessage = "El Numero de Expediente ingresado no es valido.")]
+            [MaxLength(30, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
+            public string NroExpediente { get; set; }
+
+            public string FechaCarga { get; set; }
+
+            public string Detalle { get; set; }
+
+            public string Asunto { get; set; }
+        }
+
+
+        [HttpPost]
+        public ActionResult CargarDictamenes(string JSONDictamenes, HttpPostedFileBase[] files)
+        {
+            var dictamenes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<DictamenData>>(JSONDictamenes);
+
+            foreach (DictamenData dictamenData in dictamenes)
+            {
+                Dictamen dictamen = new Dictamen
+                {
+                    NroGDE = dictamenData.NroGDE,
+                    NroExpediente = dictamenData.NroExpediente,
+                    FechaCarga = DateTime.Parse(dictamenData.FechaCarga, CultureInfo.InvariantCulture),
+                    Detalle = dictamenData.Detalle,
+                    EstaActivo = true,
+                    EsPublico = true,
+                    Asunto = db.Asuntos.FirstOrDefault(a => a.Descripcion == dictamenData.Asunto),
+                    FechaModificacion = DateTime.Now,
+                    Borrado = false,
+                    IdUsuarioModificacion = 0,
+                    ArchivoPDF = null
+                };
+                
+                
+                if (ModelState.IsValid)
+                {
+                    db.Dictamenes.Add(dictamen);
+                }
+            }
+            try
+            {
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+        }
+
 
         protected override void Dispose(bool disposing)
         {

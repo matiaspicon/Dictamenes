@@ -43,19 +43,6 @@ namespace Dictamenes.Controllers
         }
 
 
-        [HttpGet]
-        public ActionResult Algo(int id)
-        {
-
-            //var logService = new WCFLoginUniversal.LogLoginService();
-            //var algo = logService.ObtengoListaUsuariosLogeados();
-            //var otraCosa = logService.GetDatosLogin(1);
-            ////var algoptrp = logService.LogeoUsuario("123123123","1","asdasd","asdasd","1",false);
-
-            return HttpNotFound();
-        }
-
-
         //public async Task<ActionResult> DeleteFileFromFileSystem(int id)
         //{
 

@@ -13,6 +13,8 @@
     {
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
+        @Html.HiddenFor(model => model.Guid)
+
         @Html.AntiForgeryToken()
 
         <div class="form-group row">
@@ -86,7 +88,7 @@
             <div class="form-group row">
                 @Html.LabelFor(model => model.IdSujetoObligado, "Sujetos Obligados", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
                 <div class="col-md-9">
-                    @Html.DropDownList("IdSujetoObligado",null, htmlAttributes: new { @class = "form-control col-auto", id = "InputEmpresas" })
+                    @Html.DropDownList("IdSujetoObligado", null, htmlAttributes: new { @class = "form-control col-auto", id = "InputEmpresas" })
                     @Html.ValidationMessageFor(model => model.IdSujetoObligado, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -145,28 +147,28 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-9">
-                <a class="col-3 btn btn-secondary"  onclick="history.go(-1);">Volver atras</a>
+                <a class="col-3 btn btn-secondary" onclick="history.go(-1);">Volver atras</a>
                 <input type="submit" value="Guardar" class="btn btn-primary m-1" />
             </div>
         </div>
     }
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-    <script type="text/javascript">
-        function setForm(value) {
-            console.log(value);
-            if (value) {
-                document.getElementById('FormPersonas').style = 'display:block;';
-                document.getElementById('FormEmpresas').style = 'display:none;';
-                document.getElementById('InputEmpresas').value = "-1";
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        <script type="text/javascript">
+            function setForm(value) {
+                console.log(value);
+                if (value) {
+                    document.getElementById('FormPersonas').style = 'display:block;';
+                    document.getElementById('FormEmpresas').style = 'display:none;';
+                    document.getElementById('InputEmpresas').value = "-1";
+                }
+                else {
+                    document.getElementById('FormEmpresas').style = 'display:block;';
+                    document.getElementById('FormPersonas').style = 'display:none;';
+                    document.getElementById('InputCuilCuit').value = 0;
+                }
             }
-            else {
-                document.getElementById('FormEmpresas').style = 'display:block;';
-                document.getElementById('FormPersonas').style = 'display:none;';
-                document.getElementById('InputCuilCuit').value = 0;
-            }
-        }
-    </script>
-    <script>setForm(document.getElementById("esDenunciante").checked)</script>
-}
+        </script>
+        <script>setForm(document.getElementById("esDenunciante").checked)</script>
+    }
