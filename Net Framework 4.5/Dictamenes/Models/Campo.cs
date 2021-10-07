@@ -15,7 +15,7 @@ namespace Dictamenes.Models
         [MaxLength(100, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string Descripcion { get; set; }
 
-        public bool EstaHabilitado { get; set; }
+        public bool EstaHabilitado { get; set; }        
 
     }
 }

@@ -13,6 +13,7 @@ namespace Dictamenes.Models
     public class ArchivoPDF
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string Nombre { get; set; }
         public string TipoArchivo { get; set; }

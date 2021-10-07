@@ -1,7 +1,7 @@
 ﻿@model Dictamenes.Models.Dictamen
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Crear";
 }
 
 <h2>Crear Dictamen</h2>
@@ -55,7 +55,7 @@
     </div>
 
     <div class="form-group row ">
-        @Html.LabelFor(model => model.IdTipoDictamen, "TipoDictamen", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+        @Html.LabelFor(model => model.IdTipoDictamen, "Tipo de Dictamen", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
         <div class="col-md-9">
             @Html.DropDownList("IdTipoDictamen", null, htmlAttributes: new { @class = "form-control col-auto" })
             @Html.ValidationMessageFor(model => model.IdTipoDictamen, "", new { @class = "text-danger" })
@@ -111,7 +111,7 @@
     <div class="form-group">
         <div class="col-md-offset-2 col-md-9">
             <a class="col-3 btn btn-secondary"  onclick="history.go(-1);">Volver atras</a>
-            <input type="submit" value="Crear" class="btn btn-primary m-1" />
+            <input type="submit" value="Cargar" class="btn btn-primary m-1" />
         </div>
     </div>
 </div>

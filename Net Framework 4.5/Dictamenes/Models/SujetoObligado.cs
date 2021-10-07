@@ -36,7 +36,7 @@ namespace Dictamenes.Models
         [DisplayName("Tipo de Sujeto Obligado")]
         public TipoSujetoObligado TipoSujetoObligado { get; set; }
 
-        // valores necesarios para el borrado logico
-        public string Guid { get; set; }
+        public bool EstaHabilitado { get; set; }
+
     }
 }

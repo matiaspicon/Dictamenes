@@ -11,6 +11,7 @@ namespace Dictamenes.Models
     [Table("DictamenesLog")]
     public class DictamenLog
     {
+
         [Key]
         public int Id { get; set; }
 
@@ -52,10 +53,8 @@ namespace Dictamenes.Models
         [ForeignKey(nameof(TipoDictamen))]
         public int? IdTipoDictamen { get; set; }
         public TipoDictamen TipoDictamen { get; set; }
+        public int IdOriginal { set; get; }
 
-        public string Guid { get; set; } 
-
-        // valores necesarios para el borrado logico
         public bool Borrado{ get; set; }
 
         public DateTime FechaModificacion { get; set; }

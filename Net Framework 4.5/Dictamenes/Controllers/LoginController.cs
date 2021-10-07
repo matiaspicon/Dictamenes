@@ -37,8 +37,9 @@ namespace Dictamenes.Controllers
         [HttpPost]
         public ActionResult Login(string cuil, string idcomp, string Nombre, string Pass)
         {
-            WCFUsuarioLogeado usuarioLogeado = loginService.LogeoUsuario(cuil, idcomp, Nombre, Pass, "1", false);
-                        
+            //WCFUsuarioLogeado usuarioLogeado = loginService.LogeoUsuario(cuil, idcomp, Nombre, Pass, "1", false);
+
+            WCFUsuarioLogeado usuarioLogeado = null;
 
             if (usuarioLogeado == null)
             {                

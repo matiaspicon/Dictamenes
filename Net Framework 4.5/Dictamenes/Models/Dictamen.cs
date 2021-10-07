@@ -51,9 +51,9 @@ namespace Dictamenes.Models
 
         [ForeignKey(nameof(TipoDictamen))]
         public int? IdTipoDictamen { get; set; }
+        [DisplayName("Tipo de Dictamen")]
         public TipoDictamen TipoDictamen { get; set; }
 
-        public string Guid { get; set; } 
 
     }
 

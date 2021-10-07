@@ -18,7 +18,7 @@ namespace Dictamenes.Controllers
         // GET: TiposDictamen
         public ActionResult Index()
         {
-            var tipoDictamen = db.TiposDictamen.Where(d => d.EstaActivo && d.EstaHabilitado).Include(t => t.Usuario);
+            var tipoDictamen = db.TiposDictamen.Where(d =>  d.EstaHabilitado);
             return View(tipoDictamen.ToList());
         }
 
@@ -40,8 +40,7 @@ namespace Dictamenes.Controllers
         // GET: TiposDictamen/Create
         public ActionResult Create()
         {
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre");
-            return View();
+                         return View();
         }
 
         // POST: TiposDictamen/Create
@@ -58,8 +57,7 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", tipoDictamen.IdUsuarioModificacion);
-            return View(tipoDictamen);
+                         return View(tipoDictamen);
         }
 
         // GET: TiposDictamen/Edit/5
@@ -74,8 +72,7 @@ namespace Dictamenes.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", tipoDictamen.IdUsuarioModificacion);
-            return View(tipoDictamen);
+                         return View(tipoDictamen);
         }
 
         // POST: TiposDictamen/Edit/5
@@ -87,51 +84,23 @@ namespace Dictamenes.Controllers
         {
             if (ModelState.IsValid)
             {
-                TipoDictamen tipoDictamenViejo = db.TiposDictamen.AsNoTracking().First(d => d.Id == tipoDictamen.Id);
-
-                tipoDictamen.EstaActivo = true;
-
-                tipoDictamen.IdUsuarioModificacion = 3;
-                //dictamen.IdUsuarioModificacion = db.Usuario;
-                tipoDictamen.FechaModificacion = DateTime.Now;
+                var tipoSujetoDictamenViejo = db.TiposDictamen.AsNoTracking().First(d => d.Id == tipoDictamen.Id);               
+                TipoDictamenLog tipoDictamenLog = new TipoDictamenLog
+                {
+                    IdOriginal = tipoSujetoDictamenViejo.Id,
+                    Descripcion = tipoSujetoDictamenViejo.Descripcion,
+                    EstaHabilitado = tipoSujetoDictamenViejo.EstaHabilitado,
+                    FechaModificacion = DateTime.Now,
+                    IdUsuarioModificacion = 3
+                };
 
                 db.Entry(tipoDictamen).State = EntityState.Modified;
 
-                tipoDictamenViejo.EstaActivo = false;
-                tipoDictamenViejo.Id = 0;
-
-                db.TiposDictamen.Add(tipoDictamenViejo);
+                db.TiposDictamenLog.Add(tipoDictamenLog);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", tipoDictamen.IdUsuarioModificacion);
-            return View(tipoDictamen);
-        }
-
-        // GET: TiposDictamen/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            TipoDictamen tipoDictamen = db.TiposDictamen.Find(id);
-            if (tipoDictamen == null)
-            {
-                return HttpNotFound();
-            }
-            return View(tipoDictamen);
-        }
-
-        // POST: TiposDictamen/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            TipoDictamen tipoDictamen = db.TiposDictamen.Find(id);
-            db.TiposDictamen.Remove(tipoDictamen);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+        return View(tipoDictamen);
         }
 
         protected override void Dispose(bool disposing)

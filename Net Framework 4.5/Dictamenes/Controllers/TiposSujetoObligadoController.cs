@@ -18,7 +18,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoObligado
         public ActionResult Index()
         {
-            var tipoSujetoObligado = db.TiposSujetoObligado.Where(d => d.EstaActivo && d.EstaHabilitado).Include(t => t.Usuario);
+            var tipoSujetoObligado = db.TiposSujetoObligado.Where(d =>  d.EstaHabilitado);
             return View(tipoSujetoObligado.ToList());
         }
 
@@ -40,8 +40,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoObligado/Create
         public ActionResult Create()
         {
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre");
-            return View();
+                         return View();
         }
 
         // POST: TiposSujetoObligado/Create
@@ -58,8 +57,7 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", tipoSujetoObligado.IdUsuarioModificacion);
-            return View(tipoSujetoObligado);
+                         return View(tipoSujetoObligado);
         }
 
         // GET: TiposSujetoObligado/Edit/5
@@ -74,8 +72,7 @@ namespace Dictamenes.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", tipoSujetoObligado.IdUsuarioModificacion);
-            return View(tipoSujetoObligado);
+                         return View(tipoSujetoObligado);
         }
 
         // POST: TiposSujetoObligado/Edit/5
@@ -89,47 +86,22 @@ namespace Dictamenes.Controllers
             {
                 TipoSujetoObligado tipoSujetoObligadoViejo = db.TiposSujetoObligado.AsNoTracking().First(d => d.Id == tipoSujetoObligado.Id);
 
-                tipoSujetoObligado.EstaActivo = true;
-                tipoSujetoObligado.IdUsuarioModificacion = 3;
-                //dictamen.IdUsuarioModificacion = db.Usuario;
-                tipoSujetoObligado.FechaModificacion = DateTime.Now;
+                TipoSujetoObligadoLog tipoSujetoObligadoLog = new TipoSujetoObligadoLog
+                {
+                    IdOriginal = tipoSujetoObligadoViejo.Id,
+                    Descripcion = tipoSujetoObligadoViejo.Descripcion,
+                    EstaHabilitado = tipoSujetoObligadoViejo.EstaHabilitado,
+                    FechaModificacion = DateTime.Now,
+                    IdUsuarioModificacion = 3
+                };
+
                 db.Entry(tipoSujetoObligado).State = EntityState.Modified;
 
-                tipoSujetoObligadoViejo.EstaActivo = false;
-                tipoSujetoObligadoViejo.Id = 0;
-
-                db.TiposSujetoObligado.Add(tipoSujetoObligadoViejo);
+                db.TiposSujetoObligadoLog.Add(tipoSujetoObligadoLog);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", tipoSujetoObligado.IdUsuarioModificacion);
-            return View(tipoSujetoObligado);
-        }
-
-        // GET: TiposSujetoObligado/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            TipoSujetoObligado tipoSujetoObligado = db.TiposSujetoObligado.Find(id);
-            if (tipoSujetoObligado == null)
-            {
-                return HttpNotFound();
-            }
-            return View(tipoSujetoObligado);
-        }
-
-        // POST: TiposSujetoObligado/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            TipoSujetoObligado tipoSujetoObligado = db.TiposSujetoObligado.Find(id);
-            db.TiposSujetoObligado.Remove(tipoSujetoObligado);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+        return View(tipoSujetoObligado);
         }
 
         protected override void Dispose(bool disposing)

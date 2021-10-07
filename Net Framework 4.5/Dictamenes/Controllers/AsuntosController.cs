@@ -44,8 +44,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Create()
         {
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre");
-            return View();
+                         return View();
         }
 
         // POST: Asuntos/Create
@@ -112,7 +111,6 @@ namespace Dictamenes.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", asunto.IdUsuarioModificacion);
             return View(asunto);
         }
 
@@ -127,53 +125,22 @@ namespace Dictamenes.Controllers
             if (ModelState.IsValid)
             {
                 Asunto asuntoViejo = db.Asuntos.AsNoTracking().First(d => d.Id == asunto.Id);
-
-                AsuntoLog asuntoLog = new AsuntoLog 
-                { 
-                    Descripcion = asunto.Descripcion,
-                    EstaHabilitado = asunto.EstaHabilitado,
+               AsuntoLog asuntoLog = new AsuntoLog
+                {
+                    IdOriginal = asuntoViejo.Id,
+                    Descripcion = asuntoViejo.Descripcion,
+                    EstaHabilitado = asuntoViejo.EstaHabilitado,
                     FechaModificacion = DateTime.Now,
-                    IdUsuarioModificacion = 3,
+                    IdUsuarioModificacion = 3
+                };
 
-                };               
-            db.Entry(asunto).State = EntityState.Modified;
+                db.Entry(asunto).State = EntityState.Modified;
 
-            asuntoViejo.Id = 0;
-
-            db.Asuntos.Add(asuntoViejo);
-            db.SaveChanges();
+                db.AsuntosLog.Add(asuntoLog);
+                db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.IdUsuarioModificacion = new SelectList(db.Usuarios, "Id", "Nombre", asunto.IdUsuarioModificacion);
-            return View(asunto);
-        }
-
-        // GET: Asuntos/Delete/5
-        [Authorize]
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Asunto asunto = db.Asuntos.Find(id);
-            if (asunto == null)
-            {
-                return HttpNotFound();
-            }
-            return View(asunto);
-        }
-
-        // POST: Asuntos/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        [Authorize]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Asunto asunto = db.Asuntos.Find(id);
-            db.Asuntos.Remove(asunto);
-            db.SaveChanges();
-            return RedirectToAction("Index");
+        return View(asunto);
         }
 
         protected override void Dispose(bool disposing)

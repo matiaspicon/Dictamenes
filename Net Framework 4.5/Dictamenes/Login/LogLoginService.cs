@@ -405,9 +405,9 @@ namespace WCFLoginUniversal
             return encriptado.Aggregate("", (current, b) => current + b.ToString() + "j");
         }
 
-        public Entidades ObtengoEntidadByID(string idEntidad)
+        public Entidades ObtengoEntidadByID(string IdEntidad)
         {
-            return NEntidades.ObtenerEntidadesByID(idEntidad);
+            return NEntidades.ObtenerEntidadesByID(IdEntidad);
         }
 
         public List<Entidades> ObtenerEntidadesDeUsuario(double cuil)

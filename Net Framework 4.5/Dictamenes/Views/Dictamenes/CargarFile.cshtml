@@ -1,7 +1,7 @@
 ﻿@model Dictamenes.Models.Dictamen
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Cargar Archivo de Dictamen";
 }
 
 <h1>Cargar archivo</h1>
@@ -28,7 +28,7 @@
 
             <div class="form-group">
                 <div class="col row justify-content-start">
-                    <a class="col-auto btn btn-outline-secondary m-1" href="@Url.Action("Index")">Volver atras</a>
+                    <a class="col-auto btn btn-secondary m-1" href="@Url.Action("Index")">Volver atras</a>
                     <input type="submit" value="Continuar con Archivo" class="col-auto btn btn-primary m-1" />
                 </div>
             </div>
@@ -36,9 +36,6 @@
 
     </div>    
 </div>
-
-
-
 
 @section Scripts {
     @{Html.RenderPartial("_ValidationScriptsPartial");}

@@ -18,7 +18,7 @@ namespace Dictamenes.Controllers
         // GET: SujetosObligados
         public ActionResult Index()
         {
-            var sujetoObligado = db.SujetosObligados.Where(d => d.EstaActivo && d.RazonSocial != null).Include(s => s.TipoSujetoObligado).Include(s => s.UsuarioModificacion);
+            var sujetoObligado = db.SujetosObligados.Where(d =>  d.RazonSocial != null).Include(s => s.TipoSujetoObligado);
             return View(sujetoObligado.ToList());
         }
 
@@ -40,7 +40,7 @@ namespace Dictamenes.Controllers
         // GET: SujetosObligados/Create
         public ActionResult Create()
         {
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaActivo && d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion");
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d =>  d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion");
             return View();
         }
 
@@ -51,11 +51,6 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
         {
-            sujetoObligado.EstaActivo = true;
-            sujetoObligado.EstaHabilitado = true;
-            sujetoObligado.FechaModificacion = DateTime.Now;
-            sujetoObligado.IdUsuarioModificacion = 0;
-            sujetoObligado.Guid = Guid.NewGuid().ToString();
             if (ModelState.IsValid)
             {
                 db.SujetosObligados.Add(sujetoObligado);
@@ -63,7 +58,7 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaActivo && d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d =>  d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
@@ -79,7 +74,7 @@ namespace Dictamenes.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaActivo && d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d =>  d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
@@ -88,53 +83,33 @@ namespace Dictamenes.Controllers
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado, EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion, Guid")] SujetoObligado sujetoObligado)
+        public ActionResult Edit([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado, EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion, IdOriginal")] SujetoObligado sujetoObligado)
         {
             if (ModelState.IsValid)
             {
                 SujetoObligado sujetoObligadoViejo = db.SujetosObligados.AsNoTracking().First(d => d.Id == sujetoObligado.Id);
+                SujetoObligadoLog sujetoObligadoLog = new SujetoObligadoLog 
+                {                    
+                    CuilCuit = sujetoObligadoViejo.CuilCuit,
+                    Nombre = sujetoObligadoViejo.Nombre,
+                    Apellido = sujetoObligadoViejo.Apellido,
+                    RazonSocial = sujetoObligadoViejo.RazonSocial,
+                    IdOriginal = sujetoObligadoViejo.Id,
+                    EstaHabilitado = sujetoObligadoViejo.EstaHabilitado,
+                    IdTipoSujetoObligado = sujetoObligadoViejo.IdTipoSujetoObligado,
+                    FechaModificacion = DateTime.Now,
+                    IdUsuarioModificacion = 3
+                };
 
-                sujetoObligado.EstaActivo = true;
-                sujetoObligado.IdUsuarioModificacion = 3;
-                //dictamen.IdUsuarioModificacion = _context.Usuario;
-                sujetoObligado.FechaModificacion = DateTime.Now;
                 db.Entry(sujetoObligado).State = EntityState.Modified;
+                db.SaveChanges();
 
-                sujetoObligadoViejo.EstaActivo = false;
-                sujetoObligadoViejo.Id = 0;
-
-                db.SujetosObligados.Add(sujetoObligadoViejo);
+                db.SujetosObligadosLog.Add(sujetoObligadoLog);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaActivo && d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d =>  d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
-        }
-
-        // GET: SujetosObligados/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            SujetoObligado sujetoObligado = db.SujetosObligados.Find(id);
-            if (sujetoObligado == null)
-            {
-                return HttpNotFound();
-            }
-            return View(sujetoObligado);
-        }
-
-        // POST: SujetosObligados/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            SujetoObligado sujetoObligado = db.SujetosObligados.Find(id);
-            db.SujetosObligados.Remove(sujetoObligado);
-            db.SaveChanges();
-            return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)

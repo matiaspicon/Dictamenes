@@ -36,9 +36,9 @@ namespace Dictamenes.Models
         [DisplayName("Tipo de Sujeto Obligado")]
         public TipoSujetoObligado TipoSujetoObligado { get; set; }
 
-        // valores necesarios para el borrado logico
-        public int Guid { get; set; }
+        public bool EstaHabilitado { get; set; }
 
+        public int IdOriginal { set; get; }
         public DateTime FechaModificacion { get; set; }
 
         [ForeignKey("UsuarioModificacion")]

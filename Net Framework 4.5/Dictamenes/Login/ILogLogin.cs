@@ -78,7 +78,7 @@ namespace WCFLoginUniversal
         string ObtengoCodigoPF(int idusua, int idapp, int idgrupo);
 
         [OperationContract]
-        Entidades ObtengoEntidadByID(string idEntidad);
+        Entidades ObtengoEntidadByID(string IdEntidad);
 
         [OperationContract]
         List<BEUU.Entidades> ObtenerEntidadesDeUsuario(double cuil);
