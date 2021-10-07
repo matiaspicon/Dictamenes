@@ -54,6 +54,8 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
+            asunto.FechaModificacion = DateTime.Now;
+            asunto.IdUsuarioModificacion = 1;
             if (ModelState.IsValid)
             {
                 db.Asuntos.Add(asunto);
@@ -124,15 +126,18 @@ namespace Dictamenes.Controllers
         {
             if (ModelState.IsValid)
             {
-                Asunto asuntoViejo = db.Asuntos.AsNoTracking().First(d => d.Id == asunto.Id);
+               Asunto asuntoViejo = db.Asuntos.AsNoTracking().First(d => d.Id == asunto.Id);
                AsuntoLog asuntoLog = new AsuntoLog
-                {
+               {
                     IdOriginal = asuntoViejo.Id,
                     Descripcion = asuntoViejo.Descripcion,
                     EstaHabilitado = asuntoViejo.EstaHabilitado,
-                    FechaModificacion = DateTime.Now,
-                    IdUsuarioModificacion = 3
-                };
+                    FechaModificacion = asuntoViejo.FechaModificacion,
+                    IdUsuarioModificacion = asuntoViejo.IdUsuarioModificacion
+               };
+
+                asunto.IdUsuarioModificacion = 3;
+                asunto.FechaModificacion = DateTime.Now;
 
                 db.Entry(asunto).State = EntityState.Modified;
 
@@ -140,7 +145,7 @@ namespace Dictamenes.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-        return View(asunto);
+            return View(asunto);
         }
 
         protected override void Dispose(bool disposing)

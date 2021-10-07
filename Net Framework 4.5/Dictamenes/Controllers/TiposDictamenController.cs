@@ -18,7 +18,7 @@ namespace Dictamenes.Controllers
         // GET: TiposDictamen
         public ActionResult Index()
         {
-            var tipoDictamen = db.TiposDictamen.Where(d =>  d.EstaHabilitado);
+            var tipoDictamen = db.TiposDictamen;
             return View(tipoDictamen.ToList());
         }
 
@@ -39,8 +39,8 @@ namespace Dictamenes.Controllers
 
         // GET: TiposDictamen/Create
         public ActionResult Create()
-        {
-                         return View();
+        {   
+            return View();
         }
 
         // POST: TiposDictamen/Create
@@ -50,6 +50,8 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoDictamen tipoDictamen)
         {
+            tipoDictamen.IdUsuarioModificacion = 1;
+            tipoDictamen.FechaModificacion = DateTime.Now;
             if (ModelState.IsValid)
             {
                 db.TiposDictamen.Add(tipoDictamen);
@@ -57,7 +59,7 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("Index");
             }
 
-                         return View(tipoDictamen);
+            return View(tipoDictamen);
         }
 
         // GET: TiposDictamen/Edit/5
@@ -90,10 +92,12 @@ namespace Dictamenes.Controllers
                     IdOriginal = tipoSujetoDictamenViejo.Id,
                     Descripcion = tipoSujetoDictamenViejo.Descripcion,
                     EstaHabilitado = tipoSujetoDictamenViejo.EstaHabilitado,
-                    FechaModificacion = DateTime.Now,
-                    IdUsuarioModificacion = 3
+                    FechaModificacion = tipoSujetoDictamenViejo.FechaModificacion,
+                    IdUsuarioModificacion = tipoSujetoDictamenViejo.IdUsuarioModificacion
                 };
 
+                tipoDictamen.IdUsuarioModificacion = 3;
+                tipoDictamen.FechaModificacion = DateTime.Now;
                 db.Entry(tipoDictamen).State = EntityState.Modified;
 
                 db.TiposDictamenLog.Add(tipoDictamenLog);

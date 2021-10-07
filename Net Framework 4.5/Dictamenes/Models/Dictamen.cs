@@ -54,7 +54,12 @@ namespace Dictamenes.Models
         [DisplayName("Tipo de Dictamen")]
         public TipoDictamen TipoDictamen { get; set; }
 
+        public DateTime FechaModificacion { get; set; }
 
+        [ForeignKey("UsuarioModificacion")]
+        public int? IdUsuarioModificacion { get; set; }
+
+        public Usuario UsuarioModificacion { get; set; }
     }
 
 }

@@ -18,7 +18,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoObligado
         public ActionResult Index()
         {
-            var tipoSujetoObligado = db.TiposSujetoObligado.Where(d =>  d.EstaHabilitado);
+            var tipoSujetoObligado = db.TiposSujetoObligado;
             return View(tipoSujetoObligado.ToList());
         }
 
@@ -50,6 +50,8 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoObligado tipoSujetoObligado)
         {
+            tipoSujetoObligado.FechaModificacion = DateTime.Now;
+            tipoSujetoObligado.IdUsuarioModificacion = 1;
             if (ModelState.IsValid)
             {
                 db.TiposSujetoObligado.Add(tipoSujetoObligado);
@@ -57,7 +59,7 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("Index");
             }
 
-                         return View(tipoSujetoObligado);
+            return View(tipoSujetoObligado);
         }
 
         // GET: TiposSujetoObligado/Edit/5
@@ -91,9 +93,12 @@ namespace Dictamenes.Controllers
                     IdOriginal = tipoSujetoObligadoViejo.Id,
                     Descripcion = tipoSujetoObligadoViejo.Descripcion,
                     EstaHabilitado = tipoSujetoObligadoViejo.EstaHabilitado,
-                    FechaModificacion = DateTime.Now,
-                    IdUsuarioModificacion = 3
+                    FechaModificacion = tipoSujetoObligadoViejo.FechaModificacion,
+                    IdUsuarioModificacion = tipoSujetoObligadoViejo.IdUsuarioModificacion
                 };
+
+                tipoSujetoObligado.IdUsuarioModificacion = 3;
+                tipoSujetoObligado.FechaModificacion = DateTime.Now;
 
                 db.Entry(tipoSujetoObligado).State = EntityState.Modified;
 

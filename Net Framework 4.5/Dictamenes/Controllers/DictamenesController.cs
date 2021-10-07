@@ -131,6 +131,8 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen, SujetoObligado sujetoObligado)
         {
+            dictamen.FechaModificacion = DateTime.Now;
+            dictamen.IdUsuarioModificacion = 1;
             dictamen.NroGDE = dictamen.NroGDE.ToUpper();
             dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
             dictamen.Detalle = dictamen.Detalle != null ? dictamen.Detalle.ToUpper() : ".";
@@ -138,7 +140,8 @@ namespace Dictamenes.Controllers
             if (sujetoObligado.CuilCuit > 0)
             {                
                 sujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
-                
+                sujetoObligado.IdUsuarioModificacion = 3;
+                sujetoObligado.FechaModificacion = DateTime.Now;
                 db.SujetosObligados.Add(sujetoObligado);
                 db.SaveChanges();
                 dictamen.IdSujetoObligado = sujetoObligado.Id;
@@ -161,81 +164,14 @@ namespace Dictamenes.Controllers
         [HttpPost]
         public ActionResult Buscar( Busqueda busqueda)
         {
-            var dictDB = db.Dictamenes.Include(d => d.SujetoObligado);
-
-            var algo = db.Sp_FiltrarDictamenes(busqueda.NroGDE, busqueda.NroExp, busqueda.FechaCargaInicio, busqueda.FechaCargaInicio, busqueda.Detalle, busqueda.Contenido, busqueda.IdAsunto, busqueda.IdTipoDictamen, busqueda.IdSujetoObligado, busqueda.CuilCuit, busqueda.Nombre, busqueda.Apellido);
-
-            //if (busqueda.NroGDE != null)
-            //{
-            //    dictDB = dictDB.Where(d => d.NroGDE.Contains(busqueda.NroGDE.ToUpper()));
-            //}
-            //if (busqueda.NroExp != null)
-            //{
-            //    dictDB = dictDB.Where(d => d.NroExpediente.Contains(busqueda.NroExp.ToUpper()));
-            //}
-            //if (busqueda.Detalle != null)
-            //{
-            //    dictDB = dictDB.Where(d => d.Detalle.Contains(busqueda.Detalle.ToUpper()));
-            //}
-            //if (busqueda.FechaCargaInicio != null)
-            //{
-            //    dictDB = dictDB.Where(d => d.FechaCarga >= busqueda.FechaCargaInicio);
-            //}
-            //if (busqueda.FechaCargaFinal != null)
-            //{
-            //    dictDB = dictDB.Where(d => d.FechaCarga <= busqueda.FechaCargaFinal);
-            //}
-
-            //if (busqueda.IdAsunto != null)
-            //{
-            //    dictDB = dictDB.Where(d => d.IdAsunto == busqueda.IdAsunto);
-            //}
-            //if (busqueda.IdTipoDictamen != null)
-            //{
-            //    dictDB = dictDB.Where(d => d.IdTipoDictamen == busqueda.IdTipoDictamen);
-            //}
-            //if (busqueda.Contenido != null)
-            //{
-            //    dictDB = dictDB.Include(d => d.ArchivoPDF).Where(d => d.ArchivoPDF.Contenido.Contains(busqueda.Contenido));
-            //}
-
-            //if (busqueda.CuilCuit > 0)
-            //{
-            //    dictDB = dictDB.Where(d => d.SujetoObligado.CuilCuit == busqueda.CuilCuit);
-            //}
-            //if (busqueda.EsDenunciante)
-            //{
-
-            //    dictDB = dictDB.Include(s => s.SujetoObligado.TipoSujetoObligado).Where(d => d.SujetoObligado.TipoSujetoObligado.Descripcion == "Denunciante");
-
-            //    if (busqueda.Nombre != null)
-            //    {
-            //        dictDB = dictDB.Where(d => d.SujetoObligado.Nombre == busqueda.Nombre);
-            //    }
-
-            //    if (busqueda.Apellido != null)
-            //    {
-            //        dictDB = dictDB.Where(d => d.SujetoObligado.Apellido == busqueda.Apellido);
-            //    }
-            //}
-            //else
-            //{
-            //    if (busqueda.IdTipoSujetoObligado != null)
-            //    {
-            //        dictDB = dictDB.Where(d => d.SujetoObligado.IdTipoSujetoObligado == busqueda.IdTipoSujetoObligado);
-            //    }
-            //    if (busqueda.IdSujetoObligado != null)
-            //    {
-            //        dictDB = dictDB.Where(d => d.IdSujetoObligado == busqueda.IdSujetoObligado);
-            //    }
-            //}
+            var dictamenes = db.Sp_FiltrarDictamenes(busqueda.NroGDE, busqueda.NroExp, busqueda.FechaCargaInicio, busqueda.FechaCargaInicio, busqueda.Detalle, busqueda.Contenido, busqueda.IdAsunto, busqueda.IdTipoDictamen, busqueda.IdSujetoObligado, busqueda.CuilCuit, busqueda.Nombre, busqueda.Apellido);
 
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null), "Id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["TipoSujetoObligado"] = new SelectList(db.TiposSujetoObligado.Where(m => m.EstaHabilitado && m.Descripcion != "Denunciante"), "Id", "Descripcion");
             ViewData["Busqueda"] = busqueda;
-            return View("Index", algo.ToList());
+            return View("Index", dictamenes.ToList());
         }
 
 
@@ -287,11 +223,13 @@ namespace Dictamenes.Controllers
                     IdAsunto = dictamenViejo.IdAsunto,
                     IdTipoDictamen = dictamenViejo.IdTipoDictamen,
                     FechaCarga = dictamenViejo.FechaCarga,
-                    FechaModificacion = DateTime.Now,
+                    FechaModificacion = dictamenViejo.FechaModificacion,
                     Borrado = false,
-                    IdUsuarioModificacion = 3                    
+                    IdUsuarioModificacion = dictamenViejo.IdUsuarioModificacion
                 };
 
+                dictamen.FechaModificacion = DateTime.Now;
+                dictamen.IdUsuarioModificacion = 3;
                 dictamen.NroGDE = dictamen.NroGDE.ToUpper();
                 dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
                 dictamen.Detalle = dictamen.Detalle.ToUpper();
@@ -332,7 +270,7 @@ namespace Dictamenes.Controllers
 
                 {
                     SujetoObligado sujetoObligadoViejo = db.SujetosObligados.AsNoTracking().FirstOrDefault(d => d.Id == sujetoObligado.Id);
-                    if (sujetoObligadoViejo != null)
+                    if (sujetoObligadoViejo != null && sujetoObligadoViejo.RazonSocial == null)
                     {
                         SujetoObligadoLog sujetoObligadoLog = new SujetoObligadoLog
                         {
@@ -342,18 +280,27 @@ namespace Dictamenes.Controllers
                             RazonSocial = sujetoObligadoViejo.RazonSocial,
                             IdOriginal = sujetoObligadoViejo.Id,
                             EstaHabilitado = sujetoObligadoViejo.EstaHabilitado,
-                            IdTipoSujetoObligado = sujetoObligadoViejo.IdTipoSujetoObligado,
-                            FechaModificacion = DateTime.Now,
-                            IdUsuarioModificacion = 3
+                            IdTipoSujetoObligado = sujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.FirstOrDefault(d => d.Descripcion == "Denunciante").Id,
+                            FechaModificacion = sujetoObligadoViejo.FechaModificacion,
+                            IdUsuarioModificacion = sujetoObligadoViejo.IdUsuarioModificacion
                         };
+
+                        sujetoObligado.IdUsuarioModificacion = 3;
+                        sujetoObligado.FechaModificacion = DateTime.Now;
                         sujetoObligado.IdTipoSujetoObligado = sujetoObligadoViejo.IdTipoSujetoObligado;
-                        sujetoObligado.EstaHabilitado = sujetoObligadoViejo.EstaHabilitado;
+                        sujetoObligado.EstaHabilitado = sujetoObligadoViejo.EstaHabilitado;                             
+
                         db.Entry(sujetoObligado).State = EntityState.Modified;
+
                         db.SujetosObligadosLog.Add(sujetoObligadoLog);
                         db.SaveChanges();
+                        return RedirectToAction("Index");
                     }
                     else
                     {
+
+                        sujetoObligado.Id = 0;
+                        sujetoObligado.FechaModificacion = DateTime.Now;
                         sujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.FirstOrDefault(d => d.Descripcion == "Denunciante").Id;
                         db.SujetosObligados.Add(sujetoObligado);
                         db.SaveChanges();
@@ -414,7 +361,7 @@ namespace Dictamenes.Controllers
                 FechaCarga = dictamenViejo.FechaCarga,
                 FechaModificacion = DateTime.Now,
                 Borrado = true,
-                IdUsuarioModificacion = 3
+                //IdUsuarioModificacion = 3
             };
 
             db.DictamenesLog.Add(dictamenLog);

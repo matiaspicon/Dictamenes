@@ -51,6 +51,8 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
         {
+            sujetoObligado.IdUsuarioModificacion = 3;
+            sujetoObligado.FechaModificacion = DateTime.Now;
             if (ModelState.IsValid)
             {
                 db.SujetosObligados.Add(sujetoObligado);
@@ -97,12 +99,13 @@ namespace Dictamenes.Controllers
                     IdOriginal = sujetoObligadoViejo.Id,
                     EstaHabilitado = sujetoObligadoViejo.EstaHabilitado,
                     IdTipoSujetoObligado = sujetoObligadoViejo.IdTipoSujetoObligado,
-                    FechaModificacion = DateTime.Now,
-                    IdUsuarioModificacion = 3
+                    FechaModificacion = sujetoObligadoViejo.FechaModificacion,
+                    IdUsuarioModificacion = sujetoObligadoViejo.IdUsuarioModificacion
                 };
+                sujetoObligado.IdUsuarioModificacion = 3;
+                sujetoObligado.FechaModificacion = DateTime.Now;
 
                 db.Entry(sujetoObligado).State = EntityState.Modified;
-                db.SaveChanges();
 
                 db.SujetosObligadosLog.Add(sujetoObligadoLog);
                 db.SaveChanges();
