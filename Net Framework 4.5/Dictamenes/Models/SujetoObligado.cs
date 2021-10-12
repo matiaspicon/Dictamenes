@@ -36,6 +36,7 @@ namespace Dictamenes.Models
         [DisplayName("Tipo de Sujeto Obligado")]
         public TipoSujetoObligado TipoSujetoObligado { get; set; }
 
+        [DisplayName("Esta habilitado")]
         public bool EstaHabilitado { get; set; }
 
         public DateTime FechaModificacion { get; set; }

@@ -1,6 +1,7 @@
 ﻿ 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Web.Mvc;
@@ -15,6 +16,7 @@ namespace Dictamenes.Models
         [MaxLength(100, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string Descripcion { get; set; }
 
+        [DisplayName("Esta habilitado")]
         public bool EstaHabilitado { get; set; }
 
         public DateTime FechaModificacion { get; set; }

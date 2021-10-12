@@ -26,7 +26,7 @@ namespace Dictamenes.Database
         public DbSet<TipoSujetoObligadoLog> TiposSujetoObligadoLog { get; set; }
 
 
-        public virtual List<Dictamen> Sp_FiltrarDictamenes(string nroGDE, string nroExpediente, Nullable<System.DateTime> fechaInicio, Nullable<System.DateTime> fechaFinal, string detalle, string contenido, Nullable<int> idAsunto, Nullable<int> idTipoDictamen, Nullable<int> idSujetoObligado, Nullable<long> cuilCuit, string nombre, string apellido)
+        public virtual List<Dictamen> Sp_FiltrarDictamenes(string nroGDE, string nroExpediente, Nullable<System.DateTime> fechaInicio, Nullable<System.DateTime> fechaFinal, string detalle, string contenido, Nullable<int> idAsunto, Nullable<int> idTipoDictamen, Nullable<int> idSujetoObligado, Nullable<int> idTipoSujetoObligado, Nullable<long> cuilCuit, string nombre, string apellido)
         {
             var nroGDEParameter = nroGDE != null ?
                 new SqlParameter("@NroGDE", nroGDE) :
@@ -59,10 +59,14 @@ namespace Dictamenes.Database
             var idTipoDictamenParameter = idTipoDictamen.HasValue ?
                 new SqlParameter("@IdTipoDictamen", idTipoDictamen) :
                 new SqlParameter("@IdTipoDictamen", DBNull.Value);
-
+           
             var idSujetoObligadoParameter = idSujetoObligado.HasValue ?
                 new SqlParameter("@IdSujetoObligado", idSujetoObligado) :
                 new SqlParameter("@IdSujetoObligado", DBNull.Value);
+
+            var idTipoSujetoObligadoParameter = idTipoSujetoObligado.HasValue ?
+                new SqlParameter("@IdTipoSujetoObligado", idTipoSujetoObligado) :
+                new SqlParameter("@IdTipoSujetoObligado", DBNull.Value);
 
             var cuilCuitParameter = cuilCuit.HasValue ?
                 new SqlParameter("@CuilCuit", cuilCuit) :
@@ -75,10 +79,13 @@ namespace Dictamenes.Database
             var apellidoParameter = apellido != null ?
                 new SqlParameter("@Apellido", apellido) :
                 new SqlParameter("@Apellido", DBNull.Value);
-
-            return this.Database.SqlQuery<Dictamen>("sp_FiltrarDictamenes @NroGDE , @NroExpediente , @FechaInicio , @FechaFinal , @Detalle , @Contenido , @IdAsunto , @IdTipoDictamen , @IdSujetoObligado , @CuilCuit , @Nombre ",
+            
+            var algo = this.Database.SqlQuery<Dictamen>("sp_FiltrarDictamenes @NroGDE , @NroExpediente , @FechaInicio , @FechaFinal , @Detalle , @Contenido , @IdAsunto , @IdTipoDictamen , @IdSujetoObligado, @idTipoSujetoObligado , @CuilCuit , @Nombre , @Apellido",
             nroGDEParameter, nroExpedienteParameter, fechaInicioParameter, fechaFinalParameter, detalleParameter, contenidoParameter,
-            idAsuntoParameter, idTipoDictamenParameter, idSujetoObligadoParameter, cuilCuitParameter, nombreParameter, apellidoParameter).ToList();
+            idAsuntoParameter, idTipoDictamenParameter, idSujetoObligadoParameter, idTipoSujetoObligadoParameter, cuilCuitParameter, nombreParameter, apellidoParameter);
+            
+            return algo.ToList();
+
 
         }
 

@@ -81,7 +81,9 @@ namespace Dictamenes.Controllers
                 Asunto asunto = new Asunto
                 {
                     EstaHabilitado = true,
-                    Descripcion = a
+                    Descripcion = a,
+                    FechaModificacion = DateTime.Now,
+                    IdUsuarioModificacion = 1
                 };
 
                 if (ModelState.IsValid)

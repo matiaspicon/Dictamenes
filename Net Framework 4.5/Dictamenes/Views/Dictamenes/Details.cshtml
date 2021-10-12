@@ -7,43 +7,43 @@
 <h2>Details</h2>
 
 <div class="row align-content-center">
-    <label class="form-label align-self-center col-3">
+    <label class="form-label align-self-center align-self-center col-3">
         @Html.DisplayNameFor(model => model.NroGDE)
     </label>
     <p class="col-9 card p-2">
         @Html.DisplayFor(model => model.NroGDE)
     </p>
-    <label class="form-label col-3">
+    <label class="form-label align-self-center col-3">
         @Html.DisplayNameFor(model => model.NroExpediente)
     </label>
     <p class="col-9 card p-2">
         @Html.DisplayFor(model => model.NroExpediente)
     </p>
-    <label class="form-label col-3">
+    <label class="form-label align-self-center col-3">
         @Html.DisplayNameFor(model => model.FechaCarga)
     </label>
     <p class="col-9 card p-2">
         @Html.DisplayFor(model => model.FechaCarga)
     </p>
-    <label class="form-label col-3">
+    <label class="form-label align-self-center col-3">
         @Html.DisplayNameFor(model => model.Detalle)
     </label>
     <p class="col-9 card p-2">
         @Html.DisplayFor(model => model.Detalle)
     </p>
-    <label class="form-label col-3">
+    <label class="form-label align-self-center col-3">
         @Html.DisplayNameFor(model => model.EsPublico)
     </label>
     <p class="col-9 card p-2">
         @Html.DisplayFor(model => model.EsPublico)
     </p>
-    <label class="col-3 col-form-label">
+    <label class="align-self-center col-3 col-form-label">
         @Html.DisplayNameFor(model => model.Asunto)
     </label>
     <p class="col-9 card p-2">
         @Html.DisplayFor(model => model.Asunto.Descripcion)
     </p>
-    <label class="col-3 col-form-label">
+    <label class="align-self-center col-3 col-form-label">
         @Html.DisplayNameFor(model => model.TipoDictamen)
     </label>
     <p class="col-9 card p-2">
@@ -51,7 +51,7 @@
     </p>
     <h5 class="col-12">Sujeto Obligado</h5>
     <br class="m-1" />
-    <label class="form-label col-3">
+    <label class="form-label align-self-center col-3">
         @Html.DisplayNameFor(model => model.SujetoObligado.CuilCuit)
     </label>
     <p class="col-9 card p-2">
@@ -59,13 +59,13 @@
     </p>
     @if (Model.SujetoObligado.IdTipoSujetoObligado == ViewBag.IdDenunciante)
     {
-        <label class="form-label col-3">
+        <label class="form-label align-self-center col-3">
             @Html.DisplayNameFor(model => model.SujetoObligado.Nombre)
         </label>
         <p class="col-9 card p-2">
             @Html.DisplayFor(model => model.SujetoObligado.Nombre)
         </p>
-        <label class="form-label col-3">
+        <label class="form-label align-self-center col-3">
             @Html.DisplayNameFor(model => model.SujetoObligado.Apellido)
         </label>
         <p class="col-9 card p-2">
@@ -74,7 +74,7 @@
     }
     else
     {
-        <label class="form-label col-3">
+        <label class="form-label align-self-center col-3">
             @Html.DisplayNameFor(model => model.SujetoObligado.RazonSocial)
         </label>
         <p class="col-9 card p-2">
@@ -113,16 +113,16 @@
 @if (Session["rol"] != null && (string)Session["rol"] == "CARGAR")
 {
     <div class="col m-2 row justify-content-between">
-        <a class="col-3 btn btn-secondary" onclick="history.go(-1);">Volver atras</a>
-        <a class="col-3 btn btn-danger" href="@Url.Action("Delete", new { id = Model.Id })">Borrar</a>
-        <a class="col-3 btn btn-warning" href="@Url.Action("Edit", new { id = Model.Id })">Editar</a>
+        <a class="align-self-center col-3 btn btn-secondary" onclick="history.go(-1);">Volver atras</a>
+        <a class="align-self-center col-3 btn btn-danger" href="@Url.Action("Delete", new { id = Model.Id })">Borrar</a>
+        <a class="align-self-center col-3 btn btn-warning" href="@Url.Action("Edit", new { id = Model.Id })">Editar</a>
     </div>
 
 }
 else
 {
     <div class="col m-2 row justify-content-start">
-        <a class="col-3 btn btn-secondary" onclick="history.go(-1);">Volver atras</a>
+        <a class="align-self-center col-3 btn btn-secondary" onclick="history.go(-1);">Volver atras</a>
     </div>
 }
 

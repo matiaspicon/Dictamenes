@@ -54,7 +54,7 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">Detalle</label>
-                    @Html.EditorFor(model => model.NroExp, new { htmlAttributes = new { @class = "form-control col", placeholder = "Ingrese el detalle del Dictamen" } })
+                    @Html.EditorFor(model => model.Detalle, new { htmlAttributes = new { @class = "form-control col", placeholder = "Ingrese el detalle del Dictamen" } })
                 </div>
             </div>
 
@@ -92,7 +92,7 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label">Tipo de Sujeto Obligado</label>
-                        @Html.DropDownList("TipoSujetoObligado", (SelectList)ViewBag.TipoSujetoObligado, "Elija uno", new { id = "InputEmpresasTipo", @class = "form-control col" })
+                        @Html.DropDownList("IdTipoSujetoObligado", (SelectList)ViewBag.TipoSujetoObligado, "Elija uno", new { id = "InputEmpresasTipo", @class = "form-control col" })
                     </div>
 
                 </div>
