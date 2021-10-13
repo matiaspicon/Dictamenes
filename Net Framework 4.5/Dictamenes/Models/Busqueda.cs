@@ -32,7 +32,7 @@ namespace Dictamenes.Models
 
         public int? IdSujetoObligado { get; set; }
 
-        public int? CuilCuit { get; set; }
+        public long? CuilCuit { get; set; }
 
         public string Nombre { get; set; }
 

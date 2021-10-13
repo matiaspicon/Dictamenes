@@ -129,22 +129,26 @@ namespace Dictamenes.Controllers
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Dictamen dictamen, SujetoObligado sujetoObligado)
+        public ActionResult Create([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion, SujetoObligado")] Dictamen dictamen)
         {
             dictamen.FechaModificacion = DateTime.Now;
             dictamen.IdUsuarioModificacion = 1;
             dictamen.NroGDE = dictamen.NroGDE.ToUpper();
             dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
             dictamen.Detalle = dictamen.Detalle != null ? dictamen.Detalle.ToUpper() : ".";
-
-            if (sujetoObligado.CuilCuit > 0)
-            {                
-                sujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
-                sujetoObligado.IdUsuarioModificacion = 3;
-                sujetoObligado.FechaModificacion = DateTime.Now;
-                db.SujetosObligados.Add(sujetoObligado);
+            if (dictamen.SujetoObligado.CuilCuit > 0)
+            {
+                dictamen.SujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
+                dictamen.SujetoObligado.IdUsuarioModificacion = 3;
+                dictamen.SujetoObligado.FechaModificacion = DateTime.Now;
+                db.SujetosObligados.Add(dictamen.SujetoObligado);
                 db.SaveChanges();
-                dictamen.IdSujetoObligado = sujetoObligado.Id;
+                dictamen.IdSujetoObligado = dictamen.SujetoObligado.Id;
+            }
+            else
+            {
+                ModelState.Remove("SujetoObligado.CuilCuit");
+                dictamen.SujetoObligado = db.SujetosObligados.Find(dictamen.IdSujetoObligado);
             }
 
             if (ModelState.IsValid)
@@ -154,9 +158,8 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("Index");
             }
 
-
             ViewBag.IdAsunto = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdAsunto);
-            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null), "Id", "Razon Social", dictamen.IdSujetoObligado);
+            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null), "Id", "RazonSocial", dictamen.IdSujetoObligado);
             ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdTipoDictamen);
             return View(dictamen);
         }
@@ -166,7 +169,7 @@ namespace Dictamenes.Controllers
         {
             var idTipoSujetoObligado = busqueda.EsDenunciante ? db.TiposSujetoObligado.First(d => d.Descripcion == "Denunciante").Id : busqueda.IdTipoSujetoObligado;
 
-            var dictamenes = db.Sp_FiltrarDictamenes(busqueda.NroGDE, busqueda.NroExp, busqueda.FechaCargaInicio, busqueda.FechaCargaInicio, busqueda.Detalle, busqueda.Contenido, busqueda.IdAsunto, busqueda.IdTipoDictamen, busqueda.IdSujetoObligado, idTipoSujetoObligado , busqueda.CuilCuit, busqueda.Nombre, busqueda.Apellido);
+            var dictamenes = db.Sp_FiltrarDictamenes(busqueda.NroGDE, busqueda.NroExp, busqueda.FechaCargaInicio, busqueda.FechaCargaFinal, busqueda.Detalle, busqueda.Contenido, busqueda.IdAsunto, busqueda.IdTipoDictamen, busqueda.IdSujetoObligado, idTipoSujetoObligado , busqueda.CuilCuit, busqueda.Nombre, busqueda.Apellido);
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null), "Id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
@@ -362,7 +365,7 @@ namespace Dictamenes.Controllers
                 FechaCarga = dictamenViejo.FechaCarga,
                 FechaModificacion = DateTime.Now,
                 Borrado = true,
-                //IdUsuarioModificacion = 3
+                IdUsuarioModificacion = 3
             };
 
             db.DictamenesLog.Add(dictamenLog);

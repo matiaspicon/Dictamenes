@@ -80,17 +80,16 @@ namespace Dictamenes.Database
                 new SqlParameter("@Apellido", apellido) :
                 new SqlParameter("@Apellido", DBNull.Value);
             
-            var algo = this.Database.SqlQuery<Dictamen>("sp_FiltrarDictamenes @NroGDE , @NroExpediente , @FechaInicio , @FechaFinal , @Detalle , @Contenido , @IdAsunto , @IdTipoDictamen , @IdSujetoObligado, @idTipoSujetoObligado , @CuilCuit , @Nombre , @Apellido",
+            var algo = this.Dictamenes.SqlQuery("sp_FiltrarDictamenes @NroGDE , @NroExpediente , @FechaInicio , @FechaFinal , @Detalle , @Contenido , @IdAsunto , @IdTipoDictamen , @IdSujetoObligado, @idTipoSujetoObligado , @CuilCuit , @Nombre , @Apellido",
             nroGDEParameter, nroExpedienteParameter, fechaInicioParameter, fechaFinalParameter, detalleParameter, contenidoParameter,
             idAsuntoParameter, idTipoDictamenParameter, idSujetoObligadoParameter, idTipoSujetoObligadoParameter, cuilCuitParameter, nombreParameter, apellidoParameter);
             
-            return algo.ToList();
+            var devolver = algo. AsQueryable<Dictamen>().Include(d => d.Asunto);
+            return devolver.ToList();
 
 
         }
 
-    }
-
-   
+    }  
 
 }
