@@ -329,36 +329,7 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="ViewsViejas\Web.config" />
-    <Content Include="ViewsViejas\_ViewStart.cshtml" />
-    <Content Include="ViewsViejas\Home\About.cshtml" />
-    <Content Include="ViewsViejas\Home\Contact.cshtml" />
-    <Content Include="ViewsViejas\Home\Index.cshtml" />
     <Content Include="Views\Campos\Menu.cshtml" />
-    <Content Include="ViewsViejas\Asuntos\Create.cshtml" />
-    <Content Include="ViewsViejas\Asuntos\Edit.cshtml" />
-    <Content Include="ViewsViejas\Asuntos\Index.cshtml" />
-    <Content Include="ViewsViejas\Usuarios\Create.cshtml" />
-    <Content Include="ViewsViejas\Usuarios\Delete.cshtml" />
-    <Content Include="ViewsViejas\Usuarios\Details.cshtml" />
-    <Content Include="ViewsViejas\Usuarios\Edit.cshtml" />
-    <Content Include="ViewsViejas\Usuarios\Index.cshtml" />
-    <Content Include="ViewsViejas\TiposDictamen\Create.cshtml" />
-    <Content Include="ViewsViejas\TiposDictamen\Edit.cshtml" />
-    <Content Include="ViewsViejas\TiposDictamen\Index.cshtml" />
-    <Content Include="ViewsViejas\TiposSujetoObligado\Create.cshtml" />
-    <Content Include="ViewsViejas\TiposSujetoObligado\Edit.cshtml" />
-    <Content Include="ViewsViejas\TiposSujetoObligado\Index.cshtml" />
-    <Content Include="ViewsViejas\SujetosObligados\Create.cshtml" />
-    <Content Include="ViewsViejas\SujetosObligados\Details.cshtml" />
-    <Content Include="ViewsViejas\SujetosObligados\Edit.cshtml" />
-    <Content Include="ViewsViejas\SujetosObligados\Index.cshtml" />
-    <Content Include="ViewsViejas\Dictamenes\CargarFile.cshtml" />
-    <Content Include="ViewsViejas\Dictamenes\Create.cshtml" />
-    <Content Include="ViewsViejas\Dictamenes\Delete.cshtml" />
-    <Content Include="ViewsViejas\Dictamenes\Details.cshtml" />
-    <Content Include="ViewsViejas\Dictamenes\Edit.cshtml" />
-    <Content Include="ViewsViejas\Dictamenes\Index.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\SujetosObligados\Create.cshtml" />
     <Content Include="Views\SujetosObligados\Details.cshtml" />
@@ -394,7 +365,6 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Dictamenes\CargarFile.cshtml" />
-    <Content Include="ViewsViejas\_ViewImports.cshtml" />
     <Content Include="Views\Login\login.cshtml" />
     <Content Include="Views\Login\ErrorNoPermisos.cshtml" />
     <Content Include="Views\_ViewImports.cshtml" />

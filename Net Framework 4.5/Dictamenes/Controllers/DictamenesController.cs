@@ -131,6 +131,11 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion, SujetoObligado")] Dictamen dictamen)
         {
+            if (db.Dictamenes.FirstOrDefault(d => d.NroGDE == dictamen.NroGDE) != null)
+            {
+                ModelState.AddModelError("NroGDE", "El Numero de GDE ya existe y no puede repetirse");
+            }
+
             dictamen.FechaModificacion = DateTime.Now;
             dictamen.IdUsuarioModificacion = 1;
             dictamen.NroGDE = dictamen.NroGDE.ToUpper();
@@ -203,18 +208,26 @@ namespace Dictamenes.Controllers
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion,IdOriginal")] Dictamen dictamen, SujetoObligado sujetoObligado , HttpPostedFileBase file)
+        public ActionResult Edit([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion,IdOriginal, SujetoObligado")] Dictamen dictamen, SujetoObligado sujetoObligado , HttpPostedFileBase file)
         {
+            Dictamen dictamenViejo = db.Dictamenes.Include(d => d.SujetoObligado).AsNoTracking().First(d => d.Id == dictamen.Id);
+            if (dictamenViejo.NroGDE != dictamen.NroGDE && db.Dictamenes.FirstOrDefault(d => d.NroGDE == dictamen.NroGDE) != null)
+            {
+                ModelState.AddModelError("NroGDE", "El Numero de GDE ya existe y no puede repetirse");
+            }
+
             if (dictamen.IdSujetoObligado.HasValue)
             {
                 sujetoObligado.Id = dictamen.IdSujetoObligado.Value;
                 dictamen.SujetoObligado = sujetoObligado;
-
             }
+            if(sujetoObligado.CuilCuit == 0)
+            {
+                ModelState.Remove("CuilCuit");
+            }
+
             if (ModelState.IsValid)
             {
-                Dictamen dictamenViejo = db.Dictamenes.Include(d => d.SujetoObligado).AsNoTracking().First(d => d.Id == dictamen.Id);
-
                 DictamenLog dictamenLog = new DictamenLog
                 {
                     IdOriginal = dictamenViejo.Id,
@@ -382,13 +395,13 @@ namespace Dictamenes.Controllers
         class DictamenData
         {
             [RegularExpression("[iI][fF]-[0-9]{4}-[0-9]+-[aA][pP][nN]-[A-Za-z]+#[A-Za-z]+",
-            ErrorMessage = "El Numero de GDE ingresado no es valido.")]
+            ErrorMessage = "El Número de GDE ingresado no es valido.")]
             [MaxLength(30, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
             public string NroGDE { get; set; }
 
             [Required]
             [RegularExpression("[eE][xX]-[0-9]{4}-[0-9]+-[aA][pP][nN]-[A-Za-z]+#[A-Za-z]+",
-             ErrorMessage = "El Numero de Expediente ingresado no es valido.")]
+             ErrorMessage = "El Número de Expediente ingresado no es valido.")]
             [MaxLength(30, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
             public string NroExpediente { get; set; }
 

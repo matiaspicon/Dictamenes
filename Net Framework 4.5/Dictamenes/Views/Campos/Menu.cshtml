@@ -1,40 +1,42 @@
 ﻿
-
+@{
+    ViewBag.Title = "Tablas Maestras";
+}
 
 <div class="container">
     <div class="row justify-content-center">
 
-        <div class="col-md-6 form-group align-items-center">
+        <div class="col-md-8 form-group align-items-center">
             <div class="card bg-light">
                 <h5 class="card-header">Asuntos</h5>
                 <br />
                 <div class="row justify-content-center  ">
-                    <a class="btn btn-primary m-1" href="@Url.Action("Index","Asuntos")">Ver asuntos</a>
-                    <a class="btn btn-outline-primary m-1" href="@Url.Action("Create","Asuntos")" >Nuevo asunto</a>
+                    <a class="btn btn-info m-2" href="@Url.Action("Index","Asuntos")"><i class="bi bi-card-list"></i>   Ver todos los Asuntos</a>
+                    <a class="btn btn-primary m-2" href="@Url.Action("Create","Asuntos")"><i class="bi bi-plus-lg"></i>   Nuevo Asunto</a>
                 </div>
                 <br />
             </div>
         </div>
 
-        <div class="col-md-6 form-group align-items-center">
+        <div class="col-md-8 form-group align-items-center">
             <div class="card bg-light">
                 <h5 class="card-header">Tipos de Sujetos Obligados</h5>
                 <br />
                 <div class="row justify-content-center  ">
-                    <a class="btn btn-primary m-1" href="@Url.Action("Index","TiposSujetoObligado")">Ver tipos de Sujeto Obligado</a>
-                    <a class="btn btn-outline-primary m-1" href="@Url.Action("Create","TiposSujetoObligado")">Nuevo tipo de Sujeto Obligado</a>
+                    <a class="btn btn-info m-2" href="@Url.Action("Index","TiposSujetoObligado")"><i class="bi bi-card-list"></i>   Ver todos los tipos de Sujeto Obligado</a>
+                    <a class="btn btn-primary m-2" href="@Url.Action("Create","TiposSujetoObligado")"><i class="bi bi-plus-lg"></i>   Nuevo tipo de Sujeto Obligado</a>
                 </div>
                 <br />
             </div>
         </div>
 
-        <div class="col-md-6 form-group align-items-center">
+        <div class="col-md-8 form-group align-items-center">
             <div class="card bg-light">
                 <h5 class="card-header">Tipos de Dictamenes</h5>
                 <br />
                 <div class="row justify-content-center  ">
-                    <a class="btn btn-primary m-1" href="@Url.Action("Index","TiposDictamen")">Ver tipos de Dictamenes</a>
-                    <a class="btn btn-outline-primary m-1" href="@Url.Action("Create","TiposDictamen")">Nuevo tipo de Dictamen</a>
+                    <a class="btn btn-info m-2" href="@Url.Action("Index","TiposDictamen")"><i class="bi bi-card-list"></i>   Ver todos los tipos de Dictámenes</a>
+                    <a class="btn btn-primary m-2" href="@Url.Action("Create","TiposDictamen")"><i class="bi bi-plus-lg"></i>   Nuevo tipo de Dictámen</a>
                 </div>
                 <br />
             </div>

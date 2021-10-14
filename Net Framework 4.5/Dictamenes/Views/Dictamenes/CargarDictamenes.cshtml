@@ -2,14 +2,14 @@
 @{
     ViewBag.Title = "Cargar Dictamenes";
 }
-<h2>Cargar Dictamenes</h2>
+<h2>Cargar Dictámenes</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
     <div class="form-group row">
-        @Html.Label("Ingrese el JSON con todos los Dictamenes que desea agregar", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+        @Html.Label("Ingrese el JSON con todos los Dictámenes que desea agregar", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
         <div class="col-md-9">
             @Html.Editor("JSONDictamenes", new { htmlAttributes = new { @class = "form-control" } })
         </div>
@@ -17,8 +17,9 @@
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-9">
-            <a class="col-3 btn btn-secondary" onclick="history.go(-1);">Volver atras</a>
-            <input type="submit" value="Guardar" class="btn btn-primary m-1" />
+            <a class="col-3 btn btn-secondary" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atras</a>
+            <button type="submit" class="btn btn-success m-1"><i class="bi bi-check2-square"></i>  Guardar </button>
+
         </div>
     </div>
 }

@@ -81,48 +81,58 @@
             @Html.DisplayFor(model => model.SujetoObligado.RazonSocial)
         </p>
     }
-    <h5 class="form-label col-12">
-        Archivo
-    </h5>
 
-</div>
-@{ if (Model.ArchivoPDF == null)
-    {
-        <div class="row justify-content-center">
-            <h4 class="p-2 col-auto">Este dictamen no tiene un archivo</h4>
-        </div>
-    }
-    else
-    {
-        if (!System.IO.File.Exists(Server.MapPath(Model.ArchivoPDF.Path)))
+    @{ if (Model.ArchivoPDF == null)
         {
+            <h5 class="form-label col-12">
+                Archivo
+            </h5>
             <div class="row justify-content-center">
-                <h4 class="alert-danger rounded p-2 col-auto">Hubo un error con la carga del archivo</h4>
+                <h4 class="p-2 col-auto">Este dictamen no tiene un archivo</h4>
             </div>
         }
         else
         {
-            <div class="embed-responsive embed-responsive-16by9">
-                <embed src="@Url.Action("DownloadFile", "File", new { id = Model.IdArchivoPDF })" class="embed-responsive-item" />
-            </div>
+            if (!System.IO.File.Exists(Server.MapPath(Model.ArchivoPDF.Path)))
+            {
+                <h5 class="form-label col-12">
+                    Archivo
+                </h5>
+                <div class="row justify-content-center">
+                    <h4 class="alert-danger rounded p-2 col-auto">Hubo un error con la carga del archivo</h4>
+                </div>
+            }
+            else
+            {
+                <h5 class="form-label col-3">
+                    Archivo
+                </h5>
+                <a class="btn btn-dark col" data-toggle="collapse" href="#collapseOne" role="button" aria-expanded="false">Ver el Achivo del Dictámen</a>
+
+            }
         }
     }
-}
-<br />
+
+</div>
+<div id="collapseOne" class="collapse m-3">
+    <div class="embed-responsive embed-responsive-16by9">
+        <embed src="@Url.Action("DownloadFile", "File", new { id = Model.IdArchivoPDF })" class="embed-responsive-item" />
+    </div>
+</div>
 
 @if (Session["rol"] != null && (string)Session["rol"] == "CARGAR")
 {
-    <div class="col m-2 row justify-content-between">
-        <a class="align-self-center col-3 btn btn-secondary" onclick="history.go(-1);">Volver atras</a>
-        <a class="align-self-center col-3 btn btn-danger" href="@Url.Action("Delete", new { id = Model.Id })">Borrar</a>
-        <a class="align-self-center col-3 btn btn-warning" href="@Url.Action("Edit", new { id = Model.Id })">Editar</a>
+    <div class="col my-2 row justify-content-between">
+        <a class="align-self-center col-3 btn btn-secondary" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atras</a>
+        <a class="align-self-center col-3 btn btn-danger" href="@Url.Action("Delete", new { id = Model.Id })"><i class="bi bi-trash"></i> Borrar</a>
+        <a class="align-self-center col-3 btn btn-warning" href="@Url.Action("Edit", new { id = Model.Id })"><i class="bi bi-pencil-square"></i> Editar</a>
     </div>
 
 }
 else
 {
-    <div class="col m-2 row justify-content-start">
-        <a class="align-self-center col-3 btn btn-secondary" onclick="history.go(-1);">Volver atras</a>
+    <div class="col my-2 row justify-content-start">
+        <a class="align-self-center col-3 btn btn-secondary" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atras</a>
     </div>
 }
 

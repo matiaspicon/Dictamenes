@@ -5,17 +5,19 @@
 }
 
 
+<h2>Listado de todos los Dictámenes</h2>
+<hr />
 <div class="row justify-content-between my-2">
     @if (Session["rol"] != null && (string)Session["rol"] == "CARGAR")
     {
-        <div class="col-2 align-self-center mb-0">
-            <a class="btn btn-primary" href="@Url.Action("CargarFile")">Cargar nuevo</a>
+        <div class="col-3 align-self-center mb-0">
+            <a class="btn btn-primary" href="@Url.Action("CargarFile")"> <i class="bi bi-plus-lg"></i>       Cargar nuevo Dictámen</a>
         </div>
     }
     else
     {
         <div class="col-2 align-self-center mb-0">
-            <h3>Dictamenes</h3>
+            
         </div>
     }
 
@@ -23,7 +25,7 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse"
                 data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent"
                 aria-expanded="false" aria-label="Toggle navigation">
-            <i class="bi bi-search"></i> Busqueda
+            <i class="bi bi-search"></i> Búsqueda Avanzada
         </button>
     </div>
 
@@ -38,7 +40,7 @@ else
     @Html.Partial("_busqueda", (Busqueda)ViewBag.Busqueda)
 }
 
-<table class="table table-striped table-hover">
+<table id="dataTable" class="table table-striped table-hover">
     <thead>
         <tr class="table-primary">
 
@@ -54,7 +56,7 @@ else
             <th>
                 @Html.DisplayNameFor(model => model.Detalle)
             </th>
-            <th></th>
+            <th class="no-sort"></th>
         </tr>
     </thead>
     <tbody>
@@ -62,7 +64,7 @@ else
         {
             <tr>
                 <td>
-                    <a class=" link-dark text-decoration-none" href="@Url.Action("Details", new { id = item.Id })">@Html.DisplayFor(modelItem => item.NroGDE)</a>
+                    @Html.DisplayFor(modelItem => item.NroGDE)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.NroExpediente)
@@ -73,30 +75,51 @@ else
                 <td>
                     @(item != null && item.Detalle.Length > 30 ? item.Detalle.Substring(0, 30) : item.Detalle)
                 </td>
-
                 @if (Session["rol"] != null && (string)Session["rol"] == "CARGAR")
                 {
                     <td>
-                        <a class="btn btn-outline-warning" href="@Url.Action("Edit", new { id = item.Id })"><i class="bi bi-pencil-square"></i></a>
-                        <a class="btn btn-outline-danger" href="@Url.Action("Delete", new { id = item.Id })"><i class="bi bi-trash"></i></a>
+                        <a class="btn btn-info" href="@Url.Action("Details", new { id = item.Id })"><i class="bi bi-arrows-fullscreen"></i></a>
+                        <a class="btn btn-warning" href="@Url.Action("Edit", new { id = item.Id })"><i class="bi bi-pencil-square"></i></a>
+                        <a class="btn btn-danger" href="@Url.Action("Delete", new { id = item.Id })"><i class="bi bi-trash"></i></a>
                     </td>
                 }
                 else
                 {
                     <td>
-
+                        <a class="btn btn-info" href="@Url.Action("Details", new { id = item.Id })"><i class="bi bi-arrows-fullscreen"></i></a>
                     </td>
                 }
-
             </tr>
         }
-    </tbody>    
+    </tbody>
 
 </table>
 
 @if (Model.Count() < 1)
 {
     <div class="row justify-content-center">
-        <h4>No se encontraron Dictamenes</h4>
+        <h4>No se encontraron Dictámenes</h4>
     </div>
 }
+
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                "searching": false,
+                "ordering": true,
+                columnDefs: [{
+                    orderable: false,
+                    targets: "no-sort"
+                }],
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+                }
+            });
+        });
+    </script>
+}
+
