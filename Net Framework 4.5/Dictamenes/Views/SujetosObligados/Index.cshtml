@@ -6,12 +6,12 @@
 
 <h2>Listado de todos los Sujetos Obligados</h2>
 
-<p class="col">
+<p class="">
     <a class="btn btn-primary" href="@Url.Action("Create")"> <i class="bi bi-plus-lg"></i>     Cargar nuevo Sujeto Obligados</a>
 </p>
 <table id="dataTable" class="table table-striped table-hover">
     <thead>
-        <tr>
+        <tr class="table-primary">
             <th>
                 @Html.DisplayNameFor(model => model.CuilCuit)
             </th>
@@ -42,7 +42,7 @@
                     @Html.DisplayFor(modelItem => item.TipoSujetoObligado.Descripcion)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.EstaHabilitado)
+                    <i class="bi @(item.EstaHabilitado ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger" )"></i>
                 </td>
                 <td>
                     <a class="btn btn-warning" href="@Url.Action("Edit", new { id = item.Id })"><i class="bi bi-pencil-square"></i></a>

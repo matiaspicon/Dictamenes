@@ -332,7 +332,6 @@
     <Content Include="Views\Campos\Menu.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\SujetosObligados\Create.cshtml" />
-    <Content Include="Views\SujetosObligados\Details.cshtml" />
     <Content Include="Views\SujetosObligados\Edit.cshtml" />
     <Content Include="Views\SujetosObligados\Index.cshtml" />
     <Content Include="Views\TiposDictamen\Create.cshtml" />

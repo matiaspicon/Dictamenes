@@ -8,6 +8,7 @@ namespace Dictamenes.Models
 {
     public class Busqueda
     {
+        public bool Collapse { get; set; }
         public string NroGDE { get; set; }
         
         public string NroExp { get; set; }

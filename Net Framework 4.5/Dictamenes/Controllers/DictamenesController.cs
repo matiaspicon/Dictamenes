@@ -28,7 +28,7 @@ namespace Dictamenes.Controllers
         {
             var dictamenes = db.Dictamenes.Include(d => d.Asunto).Include(d => d.TipoDictamen);
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null), "Id", "RazonSocial");
+            ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["TipoSujetoObligado"] = new SelectList(db.TiposSujetoObligado.Where(m => m.EstaHabilitado && m.Descripcion != "Denunciante"), "Id", "Descripcion");
             return View(dictamenes.ToList());
@@ -106,7 +106,7 @@ namespace Dictamenes.Controllers
             // cargo la informacion para el formulario Create y devuelvo la VIEW del create con la informacion precargada
             // o sin la informacion precargada si no se pudo obtener nada del PDF
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null), "Id", "RazonSocial");
+            ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["TipoSujetoObligado"] = new SelectList(db.TiposSujetoObligado.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             return View("Create", dictamen);
@@ -117,7 +117,7 @@ namespace Dictamenes.Controllers
         public ActionResult Create()
         {
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null), "Id", "RazonSocial");
+            ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["TipoSujetoObligado"] = new SelectList(db.TiposSujetoObligado.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             return View();
@@ -133,7 +133,7 @@ namespace Dictamenes.Controllers
         {
             if (db.Dictamenes.FirstOrDefault(d => d.NroGDE == dictamen.NroGDE) != null)
             {
-                ModelState.AddModelError("NroGDE", "El Numero de GDE ya existe y no puede repetirse");
+                ModelState.AddModelError("NroGDE", "Ya existe un Dictámen con ese Número de GDE");
             }
 
             dictamen.FechaModificacion = DateTime.Now;
@@ -143,12 +143,27 @@ namespace Dictamenes.Controllers
             dictamen.Detalle = dictamen.Detalle != null ? dictamen.Detalle.ToUpper() : ".";
             if (dictamen.SujetoObligado.CuilCuit > 0)
             {
-                dictamen.SujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
-                dictamen.SujetoObligado.IdUsuarioModificacion = 3;
-                dictamen.SujetoObligado.FechaModificacion = DateTime.Now;
-                db.SujetosObligados.Add(dictamen.SujetoObligado);
-                db.SaveChanges();
-                dictamen.IdSujetoObligado = dictamen.SujetoObligado.Id;
+                SujetoObligado sujetoObligadoExistente = db.SujetosObligados.FirstOrDefault(s => s.CuilCuit == dictamen.SujetoObligado.CuilCuit);
+                if (sujetoObligadoExistente != null)
+                {
+                    if(sujetoObligadoExistente.IdTipoSujetoObligado != db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id)
+                    {
+                        ModelState.AddModelError("SujetosObligados.CuilCuit", "Ya existe un Sujeto Obligado con ese Número de Cuil");
+                    }
+                    else
+                    {
+                        dictamen.SujetoObligado = sujetoObligadoExistente;
+                    }
+                }
+                else
+                {
+                    dictamen.SujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
+                    dictamen.SujetoObligado.IdUsuarioModificacion = 3;
+                    dictamen.SujetoObligado.FechaModificacion = DateTime.Now;
+                    db.SujetosObligados.Add(dictamen.SujetoObligado);
+                    db.SaveChanges();
+                    dictamen.IdSujetoObligado = dictamen.SujetoObligado.Id;
+                }                
             }
             else
             {
@@ -162,9 +177,9 @@ namespace Dictamenes.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
+            
             ViewBag.IdAsunto = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdAsunto);
-            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null), "Id", "RazonSocial", dictamen.IdSujetoObligado);
+            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial", dictamen.IdSujetoObligado);
             ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdTipoDictamen);
             return View(dictamen);
         }
@@ -176,7 +191,7 @@ namespace Dictamenes.Controllers
 
             var dictamenes = db.Sp_FiltrarDictamenes(busqueda.NroGDE, busqueda.NroExp, busqueda.FechaCargaInicio, busqueda.FechaCargaFinal, busqueda.Detalle, busqueda.Contenido, busqueda.IdAsunto, busqueda.IdTipoDictamen, busqueda.IdSujetoObligado, idTipoSujetoObligado , busqueda.CuilCuit, busqueda.Nombre, busqueda.Apellido);
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null), "Id", "RazonSocial");
+            ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["TipoSujetoObligado"] = new SelectList(db.TiposSujetoObligado.Where(m => m.EstaHabilitado && m.Descripcion != "Denunciante"), "Id", "Descripcion");
             ViewData["Busqueda"] = busqueda;
@@ -197,7 +212,7 @@ namespace Dictamenes.Controllers
                 return HttpNotFound();
             }
             ViewBag.IdAsunto = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdAsunto);
-            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null), "Id", "RazonSocial", dictamen.IdSujetoObligado);
+            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial", dictamen.IdSujetoObligado);
             ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdTipoDictamen);
 
             return View(dictamen);
@@ -213,7 +228,7 @@ namespace Dictamenes.Controllers
             Dictamen dictamenViejo = db.Dictamenes.Include(d => d.SujetoObligado).AsNoTracking().First(d => d.Id == dictamen.Id);
             if (dictamenViejo.NroGDE != dictamen.NroGDE && db.Dictamenes.FirstOrDefault(d => d.NroGDE == dictamen.NroGDE) != null)
             {
-                ModelState.AddModelError("NroGDE", "El Numero de GDE ya existe y no puede repetirse");
+                ModelState.AddModelError("NroGDE", "Ya existe un Dictámen con ese Número de GDE");
             }
 
             if (dictamen.IdSujetoObligado.HasValue)
@@ -333,7 +348,7 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.IdAsunto = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdAsunto);
-            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null), "Id", "RazonSocial", dictamen.IdSujetoObligado);
+            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial", dictamen.IdSujetoObligado);
             ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdTipoDictamen);
             return View(dictamen);
         }
@@ -485,18 +500,18 @@ namespace Dictamenes.Controllers
             {
 
             }
-
-
             Regex date = new Regex("[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", RegexOptions.IgnoreCase);
 
             matches = date.Matches(contenido);
             try
             {
-                dict.FechaCarga = DateTime.ParseExact(matches[0].Value, "yyyy.MM.dd HH:mm:ss", null);
+                DateTime fecha;
+                DateTime.TryParseExact(matches[0].Value, "yyyy.MM.dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out fecha);
+                dict.FechaCarga = fecha;
             }
             catch
             {
-
+                dict.FechaCarga = DateTime.Now;
             }
             return dict;
 

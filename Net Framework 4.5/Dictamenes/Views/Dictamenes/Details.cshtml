@@ -4,7 +4,7 @@
     ViewBag.Title = "Detalles";
 }
 
-<h2>Details</h2>
+<h2>Detalles del Dictámen</h2>
 
 <div class="row align-content-center">
     <label class="form-label align-self-center align-self-center col-3">
@@ -120,21 +120,27 @@
     </div>
 </div>
 
-@if (Session["rol"] != null && (string)Session["rol"] == "CARGAR")
-{
-    <div class="col my-2 row justify-content-between">
-        <a class="align-self-center col-3 btn btn-secondary" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atras</a>
-        <a class="align-self-center col-3 btn btn-danger" href="@Url.Action("Delete", new { id = Model.Id })"><i class="bi bi-trash"></i> Borrar</a>
-        <a class="align-self-center col-3 btn btn-warning" href="@Url.Action("Edit", new { id = Model.Id })"><i class="bi bi-pencil-square"></i> Editar</a>
-    </div>
+<div class="row justify-content-end">
+    <div class="col-lg-6 col-md-8 row justify-content-end">
+        @if (Session["rol"] != null && (string)Session["rol"] == "CARGAR")
+        {
+            <div class="col my-2 row ">
+                <a class="align-self-center m-1 col btn btn-secondary" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atras</a>
+                <a class="align-self-center m-1 col btn btn-danger" href="@Url.Action("Delete", new { id = Model.Id })"><i class="bi bi-trash"></i> Borrar</a>
+                <a class="align-self-center m-1 col btn btn-warning" href="@Url.Action("Edit", new { id = Model.Id })"><i class="bi bi-pencil-square"></i> Editar</a>
+            </div>
 
-}
-else
-{
-    <div class="col my-2 row justify-content-start">
-        <a class="align-self-center col-3 btn btn-secondary" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atras</a>
+        }
+        else
+        {
+            <div class="col-4 my-2">
+                <a class="align-self-center col btn btn-secondary" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atras</a>
+            </div>
+        }
     </div>
-}
+</div>
+
+
 
 
 

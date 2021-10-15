@@ -20,7 +20,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Index()
         {
-            var asunto = db.Asuntos.Where(d =>d.EstaHabilitado);
+            var asunto = db.Asuntos;
             return View(asunto.ToList());
         }
 

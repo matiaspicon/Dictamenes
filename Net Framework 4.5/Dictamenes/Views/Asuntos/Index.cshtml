@@ -29,7 +29,7 @@
                     @Html.DisplayFor(modelItem => item.Descripcion)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.EstaHabilitado)
+                    <i class="bi @(item.EstaHabilitado ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger" )"></i>
                 </td>
                 <td>
                     <a class="btn btn-warning" href="@Url.Action("Edit", new { id = item.Id })"><i class="bi bi-pencil-square"></i></a>

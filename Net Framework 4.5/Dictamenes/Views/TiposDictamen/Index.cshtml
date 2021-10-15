@@ -5,8 +5,7 @@
 }
 
 <h2>Listado de todos los Tipos de Dictámen</h2>
-
-<p class="col">
+<p class="">
     <a class="btn btn-primary" href="@Url.Action("Create")"><i class="bi bi-plus-lg"></i>     Cargar nuevo Tipo de Dictámen</a>
 </p>
 <table id="dataTable" class="table table-striped table-hover">
@@ -29,7 +28,7 @@
                     @Html.DisplayFor(modelItem => item.Descripcion)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.EstaHabilitado)
+                    <i class="bi @(item.EstaHabilitado ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger" )"></i>
                 </td>
                 <td>
                     <a class="btn btn-warning" href="@Url.Action("Edit", new { id = item.Id })"><i class="bi bi-pencil-square"></i></a>
