@@ -31,7 +31,7 @@
                 <td>
                     <i class="bi @(item.EstaHabilitado ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger" )"></i>
                 </td>
-                <td>
+                <td class="row justify-content-end mx-0">
                     <a class="btn btn-warning" href="@Url.Action("Edit", new { id = item.Id })"><i class="bi bi-pencil-square"></i></a>
                 </td>
             </tr>

@@ -46,68 +46,90 @@
     <label class="align-self-center col-3 col-form-label">
         @Html.DisplayNameFor(model => model.TipoDictamen)
     </label>
-    <p class="col-9 card p-2">
-        @Html.DisplayFor(model => model.TipoDictamen.Descripcion)
-    </p>
-    <h5 class="col-12">Sujeto Obligado</h5>
-    <br class="m-1" />
-    <label class="form-label align-self-center col-3">
-        @Html.DisplayNameFor(model => model.SujetoObligado.CuilCuit)
-    </label>
-    <p class="col-9 card p-2">
-        @Html.DisplayFor(model => model.SujetoObligado.CuilCuit)
-    </p>
-    @if (Model.SujetoObligado.IdTipoSujetoObligado == ViewBag.IdDenunciante)
-    {
-        <label class="form-label align-self-center col-3">
-            @Html.DisplayNameFor(model => model.SujetoObligado.Nombre)
-        </label>
-        <p class="col-9 card p-2">
-            @Html.DisplayFor(model => model.SujetoObligado.Nombre)
-        </p>
-        <label class="form-label align-self-center col-3">
-            @Html.DisplayNameFor(model => model.SujetoObligado.Apellido)
-        </label>
-        <p class="col-9 card p-2">
-            @Html.DisplayFor(model => model.SujetoObligado.Apellido)
+    @if (Model.TipoDictamen != null)
+    {<p class="col-9 card p-2">
+            @Html.DisplayFor(model => model.TipoDictamen.Descripcion)
         </p>
     }
     else
     {
+        <h6 class="col-9 card p-2">
+            Este dictámen no tiene un Tipo de Dictámen
+        </h6>
+    }
+
+
+    @if (Model.SujetoObligado != null)
+    {
+        <h5 class="col-12">Sujeto Obligado</h5>
+        <br class="m-1" />
         <label class="form-label align-self-center col-3">
-            @Html.DisplayNameFor(model => model.SujetoObligado.RazonSocial)
+            @Html.DisplayNameFor(model => model.SujetoObligado.CuilCuit)
         </label>
         <p class="col-9 card p-2">
-            @Html.DisplayFor(model => model.SujetoObligado.RazonSocial)
+            @Html.DisplayFor(model => model.SujetoObligado.CuilCuit)
         </p>
+        if (Model.SujetoObligado.IdTipoSujetoObligado == ViewBag.IdDenunciante)
+        {
+            <label class="form-label align-self-center col-3">
+                @Html.DisplayNameFor(model => model.SujetoObligado.Nombre)
+            </label>
+            <p class="col-9 card p-2">
+                @Html.DisplayFor(model => model.SujetoObligado.Nombre)
+            </p>
+            <label class="form-label align-self-center col-3">
+                @Html.DisplayNameFor(model => model.SujetoObligado.Apellido)
+            </label>
+            <p class="col-9 card p-2">
+                @Html.DisplayFor(model => model.SujetoObligado.Apellido)
+            </p>
+        }
+        else
+        {
+            <label class="form-label align-self-center col-3">
+                @Html.DisplayNameFor(model => model.SujetoObligado.RazonSocial)
+            </label>
+            <p class="col-9 card p-2">
+                @Html.DisplayFor(model => model.SujetoObligado.RazonSocial)
+            </p>
+        }
     }
+    else
+    {
+        
+            <h5 class="form-label col-3 align-self-center">
+                Sujeto Obligado
+            </h5>
+            <h6 class="card p-2 col-9">Este dictámen no tiene un Sujeto Obligado</h6>
+        
+    }
+
 
     @{ if (Model.ArchivoPDF == null)
         {
-            <h5 class="form-label col-12">
-                Archivo
-            </h5>
-            <div class="row justify-content-center">
-                <h4 class="p-2 col-auto">Este dictamen no tiene un archivo</h4>
-            </div>
+                <h5 class="form-label col-3 align-self-center">
+                    Archivo
+                </h5>
+                <h6 class="card p-2 col-9">Este dictámen no tiene un archivo</h6>
+            
         }
         else
         {
             if (!System.IO.File.Exists(Server.MapPath(Model.ArchivoPDF.Path)))
             {
-                <h5 class="form-label col-12">
-                    Archivo
-                </h5>
-                <div class="row justify-content-center">
-                    <h4 class="alert-danger rounded p-2 col-auto">Hubo un error con la carga del archivo</h4>
-                </div>
+                
+                    <h5 class="form-label col-3 align-self-center">
+                        Archivo
+                    </h5>
+                    <h6 class="card alert-danger rounded p-2 col-9">Hubo un error con la carga del archivo</h6>
+                
             }
             else
             {
-                <h5 class="form-label col-3">
+                <h5 class="form-label col-3 align-self-center">
                     Archivo
                 </h5>
-                <a class="btn btn-dark col" data-toggle="collapse" href="#collapseOne" role="button" aria-expanded="false">Ver el Achivo del Dictámen</a>
+                <a class="btn btn-dark col-9" data-toggle="collapse" href="#collapseOne" role="button" aria-expanded="false">Ver el Achivo del Dictámen</a>
 
             }
         }
@@ -127,7 +149,7 @@
             <div class="col my-2 row ">
                 <a class="align-self-center m-1 col btn btn-secondary" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atras</a>
                 <a class="align-self-center m-1 col btn btn-danger" href="@Url.Action("Delete", new { id = Model.Id })"><i class="bi bi-trash"></i> Borrar</a>
-                <a class="align-self-center m-1 col btn btn-warning" href="@Url.Action("Edit", new { id = Model.Id })"><i class="bi bi-pencil-square"></i> Editar</a>
+                <a class="align-self-center m-1 col-md col-sm-auto btn btn-warning" href="@Url.Action("Edit", new { id = Model.Id })"><i class="bi bi-pencil-square"></i> Editar</a>
             </div>
 
         }

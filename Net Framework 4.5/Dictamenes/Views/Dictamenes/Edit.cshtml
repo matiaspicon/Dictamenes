@@ -47,24 +47,33 @@
                 @Html.ValidationMessageFor(model => model.Detalle, "", new { @class = "text-danger" })
             </div>
         </div>
-        @Html.HiddenFor(model => model.IdArchivoPDF)
+        @Html.HiddenFor(model => model.IdArchivoPDF, new  { id ="IdArchivo" })
         <div class="form-group row">
             <p class="col-md-3">Ingrese el Archivo PDF</p>
             <input type="file" class="col-md-9" accept=".pdf" name="file" />
         </div>
 
         <div class="form-group row">
-            @Html.LabelFor(model => model.IdAsunto, "IdAsunto", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
             <div class="col-md-9">
-                @Html.DropDownList("IdAsunto", null, htmlAttributes: new { @class = "form-control col-auto" })
+                <div class="checkbox">
+                    @Html.CheckBox("BorrarArchivo", false) BorrarArchivo
+                </div>
+            </div>
+        </div>
+
+
+        <div class="form-group row">
+            @Html.LabelFor(model => model.IdAsunto, "Asunto", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+            <div class="col-md-9">
+                @Html.DropDownList("IdAsunto", null, "Elija uno",htmlAttributes: new { @class = "form-control col-auto" })
                 @Html.ValidationMessageFor(model => model.IdAsunto, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group row">
-            @Html.LabelFor(model => model.IdTipoDictamen, "IdTipoDictamen", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+            @Html.LabelFor(model => model.IdTipoDictamen, "Tipo de Dictámen", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
             <div class="col-md-9">
-                @Html.DropDownList("IdTipoDictamen", null, htmlAttributes: new { @class = "form-control col-auto" })
+                @Html.DropDownList("IdTipoDictamen", null, "Sin Tipo de Dictámen", htmlAttributes: new { @class = "form-control col-auto" })
                 @Html.ValidationMessageFor(model => model.IdTipoDictamen, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -79,68 +88,43 @@
 
         <div class="form-group form-check row">
             <label class="form-check-label control-label col-md-6 align-self-end">
-                <input type="checkbox" class="form-check-input" id="esDenunciante" onclick="setForm(this.checked)" @(Model.SujetoObligado != null  && Model.SujetoObligado.Nombre != null ? "checked" : " ") /> Sujeto Obligado es Denunciante
+                @*<input type="checkbox" class="form-check-input" id="esDenunciante" name="EsDenunciante" onclick="setForm(this.checked)" @(Model.SujetoObligado != null && Model.SujetoObligado.Nombre != null ? "checked" : " ") />*@
+                @Html.CheckBox("EsDenunciante", (Model.SujetoObligado != null && Model.SujetoObligado.Nombre != null), new { id = "esDenunciante", name = "EsDenunciante", onclick = "setForm(this.checked)" }) Sujeto Obligado es Denunciante
             </label>
         </div>
+
 
         <div id="FormEmpresas" style="display:block">
             <div class="form-group row">
                 @Html.LabelFor(model => model.IdSujetoObligado, "Sujetos Obligados", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
                 <div class="col-md-9">
-                    @Html.DropDownList("IdSujetoObligado", null, htmlAttributes: new { @class = "form-control col-auto", id = "InputEmpresas" })
+                    @Html.DropDownList("IdSujetoObligado", null, "Sin Sujeto Obligado",htmlAttributes: new { @class = "form-control col-auto", id = "InputEmpresas" })
                     @Html.ValidationMessageFor(model => model.IdSujetoObligado, "", new { @class = "text-danger" })
                 </div>
             </div>
         </div>
 
         <div id="FormPersonas" style="display:none">
-
-            @if (Model.SujetoObligado != null && Model.SujetoObligado.Nombre != null)
-            {
-                @Html.HiddenFor(model => model.IdSujetoObligado)
-                <div class="form-group row">
-                    <label class="form-label col-md-3 align-self-end">CUIL/CUIT </label>
-                    <div class="col-md-9">
-                        @Html.EditorFor(model => model.SujetoObligado.CuilCuit, new { htmlAttributes = new { @class = "form-control col-auto", id = "InputCuilCui", placeholder = "Ingrese el CUIL/CUIT del Sujeto Obligado" } })
-                        @Html.ValidationMessageFor(model => model.SujetoObligado.CuilCuit, "", new { @class = "text-danger" })
-                    </div>
+            @Html.HiddenFor(model => model.IdSujetoObligado)
+            <div class="form-group row">
+                <label class="form-label col-md-3 align-self-end">CUIL/CUIT </label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.SujetoObligado.CuilCuit, new { htmlAttributes = new { @class = "form-control col-auto", id = "InputCuilCuit", placeholder = "Ingrese el CUIL/CUIT del Sujeto Obligado" } })
+                    @Html.ValidationMessageFor(model => model.SujetoObligado.CuilCuit, "", new { @class = "text-danger" })
                 </div>
-                <div class="form-group row">
-                    <label class="form-label col-md-3 align-self-end">Nombre</label>
-                    <div class="col-md-9">
-                        @Html.EditorFor(model => model.SujetoObligado.Nombre, new { htmlAttributes = new { @class = "form-control col-auto", placeholder = "Ingrese el Nombre del Sujeto Obligado" } })
-                    </div>
+            </div>
+            <div class="form-group row">
+                <label class="form-label col-md-3 align-self-end">Nombre</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.SujetoObligado.Nombre, new { htmlAttributes = new { @class = "form-control col-auto", placeholder = "Ingrese el Nombre del Sujeto Obligado" } })
                 </div>
-                <div class="form-group row">
-                    <label class="form-label col-md-3 align-self-end">Apellido</label>
-                    <div class="col-md-9">
-                        @Html.EditorFor(model => model.SujetoObligado.Apellido, new { htmlAttributes = new { @class = "form-control col-auto", placeholder = "Ingrese el Apellido del Sujeto Obligado" } })
-                    </div>
+            </div>
+            <div class="form-group row">
+                <label class="form-label col-md-3 align-self-end">Apellido</label>
+                <div class="col-md-9">
+                    @Html.EditorFor(model => model.SujetoObligado.Apellido, new { htmlAttributes = new { @class = "form-control col-auto", placeholder = "Ingrese el Apellido del Sujeto Obligado" } })
                 </div>
-            }
-            else
-            {
-                <div class="form-group row">
-                    <label class="form-label col-md-3 align-self-end">CUIL/CUIT </label>
-                    <div class="col-md-9">
-                        <input id="InputCuilCuit" name="CuilCuit" type="number" class="form-control col-auto" value="-1" placeholder="Ingrese el CUIL/CUIT del Sujeto Obligado">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="form-label col-md-3 align-self-end">Nombre</label>
-                    <div class="col-md-9">
-                        <input name="Nombre" type="text" class="form-control col-auto" placeholder="Ingrese el Nombre del Sujeto Obligado">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="form-label col-md-3 align-self-end">Apellido</label>
-                    <div class="col-md-9">
-                        <input name="Apellido" type="text" class="form-control col-auto" placeholder="Ingrese el Apellido del Sujeto Obligado">
-                    </div>
-                </div>
-            }
-
-
+            </div>
         </div>
 
         <div class="row justify-content-end">
