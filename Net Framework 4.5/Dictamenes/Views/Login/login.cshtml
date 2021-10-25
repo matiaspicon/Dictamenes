@@ -14,13 +14,14 @@
             <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
                 <div class="card border-0 shadow rounded-3 my-5">
                     <div class="card-body p-4 p-sm-5">
-                        <h5 class="card-title text-center mb-5 fw-light fs-5">Loguearse</h5>
+                        <h5 class="card-title text-center mb-5 fw-light fs-5">Iniciar Sesion</h5>
 
-                        @if(ViewBag.Error != null){
+                        @if (ViewBag.Error != null)
+                        {
                             <div class="alert alert-danger" role="alert">
                                 @ViewBag.Error
-                            </div>                     
-                        
+                            </div>
+
                         }
 
                         <div class="form-floating mb-3">
@@ -28,12 +29,16 @@
                             <input name="cuilCuit" type="text" class="form-control col" id="floatingInput" placeholder="Ingrese el Cuil/Cuit">
                         </div>
                         <div class="form-floating mb-3">
+                            <label for="floatingInput">ID de Compania</label>
+                            <input name="idcomp" type="text" class="form-control col" id="floatingInput" placeholder="Ingrese el ID de compañía">
+                        </div>
+                        <div class="form-floating mb-3">
                             <label for="floatingInput">Usuario</label>
                             <input name="nombre" type="text" class="form-control col" id="floatingInput" placeholder="Ingrese el Usuario">
                         </div>
                         <div class="form-floating mb-3">
                             <label for="floatingPassword">Contraseña</label>
-                            <input name="cuil" type="password" class="form-control col" id="floatingPassword" placeholder="Ingrese la Contraseña">
+                            <input name="pass" type="password" class="form-control col" id="floatingPassword" placeholder="Ingrese la Contraseña">
                         </div>
                         <div class="d-grid">
                             <input type="submit" value="Ingresar" class="btn btn-primary m-1" />

@@ -26,7 +26,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamen
         public ActionResult Index()
         {
-            var dictamenes = db.Dictamenes.Include(d => d.Asunto).Include(d => d.TipoDictamen);
+            var dictamenes = db.Dictamenes.Where(d => d.FechaCarga.Year == DateTime.Today.Year).Include(d => d.Asunto).Include(d => d.TipoDictamen);
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
@@ -59,7 +59,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamenes/Create
         public ActionResult CargarFile()
         {
-            if ((string)Session["rol"] == "CARGAR" || (string)Session["rol"] == "EDITAR_CAMPOS")
+            if ((string)Session["rol"] == "CARGAR")
             {
                 return View();
             }
@@ -486,98 +486,98 @@ namespace Dictamenes.Controllers
             catch {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            foreach (DictamenData dictamenData in dictamenes)
+            if(JSONDictamenes != null)
             {
-
-                Asunto asunto = db.Asuntos.FirstOrDefault(a => a.Descripcion == dictamenData.Asunto);
-                if(asunto != null)
+                foreach (DictamenData dictamenData in dictamenes)
                 {
-                    Dictamen dictamen = new Dictamen
-                    {
-                        NroGDE = dictamenData.NroGDE,
-                        NroExpediente = dictamenData.NroExpediente,
-                        FechaCarga = DateTime.ParseExact(dictamenData.FechaCarga, "dd-MM-yyyy HH:mm", CultureInfo.InvariantCulture),
-                        Detalle = dictamenData.Detalle,
-                        EsPublico = true,
-                        Asunto = asunto,
-                        IdAsunto = asunto != null ? asunto.Id : 0,
-                        ArchivoPDF = null,
-                        FechaModificacion = DateTime.Now,
-                        IdSujetoObligado = null,
-                        IdUsuarioModificacion = 1,
-                        IdTipoDictamen = null
 
+                    Asunto asunto = db.Asuntos.FirstOrDefault(a => a.Descripcion == dictamenData.Asunto);
+                    if (asunto != null)
+                    {
+                        Dictamen dictamen = new Dictamen
+                        {
+                            NroGDE = dictamenData.NroGDE,
+                            NroExpediente = dictamenData.NroExpediente,
+                            FechaCarga = DateTime.ParseExact(dictamenData.FechaCarga, "dd-MM-yyyy HH:mm", CultureInfo.InvariantCulture),
+                            Detalle = dictamenData.Detalle,
+                            EsPublico = true,
+                            Asunto = asunto,
+                            IdAsunto = asunto != null ? asunto.Id : 0,
+                            ArchivoPDF = null,
+                            FechaModificacion = DateTime.Now,
+                            IdSujetoObligado = null,
+                            IdUsuarioModificacion = 1,
+                            IdTipoDictamen = null
+                        };
+
+                        if (IsValid(dictamen))
+                        {
+                            db.Dictamenes.Add(dictamen);
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            dictamenesError.Add(dictamen);
+                        }
+                    }
+
+                }
+            }            
+
+            if(files != null)
+            {
+                foreach (HttpPostedFileBase file in files)
+                {
+                    var fileName = Guid.NewGuid().ToString();
+                    var extension = Path.GetExtension(file.FileName);
+
+                    // compruebo directorio
+                    var basePath = Server.MapPath("~/Files");
+                    var filePath = Path.Combine("~", "Files", fileName + extension);
+
+                    bool basePathExists = System.IO.Directory.Exists(basePath);
+                    if (!basePathExists) Directory.CreateDirectory(basePath);
+
+                    if (!System.IO.File.Exists(Server.MapPath(filePath)))
+                    {
+                        file.SaveAs(Server.MapPath(filePath));
+                    }
+                    // creo el archivo para la base de datos
+                    var archivo = new ArchivoPDF
+                    {
+                        FechaCarga = DateTime.Now,
+                        TipoArchivo = file.ContentType,
+                        Extension = extension,
+                        Nombre = fileName,
+                        Path = filePath,
+                        Contenido = FileController.ExtractTextFromPdf(filePath),
                     };
 
-                    if (IsValid(dictamen))
-                    {
-                        db.Dictamenes.Add(dictamen);
-                        db.SaveChanges();
-                    }
-                    else
-                    {
+                    string NroGDE;
 
-                        dictamenesError.Add(dictamen);
+                    Regex numeroGDE = new Regex("IF-[0-9]{4}-[0-9]+-APN-[A-Z]+#[A-Z]+", RegexOptions.IgnoreCase);
+
+                    MatchCollection matches = numeroGDE.Matches(archivo.Contenido);
+                    try
+                    {
+                        NroGDE = matches[0].Value;
+                        Dictamen dict = db.Dictamenes.Where(m => m.NroGDE == NroGDE).ToArray().FirstOrDefault();
+                        if (dict != null)
+                        {
+                            db.ArchivosPDF.Add(archivo);
+                            db.SaveChanges();
+                            dict.IdArchivoPDF = archivo.Id;
+                            db.Entry(dict).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
+                    }
+                    catch
+                    {
+                        archivosPDFError.Add(archivo);
                     }
                 }
-                
             }
-
-
-            foreach(HttpPostedFileBase file in files)
-            {
-                var fileName = Guid.NewGuid().ToString();                
-                var extension = Path.GetExtension(file.FileName);
-
-                // compruebo directorio
-                var basePath = Server.MapPath("~/Files");
-                var filePath = Path.Combine("~", "Files", fileName + extension);
-
-                bool basePathExists = System.IO.Directory.Exists(basePath);
-                if (!basePathExists) Directory.CreateDirectory(basePath);
-
-                if (!System.IO.File.Exists(Server.MapPath(filePath)))
-                {
-                    file.SaveAs(Server.MapPath(filePath));
-                }
-                // creo el archivo para la base de datos
-                var archivo = new ArchivoPDF
-                {
-                    FechaCarga = DateTime.Now,
-                    TipoArchivo = file.ContentType,
-                    Extension = extension,
-                    Nombre = fileName,
-                    Path = filePath,
-                    Contenido = FileController.ExtractTextFromPdf(filePath),
-                };
-
-                string NroGDE;
-
-                Regex numeroGDE = new Regex("IF-[0-9]{4}-[0-9]+-APN-[A-Z]+#[A-Z]+", RegexOptions.IgnoreCase);
-
-                MatchCollection matches = numeroGDE.Matches(archivo.Contenido);
-                try
-                {
-                    NroGDE = matches[0].Value;
-                    Dictamen dict = db.Dictamenes.Where(m => m.NroGDE == NroGDE).ToArray().FirstOrDefault();
-                    if (dict != null)
-                    {
-                        db.ArchivosPDF.Add(archivo);
-                        db.SaveChanges();
-                        dict.IdArchivoPDF = archivo.Id;
-                        db.Entry(dict).State = EntityState.Modified;
-                        db.SaveChanges();
-
-                    }
-                }
-                catch
-                {
-                    archivosPDFError.Add(archivo);
-                }
-
-               
-            }
+           
             
             db.SaveChanges();
             return Json(new {archivosPDFError, dictamenesError });

@@ -86,6 +86,8 @@ namespace WCFLoginUniversal
             SingletonConexion.ConecString.ConexionString = ConfigurationManager.AppSettings["csUniversal"];
             SingletonAplicacionesConexion.ConecString.ConexionString = ConfigurationManager.AppSettings["csAplicaciones"];
 
+            //Usuarios usua = NPersonas.ObtengoPersonaPorCuit(cuil);
+
             Usuarios usua = NPersonas.ObtengoExistenciaPersona(cuil, idcomp, nomusua, pass);
 
             if (usua == null) return null;
@@ -132,7 +134,7 @@ namespace WCFLoginUniversal
 
                     wcfll.MenuXML = menu;
 
-                    wcfll.Menu = MenuHelper.armarMenu(menu);
+                    //wcfll.Menu = MenuHelper.armarMenu(menu);
                 }
 
                 return wcfll;

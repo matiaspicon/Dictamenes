@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using WCFLoginUniversal;
 using System.Web.Security;
 using Newtonsoft.Json;
+using System.Configuration;
 using BEUU;
 using System.Security.Claims;
 using Microsoft.Owin.Security.Cookies;
@@ -18,6 +19,39 @@ namespace Dictamenes.Controllers
 
         LogLoginService loginService = new LogLoginService();
         // GET: Login
+
+        class UsuarioLogueado{
+            
+            public string NombreUsuario { get; set; }
+
+            
+            public int Id { get; set; }
+
+            
+            public string NombrePersona { get; set; }
+
+            
+            public string ApellidoPersona { get; set; }
+
+            
+            public string CUIL_CUIT { get; set; }
+
+            
+            public string Mail { get; set; }
+
+            
+            public string Telefono { get; set; }
+
+            public string GrupoDescripcion { get; set; }
+
+            public int IdGrupo { get; set; }
+
+
+        }
+
+
+
+
         [AllowAnonymous]
         public ActionResult Login()
         {
@@ -25,35 +59,51 @@ namespace Dictamenes.Controllers
             {
                 try
                 {
-                    Session["rol"] = (string)JsonConvert.DeserializeObject<dynamic>(((FormsIdentity)User.Identity).Ticket.UserData).rol;                    
+                    var usuarioLogeado = JsonConvert.DeserializeObject<UsuarioLogueado>(((FormsIdentity)User.Identity).Ticket.UserData);
+                    Session["rol"] = usuarioLogeado.GrupoDescripcion != "CARGAR" ? Models.Rol.CARGAR.ToString() : Models.Rol.CONSULTAR.ToString();
+                    Session["rolID"] = usuarioLogeado.IdGrupo;
                     return RedirectToAction("Index", "Dictamenes");
                 }
                 catch { }                
             }
-
             return View();           
         }
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult Login(string CuilCuit, string idcomp, string Nombre, string Pass)
+        public ActionResult Login(string CuilCuit, string Idcomp, string Nombre, string Pass)
         {
-            WCFUsuarioLogeado usuarioLogeado = loginService.LogeoUsuario(CuilCuit, idcomp, Nombre, Pass, "259", false);
-            var algo = loginService.ObtengoListaUsuariosLogeados();
-            var algo1 = loginService.ObtengoPersonaByAplicativo(259);
-            var usuarioLog = loginService.ObtengoListaUsuariosLogeados();
-           //WCFUsuarioLogeado usuarioLogeado = null;
+            WCFUsuarioLogeado usuarioLogeado = loginService.LogeoUsuario(CuilCuit, Idcomp, Nombre, Pass, ConfigurationManager.AppSettings["IdApp"], false);
+            //var algo = loginservice.obtengolistausuarioslogeados();
+            //var algo1 = loginService.ObtengoPersonaByAplicativo(259);
+            //var app = neguu.naplicaciones.obteneraplicacionbyid(259);
+            //var usuariolog = loginservice.obtengolistausuarioslogeados();
+            //WCFUsuarioLogeado usuarioLogeado = null;
 
-            if (usuarioLogeado == null)
+            if (usuarioLogeado != null)
             {                
-                string userData = JsonConvert.SerializeObject(new { CuilCuit, idcomp, rol = "CARGAR" });
-                Session["rol"] = Nombre;
-                FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1,
-                Nombre,
-                DateTime.Now,
-                DateTime.Now.AddMinutes(30),
-                false,
-                userData,
-                FormsAuthentication.FormsCookiePath);
+                string userData = JsonConvert.SerializeObject(new UsuarioLogueado
+                {
+                    ApellidoPersona = usuarioLogeado.ApellidoPersona,
+                    CUIL_CUIT = usuarioLogeado.CUIL_CUIT,
+                    GrupoDescripcion =  usuarioLogeado.Grupos.GrupoDescripcion,
+                    IdGrupo = usuarioLogeado.Grupos.IdGrupo,
+                    Id = usuarioLogeado.Id,
+                    Mail = usuarioLogeado.Mail,
+                    NombrePersona = usuarioLogeado.NombrePersona,
+                    NombreUsuario = usuarioLogeado.NombreUsuario,
+                    Telefono = usuarioLogeado.Telefono
+                });
+                Session["rol"] = usuarioLogeado.Grupos.GrupoDescripcion != "CARGAR" ? Models.Rol.CARGAR.ToString() : Models.Rol.CONSULTAR.ToString();
+                Session["rolID"] = usuarioLogeado.Grupos.IdGrupo;
+
+                FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
+                    1,
+                    Nombre.ToUpper(),
+                    DateTime.Now,
+                    DateTime.Now.AddMinutes(30),
+                    false,
+                    userData,
+                    FormsAuthentication.FormsCookiePath);
 
                 // Encrypt the ticket.
                 string encTicket = FormsAuthentication.Encrypt(ticket);
