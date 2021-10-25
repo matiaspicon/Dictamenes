@@ -35,15 +35,17 @@ namespace Dictamenes.Controllers
         }
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult Login(string cuil, string idcomp, string Nombre, string Pass)
+        public ActionResult Login(string CuilCuit, string idcomp, string Nombre, string Pass)
         {
-            //WCFUsuarioLogeado usuarioLogeado = loginService.LogeoUsuario(cuil, idcomp, Nombre, Pass, "1", false);
-
-            WCFUsuarioLogeado usuarioLogeado = null;
+            WCFUsuarioLogeado usuarioLogeado = loginService.LogeoUsuario(CuilCuit, idcomp, Nombre, Pass, "259", false);
+            var algo = loginService.ObtengoListaUsuariosLogeados();
+            var algo1 = loginService.ObtengoPersonaByAplicativo(259);
+            var usuarioLog = loginService.ObtengoListaUsuariosLogeados();
+           //WCFUsuarioLogeado usuarioLogeado = null;
 
             if (usuarioLogeado == null)
             {                
-                string userData = JsonConvert.SerializeObject(new { cuil, idcomp, rol = Nombre });
+                string userData = JsonConvert.SerializeObject(new { CuilCuit, idcomp, rol = "CARGAR" });
                 Session["rol"] = Nombre;
                 FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1,
                 Nombre,
@@ -63,6 +65,7 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("Index", "Dictamenes");
             }
 
+            ViewBag.Error = "Los datos ingresados son incorrectos";
             return View();
         }
 
