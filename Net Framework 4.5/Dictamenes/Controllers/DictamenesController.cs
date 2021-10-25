@@ -461,41 +461,136 @@ namespace Dictamenes.Controllers
             public string Asunto { get; set; }
         }
 
+
+        private bool IsValid(Dictamen dictamen)
+        {
+            ModelState.Clear();
+            if (!TryValidateModel(dictamen))
+            {
+
+            }
+            return ModelState.IsValid;
+        }
+
         [HttpPost]
         public ActionResult CargarDictamenes(string JSONDictamenes, HttpPostedFileBase[] files)
         {
-            var dictamenes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<DictamenData>>(JSONDictamenes);
+            List<DictamenData> dictamenes;
+            List<Dictamen> dictamenesError = new List<Dictamen>();
+            List<ArchivoPDF> archivosPDFError = new List<ArchivoPDF>();
+
+            try
+            {
+                dictamenes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<DictamenData>>(JSONDictamenes);
+            }
+            catch {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
 
             foreach (DictamenData dictamenData in dictamenes)
             {
-                Dictamen dictamen = new Dictamen
+
+                Asunto asunto = db.Asuntos.FirstOrDefault(a => a.Descripcion == dictamenData.Asunto);
+                if(asunto != null)
                 {
-                    NroGDE = dictamenData.NroGDE,
-                    NroExpediente = dictamenData.NroExpediente,
-                    FechaCarga = DateTime.Parse(dictamenData.FechaCarga, CultureInfo.InvariantCulture),
-                    Detalle = dictamenData.Detalle,
-                    EsPublico = true,
-                    Asunto = db.Asuntos.FirstOrDefault(a => a.Descripcion == dictamenData.Asunto),
-                    ArchivoPDF = null
+                    Dictamen dictamen = new Dictamen
+                    {
+                        NroGDE = dictamenData.NroGDE,
+                        NroExpediente = dictamenData.NroExpediente,
+                        FechaCarga = DateTime.ParseExact(dictamenData.FechaCarga, "dd-MM-yyyy HH:mm", CultureInfo.InvariantCulture),
+                        Detalle = dictamenData.Detalle,
+                        EsPublico = true,
+                        Asunto = asunto,
+                        IdAsunto = asunto != null ? asunto.Id : 0,
+                        ArchivoPDF = null,
+                        FechaModificacion = DateTime.Now,
+                        IdSujetoObligado = null,
+                        IdUsuarioModificacion = 1,
+                        IdTipoDictamen = null
+
+                    };
+
+                    if (IsValid(dictamen))
+                    {
+                        db.Dictamenes.Add(dictamen);
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+
+                        dictamenesError.Add(dictamen);
+                    }
+                }
+                
+            }
+
+
+            foreach(HttpPostedFileBase file in files)
+            {
+                var fileName = Guid.NewGuid().ToString();                
+                var extension = Path.GetExtension(file.FileName);
+
+                // compruebo directorio
+                var basePath = Server.MapPath("~/Files");
+                var filePath = Path.Combine("~", "Files", fileName + extension);
+
+                bool basePathExists = System.IO.Directory.Exists(basePath);
+                if (!basePathExists) Directory.CreateDirectory(basePath);
+
+                if (!System.IO.File.Exists(Server.MapPath(filePath)))
+                {
+                    file.SaveAs(Server.MapPath(filePath));
+                }
+                // creo el archivo para la base de datos
+                var archivo = new ArchivoPDF
+                {
+                    FechaCarga = DateTime.Now,
+                    TipoArchivo = file.ContentType,
+                    Extension = extension,
+                    Nombre = fileName,
+                    Path = filePath,
+                    Contenido = FileController.ExtractTextFromPdf(filePath),
                 };
 
+                string NroGDE;
 
-                if (ModelState.IsValid)
+                Regex numeroGDE = new Regex("IF-[0-9]{4}-[0-9]+-APN-[A-Z]+#[A-Z]+", RegexOptions.IgnoreCase);
+
+                MatchCollection matches = numeroGDE.Matches(archivo.Contenido);
+                try
                 {
-                    db.Dictamenes.Add(dictamen);
-                }
-            }
-            try
-            {
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-        }
+                    NroGDE = matches[0].Value;
+                    Dictamen dict = db.Dictamenes.Where(m => m.NroGDE == NroGDE).ToArray().FirstOrDefault();
+                    if (dict != null)
+                    {
+                        db.ArchivosPDF.Add(archivo);
+                        db.SaveChanges();
+                        dict.IdArchivoPDF = archivo.Id;
+                        db.Entry(dict).State = EntityState.Modified;
+                        db.SaveChanges();
 
+                    }
+                }
+                catch
+                {
+                    archivosPDFError.Add(archivo);
+                }
+
+               
+            }
+            
+            db.SaveChanges();
+            return Json(new {archivosPDFError, dictamenesError });
+            
+            //try
+            //{
+
+            //}
+            //catch
+            //{
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //}
+        }
 
         protected override void Dispose(bool disposing)
         {

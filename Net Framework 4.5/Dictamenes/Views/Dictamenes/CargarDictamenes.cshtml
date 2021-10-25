@@ -4,15 +4,21 @@
 }
 <h2>Cargar Dictámenes</h2>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("CargarDictamenes", "Dictamenes", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
 
     <div class="form-group row">
         @Html.Label("Ingrese el JSON con todos los Dictámenes que desea agregar", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
-        <div class="col-md-9">
-            @Html.Editor("JSONDictamenes", new { htmlAttributes = new { @class = "form-control" } })
-        </div>
+
+    </div>
+    <div class="col-md-9">
+        <textarea name="JSONDictamenes"></textarea>
+    </div>
+
+    <div class="form-group">
+        <p class="">     Ingrese el Archivo PDF</p>
+        <input type="file" class="" accept=".pdf" name="files" multiple>
     </div>
 
     <div class="form-group">
