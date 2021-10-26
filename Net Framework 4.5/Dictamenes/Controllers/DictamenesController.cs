@@ -118,7 +118,7 @@ namespace Dictamenes.Controllers
         {
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
-            ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
+            ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion", db.TiposDictamen.First(m => m.Descripcion == "No corresponde"));
             ViewData["TipoSujetoObligado"] = new SelectList(db.TiposSujetoObligado.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             return View();
         }
@@ -235,15 +235,9 @@ namespace Dictamenes.Controllers
             {
                 ModelState.AddModelError("NroGDE", "Ya existe un Dictámen con ese Número de GDE");
             }
-
-            //if (dictamen.IdSujetoObligado.HasValue)
-            //{
-            //    sujetoObligado.Id = dictamen.IdSujetoObligado.Value;
-            //    dictamen.SujetoObligado = sujetoObligado;
-            //}
+            
             if (dictamen.SujetoObligado.CuilCuit == 0)
             {
-                ModelState.Remove("CuilCuit");
                 ModelState.Remove("SujetoObligado.CuilCuit");
             }
 
@@ -348,6 +342,10 @@ namespace Dictamenes.Controllers
                             db.SujetosObligadosLog.Add(sujetoObligadoLog);
                             db.SaveChanges();
                             
+                        }
+                        else
+                        {
+                            dictamen.SujetoObligado.Id = dictamen.IdSujetoObligado.Value;
                         }
                     }
                     else
@@ -507,7 +505,7 @@ namespace Dictamenes.Controllers
                             FechaModificacion = DateTime.Now,
                             IdSujetoObligado = null,
                             IdUsuarioModificacion = 1,
-                            IdTipoDictamen = null
+                            IdTipoDictamen = db.TiposDictamen.First(m => m.Descripcion == "No corresponde").Id
                         };
 
                         if (IsValid(dictamen))

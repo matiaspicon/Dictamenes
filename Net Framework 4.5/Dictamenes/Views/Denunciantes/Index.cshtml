@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Dictamenes.Models.SujetoObligado>
+
+@{
+    ViewBag.Title = "Listado de Sujetos Obligados Denunciantes";
+}
+
+<h2>Listado de todos los Sujetos Obligados Denunciantes</h2>
+
+<table id="dataTable" class="table table-striped table-hover">
+    <thead>
+        <tr class="table-primary">
+            <th>
+                @Html.DisplayNameFor(model => model.CuilCuit)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Apellido)
+            </th>
+            <th class="no-sort"></th>
+        </tr>
+    </thead> 
+   
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CuilCuit)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Apellido)
+            </td>
+            <td class="row justify-content-end mx-0">
+                <a class="btn btn-warning" href="@Url.Action("Edit", new { id = item.Id })"><i class="bi bi-pencil-square"></i></a>
+            </td>
+        </tr>
+        }
+    </tbody>
+    
+
+</table>
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#dataTable').DataTable({
+                "ordering": true,
+                columnDefs: [{
+                    orderable: false,
+                    targets: "no-sort"
+                }],
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Spanish.json"
+                }
+            });
+        });
+    </script>
+}

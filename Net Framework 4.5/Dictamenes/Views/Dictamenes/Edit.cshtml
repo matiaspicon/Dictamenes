@@ -47,7 +47,7 @@
                 @Html.ValidationMessageFor(model => model.Detalle, "", new { @class = "text-danger" })
             </div>
         </div>
-        @Html.HiddenFor(model => model.IdArchivoPDF, new  { id ="IdArchivo" })
+        @Html.HiddenFor(model => model.IdArchivoPDF, new { id = "IdArchivo" })
         <div class="form-group row">
             <p class="col-md-3">Ingrese el Archivo PDF</p>
             <input type="file" class="col-md-9" accept=".pdf" name="file" />
@@ -56,7 +56,7 @@
         <div class="form-group row">
             <div class="col-md-9">
                 <div class="checkbox">
-                    @Html.CheckBox("BorrarArchivo", false) BorrarArchivo
+                    @Html.CheckBox("BorrarArchivo", false)  @Html.Label("BorrarArchivo", "Borrar Archivo", htmlAttributes: new { @class = "control-label col-md-9 align-self-end" })
                 </div>
             </div>
         </div>
@@ -65,7 +65,7 @@
         <div class="form-group row">
             @Html.LabelFor(model => model.IdAsunto, "Asunto", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
             <div class="col-md-9">
-                @Html.DropDownList("IdAsunto", null, "Elija uno",htmlAttributes: new { @class = "form-control col-auto" })
+                @Html.DropDownList("IdAsunto", null, "Elija uno", htmlAttributes: new { @class = "form-control col-auto" })
                 @Html.ValidationMessageFor(model => model.IdAsunto, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -86,11 +86,12 @@
             </div>
         </div>
 
-        <div class="form-group form-check row">
-            <label class="form-check-label control-label col-md-6 align-self-end">
-                @*<input type="checkbox" class="form-check-input" id="esDenunciante" name="EsDenunciante" onclick="setForm(this.checked)" @(Model.SujetoObligado != null && Model.SujetoObligado.Nombre != null ? "checked" : " ") />*@
-                @Html.CheckBox("EsDenunciante", (Model.SujetoObligado != null && Model.SujetoObligado.Nombre != null), new { id = "esDenunciante", name = "EsDenunciante", onclick = "setForm(this.checked)" }) Sujeto Obligado es Denunciante
-            </label>
+        <div class="form-group row">
+            <div class="col-md-9">
+                <div class="checkbox">
+                    @Html.CheckBox("EsDenunciante", (Model.SujetoObligado != null && Model.SujetoObligado.Nombre != null), new { id = "esDenunciante", name = "EsDenunciante", onclick = "setForm(this.checked)" }) @Html.Label("esDenunciante","Sujeto Obligado es Denunciante", htmlAttributes: new { @class = "control-label col-md-9 align-self-end" }  )
+                </div>
+            </div>
         </div>
 
 
@@ -98,7 +99,7 @@
             <div class="form-group row">
                 @Html.LabelFor(model => model.IdSujetoObligado, "Sujetos Obligados", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
                 <div class="col-md-9">
-                    @Html.DropDownList("IdSujetoObligado", null, "Sin Sujeto Obligado",htmlAttributes: new { @class = "form-control col-auto", id = "InputEmpresas" })
+                    @Html.DropDownList("IdSujetoObligado", null, "Sin Sujeto Obligado", htmlAttributes: new { @class = "form-control col-auto", id = "InputEmpresas" })
                     @Html.ValidationMessageFor(model => model.IdSujetoObligado, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -106,6 +107,7 @@
 
         <div id="FormPersonas" style="display:none">
             @Html.HiddenFor(model => model.IdSujetoObligado)
+            @if (Model.SujetoObligado != null) { Html.HiddenFor(model => model.SujetoObligado.Id); }
             <div class="form-group row">
                 <label class="form-label col-md-3 align-self-end">CUIL/CUIT </label>
                 <div class="col-md-9">

@@ -1,11 +1,8 @@
 ﻿@model IEnumerable<Dictamenes.Models.Dictamen>
 @using Dictamenes.Models
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Listado de Dictámenes";
 }
-
-
-
 
 
 @if (Session["rol"] != null && (string)Session["rol"] == "CARGAR")

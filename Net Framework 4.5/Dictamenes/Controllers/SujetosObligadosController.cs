@@ -51,6 +51,11 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
         {
+            if (db.SujetosObligados.FirstOrDefault(s => s.CuilCuit == sujetoObligado.CuilCuit) != null)
+            {
+                ModelState.AddModelError("CuilCuit", "Ya existe un Sujeto Obligado con ese Cuil/Cuit");
+            }
+
             sujetoObligado.IdUsuarioModificacion = 3;
             sujetoObligado.FechaModificacion = DateTime.Now;
             if (ModelState.IsValid)
@@ -87,9 +92,14 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado, EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion, IdOriginal")] SujetoObligado sujetoObligado)
         {
+            SujetoObligado sujetoObligadoViejo = db.SujetosObligados.AsNoTracking().First(d => d.Id == sujetoObligado.Id);
+            if (sujetoObligadoViejo.CuilCuit != sujetoObligado.CuilCuit && db.SujetosObligados.FirstOrDefault(s => s.CuilCuit == sujetoObligado.CuilCuit) != null)
+            {
+                ModelState.AddModelError("CuilCuit", "Ya existe un Sujeto Obligado con ese Cuil/Cuit");
+            }
+
             if (ModelState.IsValid)
             {
-                SujetoObligado sujetoObligadoViejo = db.SujetosObligados.AsNoTracking().First(d => d.Id == sujetoObligado.Id);
                 SujetoObligadoLog sujetoObligadoLog = new SujetoObligadoLog 
                 {                    
                     CuilCuit = sujetoObligadoViejo.CuilCuit,
