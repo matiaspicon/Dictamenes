@@ -2,14 +2,14 @@
 @{
     ViewBag.Title = "Cargar Dictamenes";
 }
-<h2>Cargar Dictámenes</h2>
+<h2>Cargar Dictamenes</h2>
 
 @using (Html.BeginForm("CargarDictamenes", "Dictamenes", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
 
     <div class="form-group row">
-        @Html.Label("Ingrese el JSON con todos los Dictámenes que desea agregar", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+        @Html.Label("Ingrese el JSON con todos los Dictamenes que desea agregar", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
 
     </div>
     <div class="col-md-9">

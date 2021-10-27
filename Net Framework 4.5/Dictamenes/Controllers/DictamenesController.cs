@@ -133,7 +133,7 @@ namespace Dictamenes.Controllers
         {
             if (db.Dictamenes.FirstOrDefault(d => d.NroGDE == dictamen.NroGDE) != null)
             {
-                ModelState.AddModelError("NroGDE", "Ya existe un Dictámen con ese Número de GDE");
+                ModelState.AddModelError("NroGDE", "Ya existe un Dictamen con ese Número de GDE");
             }
 
             dictamen.FechaModificacion = DateTime.Now;
@@ -233,7 +233,7 @@ namespace Dictamenes.Controllers
             Dictamen dictamenViejo = db.Dictamenes.Include(d => d.SujetoObligado).AsNoTracking().First(d => d.Id == dictamen.Id);
             if (dictamenViejo.NroGDE != dictamen.NroGDE && db.Dictamenes.FirstOrDefault(d => d.NroGDE == dictamen.NroGDE) != null)
             {
-                ModelState.AddModelError("NroGDE", "Ya existe un Dictámen con ese Número de GDE");
+                ModelState.AddModelError("NroGDE", "Ya existe un Dictamen con ese Número de GDE");
             }
             
             if (dictamen.SujetoObligado.CuilCuit == 0)

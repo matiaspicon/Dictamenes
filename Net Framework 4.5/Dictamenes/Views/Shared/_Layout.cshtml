@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Dictámenes</title>
+    <title>@ViewData["Title"] - Dictamenes</title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     @using Dictamenes.Models
@@ -13,7 +13,7 @@
 <body class="p-0">
     <header>
         <nav class="navbar navbar-expand-xl navbar-light bg-light">
-            <a class="navbar-brand">Dictámenes</a>
+            <a class="navbar-brand">Dictamenes</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -22,13 +22,13 @@
                     @if (Session["rol"] != null && (string)Session["rol"] == Rol.CONSULTAR.ToString())
                     {
 
-                        <a class="nav-link text-dark" href="@Url.Action("Index","Dictamenes")">Listado de Dictámenes</a>
+                        <a class="nav-link text-dark" href="@Url.Action("Index","Dictamenes")">Listado de Dictamenes</a>
 
                     }
                     else if (Session["rol"] != null && (string)Session["rol"] == Rol.CARGAR.ToString())
                     {
 
-                        <a class="nav-link text-dark" href="@Url.Action("Index","Dictamenes")">Listado de Dictámenes</a>
+                        <a class="nav-link text-dark" href="@Url.Action("Index","Dictamenes")">Listado de Dictamenes</a>
 
 
                         <a class="nav-link text-dark" href="@Url.Action("Menu", "Campos")">Tablas maestras</a>

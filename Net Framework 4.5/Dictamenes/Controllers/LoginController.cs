@@ -43,24 +43,26 @@ namespace Dictamenes.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult Login()
+        public ActionResult Login(string returnUrl)
         {
-            if (User.Identity.IsAuthenticated && Session["rol"] == null)
+            if (User.Identity.IsAuthenticated)
             {
-                try
+                if(Session["rol"] == null)
                 {
                     var usuarioLogeado = JsonConvert.DeserializeObject<UsuarioLogueado>(((FormsIdentity)User.Identity).Ticket.UserData);
                     Session["rol"] = usuarioLogeado.GrupoDescripcion != "CARGAR" ? Models.Rol.CARGAR.ToString() : Models.Rol.CONSULTAR.ToString();
                     Session["rolID"] = usuarioLogeado.IdGrupo;
-                    return RedirectToAction("Index", "Dictamenes");
-                }
-                catch { }                
+                }                  
+                if (returnUrl != null) return Redirect(returnUrl);
+                return RedirectToAction("Index", "Dictamenes");
+                              
             }
+            ViewBag.ReturnUrl = returnUrl;
             return View();           
         }
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult Login(string CuilCuit, string Idcomp, string Nombre, string Pass)
+        public ActionResult Login(string CuilCuit, string Idcomp, string Nombre, string Pass, string ReturnURL)
         {
             //if (CuilCuit != "" && Idcomp != "" && Nombre != "" && Pass != "")
             //{
@@ -105,9 +107,10 @@ namespace Dictamenes.Controllers
                     // Create the cookie.
                     Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, encTicket));
 
-                    // Redirect back to original URL.
+                // Redirect back to original URL.
+                    if (ReturnURL != null) return Redirect(ReturnURL);
                     return RedirectToAction("Index", "Dictamenes");
-                }
+            }
 
             //}
 
@@ -120,8 +123,10 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Logout()
         {
+            Session["rol"] = null;
+            Session["rolId"] = null;
             FormsAuthentication.SignOut();
-            return RedirectToAction("Login");
+            return RedirectToAction("Login","Login");
         }
 
         public ActionResult ErrorNoPermisos()
