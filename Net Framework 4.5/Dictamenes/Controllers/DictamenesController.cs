@@ -59,11 +59,12 @@ namespace Dictamenes.Controllers
         // GET: Dictamenes/Create
         public ActionResult CargarFile()
         {
-            if ((string)Session["rol"] == "CARGAR")
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
             {
-                return View();
+                return RedirectToAction("ErrorNoPermisos", "Login");
             }
-            return RedirectToAction("ErrorNoPermisos", "Login");
+            
+            return View();
         }
 
         [HttpPost]
@@ -102,7 +103,6 @@ namespace Dictamenes.Controllers
             dictamen = ExtratDictamenFromString(archivo.Contenido);
             dictamen.IdArchivoPDF = archivo.Id;
             dictamen.ArchivoPDF = archivo;
-
             // cargo la informacion para el formulario Create y devuelvo la VIEW del create con la informacion precargada
             // o sin la informacion precargada si no se pudo obtener nada del PDF
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
@@ -116,6 +116,11 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Create
         public ActionResult Create()
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion", db.TiposDictamen.First(m => m.Descripcion == "No corresponde"));
@@ -173,6 +178,15 @@ namespace Dictamenes.Controllers
                 dictamen.SujetoObligado = db.SujetosObligados.Find(dictamen.IdSujetoObligado);
             }
 
+            if(dictamen.IdSujetoObligado == null)
+            {
+                dictamen.HaySujetoObligado = false;
+            }
+            else
+            {
+                dictamen.HaySujetoObligado = true;
+            }
+
             if (ModelState.IsValid)
             {
                 db.Dictamenes.Add(dictamen);
@@ -204,6 +218,11 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Edit/5
         public ActionResult Edit(int? id)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -326,7 +345,6 @@ namespace Dictamenes.Controllers
                                 FechaModificacion = sujetoObligadoViejo.FechaModificacion,
                                 IdUsuarioModificacion = sujetoObligadoViejo.IdUsuarioModificacion
                             };
-
                             sujetoObligadoViejo.CuilCuit = dictamen.SujetoObligado.CuilCuit;
                             sujetoObligadoViejo.Nombre = dictamen.SujetoObligado.Nombre;
                             sujetoObligadoViejo.Apellido = dictamen.SujetoObligado.Apellido;
@@ -370,6 +388,14 @@ namespace Dictamenes.Controllers
                         dictamen.IdSujetoObligado = null;
                         dictamen.SujetoObligado = null;
                     }
+                }
+                if (dictamen.IdSujetoObligado == null)
+                {
+                    dictamen.HaySujetoObligado = false;
+                }
+                else
+                {
+                    dictamen.HaySujetoObligado = true;
                 }
                 //-----------------------------------------------------------------------------
 

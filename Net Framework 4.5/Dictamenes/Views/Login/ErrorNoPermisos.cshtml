@@ -5,9 +5,19 @@
 
 <div class="container">
 
-    <h1>No tienes permiso para entrar en este lugar</h1>
+    <h1 class="text-danger">No tienes permiso</h1>
+    <hr>
 
-    <a class="col-3 btn btn-secondary" href="@Url.Action("Index","Dictamenes")"><i class="bi bi-arrow-left"></i>  Volver atras</a>
+    <p>Tu usuario no pertenece al grupo necesario para realizar esta acción. Puedes volver atras o iniciar sesion con otro usuario que cuente con los permisos requeridos.</p>
 
-     
+
+
+
+    <div class="row justify-content-end">
+        <div class="col-lg-6 col-md-8 row justify-content-end">
+            <a class="col-4 btn btn-secondary m-1" href="@Url.Action("Index","Dictamenes")"><i class="bi bi-arrow-left"></i>  Volver atras</a>
+            <a class="btn btn-dark col-4 m-1" href="@Url.Action("Logout", "Login")"><i class="bi bi-person-circle"></i>  Cerrar sesion </a>
+        </div>
+    </div>
+
 </div>

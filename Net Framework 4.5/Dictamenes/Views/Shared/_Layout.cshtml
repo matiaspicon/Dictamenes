@@ -45,13 +45,13 @@
                 <div class="navbar-nav ml-auto">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <div class="nav-item dropdown">
-                            <button class="btn dropdown-toggle px-sm-0" type="button" id="menuOpciones" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                @User.Identity.Name <span class="caret"></span>
-                            </button>
-                            <div class="dropdown-menu" aria-labelledby="menuOpciones">
+                        <div class="nav-item dropdown">   
+                            <a class="nav-link dropdown-toggle px-3" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @User.Identity.Name
+                            </a>
+                            <div class="dropdown-menu ml-auto" aria-labelledby="navbarDropdownMenuLink">
                                 <a href="@Url.Action("Logout", "Login")" class="dropdown-item">
-                                    <i class="fas fa-sign-out-alt"></i> Salir
+                                    <i class="fas fa-sign-out-alt"></i> Cerrar sesion
                                 </a>
                             </div>
                         </div>

@@ -32,6 +32,7 @@ namespace Dictamenes.Models
         [DisplayName("Fecha de Carga")]
         public DateTime FechaCarga { get; set; }
 
+        [Required]
         public string Detalle { get; set; }
 
         [DisplayName("Es Público")]
@@ -40,6 +41,8 @@ namespace Dictamenes.Models
         [ForeignKey(nameof(ArchivoPDF))]
         public int? IdArchivoPDF { get; set; }
         public ArchivoPDF ArchivoPDF { get; set; }
+
+        public bool HaySujetoObligado { get; set; }
 
         [ForeignKey(nameof(SujetoObligado))]
         public int? IdSujetoObligado { get; set; }
