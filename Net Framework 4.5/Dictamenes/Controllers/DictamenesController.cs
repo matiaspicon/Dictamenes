@@ -71,6 +71,11 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CargarFile(HttpPostedFileBase file)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
             Dictamen dictamen = new Dictamen();
             //separo informacion del archivo
             var fileName = Guid.NewGuid().ToString();
@@ -123,7 +128,7 @@ namespace Dictamenes.Controllers
 
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
-            ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion", db.TiposDictamen.First(m => m.Descripcion == "No corresponde"));
+            ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["TipoSujetoObligado"] = new SelectList(db.TiposSujetoObligado.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             return View();
         }
@@ -146,7 +151,7 @@ namespace Dictamenes.Controllers
             dictamen.NroGDE = dictamen.NroGDE.ToUpper();
             dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
             dictamen.Detalle = dictamen.Detalle != null ? dictamen.Detalle.ToUpper() : ".";
-
+            dictamen.EsPublico = false;
 
             if (dictamen.SujetoObligado.CuilCuit > 0)
             {
@@ -227,7 +232,9 @@ namespace Dictamenes.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Dictamen dictamen = db.Dictamenes.Include(d => d.SujetoObligado).FirstOrDefault(d => d.Id == id);
+
             if (dictamen == null)
             {
                 return HttpNotFound();
@@ -249,16 +256,24 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion,IdOriginal, SujetoObligado")] Dictamen dictamen, bool EsDenunciante, bool BorrarArchivo, HttpPostedFileBase file)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
+
             Dictamen dictamenViejo = db.Dictamenes.Include(d => d.SujetoObligado).AsNoTracking().First(d => d.Id == dictamen.Id);
             if (dictamenViejo.NroGDE != dictamen.NroGDE && db.Dictamenes.FirstOrDefault(d => d.NroGDE == dictamen.NroGDE) != null)
             {
                 ModelState.AddModelError("NroGDE", "Ya existe un Dictamen con ese Número de GDE");
             }
             
-            if (dictamen.SujetoObligado.CuilCuit == 0)
+            if (!EsDenunciante)
             {
                 ModelState.Remove("SujetoObligado.CuilCuit");
             }
+
+            dictamen.EsPublico = false;
 
             if (ModelState.IsValid)
             {
@@ -269,6 +284,7 @@ namespace Dictamenes.Controllers
                     NroExpediente = dictamenViejo.NroExpediente,
                     Detalle = dictamenViejo.Detalle,
                     EsPublico = dictamenViejo.EsPublico,
+                    HaySujetoObligado = dictamenViejo.IdSujetoObligado != null,
                     IdArchivoPDF = dictamenViejo.IdArchivoPDF,
                     IdSujetoObligado = dictamenViejo.IdSujetoObligado,
                     IdAsunto = dictamenViejo.IdAsunto,
@@ -389,6 +405,8 @@ namespace Dictamenes.Controllers
                         dictamen.SujetoObligado = null;
                     }
                 }
+
+
                 if (dictamen.IdSujetoObligado == null)
                 {
                     dictamen.HaySujetoObligado = false;
@@ -414,6 +432,11 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Delete/5
         public ActionResult Delete(int? id)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -431,6 +454,11 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
             var dictamen = db.Dictamenes.Find(id);
 
             Dictamen dictamenViejo = db.Dictamenes.AsNoTracking().First(d => d.Id == id);
@@ -444,6 +472,7 @@ namespace Dictamenes.Controllers
                 NroExpediente = dictamenViejo.NroExpediente,
                 Detalle = dictamenViejo.Detalle,
                 EsPublico = dictamenViejo.EsPublico,
+                HaySujetoObligado = dictamenViejo.IdSujetoObligado != null,
                 IdArchivoPDF = dictamenViejo.IdArchivoPDF,
                 IdSujetoObligado = dictamenViejo.IdSujetoObligado,
                 IdAsunto = dictamenViejo.IdAsunto,
@@ -499,6 +528,11 @@ namespace Dictamenes.Controllers
         [HttpPost]
         public ActionResult CargarDictamenes(string JSONDictamenes, HttpPostedFileBase[] files)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
             List<DictamenData> dictamenes;
             List<Dictamen> dictamenesError = new List<Dictamen>();
             List<ArchivoPDF> archivosPDFError = new List<ArchivoPDF>();
@@ -510,7 +544,7 @@ namespace Dictamenes.Controllers
             catch {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if(JSONDictamenes != null)
+            if(dictamenes != null)
             {
                 foreach (DictamenData dictamenData in dictamenes)
                 {
@@ -525,13 +559,14 @@ namespace Dictamenes.Controllers
                             FechaCarga = DateTime.ParseExact(dictamenData.FechaCarga, "dd-MM-yyyy HH:mm", CultureInfo.InvariantCulture),
                             Detalle = dictamenData.Detalle,
                             EsPublico = true,
+                            HaySujetoObligado = false,
                             Asunto = asunto,
                             IdAsunto = asunto != null ? asunto.Id : 0,
                             ArchivoPDF = null,
                             FechaModificacion = DateTime.Now,
                             IdSujetoObligado = null,
                             IdUsuarioModificacion = 1,
-                            IdTipoDictamen = db.TiposDictamen.First(m => m.Descripcion == "No corresponde").Id
+                            IdTipoDictamen = db.TiposDictamen.First(m => m.Descripcion == "Sin valor").Id
                         };
 
                         if (IsValid(dictamen))
@@ -546,9 +581,9 @@ namespace Dictamenes.Controllers
                     }
 
                 }
-            }            
+            }
 
-            if(files != null)
+            if (files.FirstOrDefault() != null)
             {
                 foreach (HttpPostedFileBase file in files)
                 {
@@ -600,20 +635,10 @@ namespace Dictamenes.Controllers
                         archivosPDFError.Add(archivo);
                     }
                 }
-            }
-           
+            }           
             
             db.SaveChanges();
-            return Json(new {archivosPDFError, dictamenesError });
-            
-            //try
-            //{
-
-            //}
-            //catch
-            //{
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            //}
+            return Json(new {archivosPDFError, dictamenesError});          
         }
 
         protected override void Dispose(bool disposing)

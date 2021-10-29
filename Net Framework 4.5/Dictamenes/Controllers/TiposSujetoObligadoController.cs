@@ -18,29 +18,22 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoObligado
         public ActionResult Index()
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
             var tipoSujetoObligado = db.TiposSujetoObligado;
             return View(tipoSujetoObligado.ToList());
-        }
-
-        // GET: TiposSujetoObligado/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            TipoSujetoObligado tipoSujetoObligado = db.TiposSujetoObligado.Find(id);
-            if (tipoSujetoObligado == null)
-            {
-                return HttpNotFound();
-            }
-            return View(tipoSujetoObligado);
         }
 
         // GET: TiposSujetoObligado/Create
         public ActionResult Create()
         {
-                         return View();
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+            return View();
         }
 
         // POST: TiposSujetoObligado/Create
@@ -50,6 +43,10 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoObligado tipoSujetoObligado)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
             tipoSujetoObligado.FechaModificacion = DateTime.Now;
             tipoSujetoObligado.IdUsuarioModificacion = 1;
             if (ModelState.IsValid)
@@ -65,6 +62,10 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoObligado/Edit/5
         public ActionResult Edit(int? id)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -84,6 +85,10 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoObligado tipoSujetoObligado)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
             if (ModelState.IsValid)
             {
                 TipoSujetoObligado tipoSujetoObligadoViejo = db.TiposSujetoObligado.AsNoTracking().First(d => d.Id == tipoSujetoObligado.Id);
@@ -106,7 +111,7 @@ namespace Dictamenes.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-        return View(tipoSujetoObligado);
+            return View(tipoSujetoObligado);
         }
 
         protected override void Dispose(bool disposing)

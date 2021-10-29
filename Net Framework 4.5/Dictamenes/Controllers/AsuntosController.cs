@@ -20,31 +20,24 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Index()
         {
+
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
             var asunto = db.Asuntos;
             return View(asunto.ToList());
-        }
-
-        // GET: Asuntos/Details/5
-        [Authorize]
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Asunto asunto = db.Asuntos.Find(id);
-            if (asunto == null)
-            {
-                return HttpNotFound();
-            }
-            return View(asunto);
         }
 
         // GET: Asuntos/Create
         [Authorize]
         public ActionResult Create()
         {
-                         return View();
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+            return View();
         }
 
         // POST: Asuntos/Create
@@ -54,6 +47,10 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
             asunto.FechaModificacion = DateTime.Now;
             asunto.IdUsuarioModificacion = 1;
             if (ModelState.IsValid)
@@ -67,6 +64,10 @@ namespace Dictamenes.Controllers
 
         public ActionResult CargarAsuntos()
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
             return View();
         }
 
@@ -74,6 +75,12 @@ namespace Dictamenes.Controllers
         [HttpPost]
         public ActionResult CargarAsuntos(string JSONAsuntos)
         {
+
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
             var asuntos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(JSONAsuntos);
 
             foreach (string a in asuntos) 
@@ -106,6 +113,10 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Edit(int? id)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -126,6 +137,12 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Edit([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
+
             if (ModelState.IsValid)
             {
                Asunto asuntoViejo = db.Asuntos.AsNoTracking().First(d => d.Id == asunto.Id);

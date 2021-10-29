@@ -18,28 +18,23 @@ namespace Dictamenes.Controllers
         // GET: SujetosObligados
         public ActionResult Index()
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
             var sujetoObligado = db.SujetosObligados.Where(d =>  d.RazonSocial != null).Include(s => s.TipoSujetoObligado);
             return View(sujetoObligado.ToList());
-        }
-
-        // GET: SujetosObligados/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            SujetoObligado sujetoObligado = db.SujetosObligados.Find(id);
-            if (sujetoObligado == null)
-            {
-                return HttpNotFound();
-            }
-            return View(sujetoObligado);
         }
 
         // GET: SujetosObligados/Create
         public ActionResult Create()
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
             ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d =>  d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion");
             return View();
         }
@@ -51,6 +46,11 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
             if (db.SujetosObligados.FirstOrDefault(s => s.CuilCuit == sujetoObligado.CuilCuit) != null)
             {
                 ModelState.AddModelError("CuilCuit", "Ya existe un Sujeto Obligado con ese Cuil/Cuit");
@@ -72,6 +72,11 @@ namespace Dictamenes.Controllers
         // GET: SujetosObligados/Edit/5
         public ActionResult Edit(int? id)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -92,6 +97,11 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado, EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion, IdOriginal")] SujetoObligado sujetoObligado)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
             SujetoObligado sujetoObligadoViejo = db.SujetosObligados.AsNoTracking().First(d => d.Id == sujetoObligado.Id);
             if (sujetoObligadoViejo.CuilCuit != sujetoObligado.CuilCuit && db.SujetosObligados.FirstOrDefault(s => s.CuilCuit == sujetoObligado.CuilCuit) != null)
             {

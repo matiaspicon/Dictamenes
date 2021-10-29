@@ -66,7 +66,7 @@ namespace Dictamenes.Controllers
         {
             //if (CuilCuit != "" && Idcomp != "" && Nombre != "" && Pass != "")
             //{
-            //WCFUsuarioLogeado usuarioLogeado = loginService.LogeoUsuario(CuilCuit, Idcomp, Nombre, Pass, ConfigurationManager.AppSettings["IdApp"], false);
+            //    WCFUsuarioLogeado usuarioLogeado = loginService.LogeoUsuario(CuilCuit, Idcomp, Nombre, Pass, ConfigurationManager.AppSettings["IdApp"], false);
             //var algo = loginservice.obtengolistausuarioslogeados();
             //var algo1 = loginService.ObtengoPersonaByAplicativo(259);
             //var app = neguu.naplicaciones.obteneraplicacionbyid(259);
@@ -74,7 +74,7 @@ namespace Dictamenes.Controllers
             //WCFUsuarioLogeado usuarioLogeado = null;
 
             WCFUsuarioLogeado usuarioLogeado = new WCFUsuarioLogeado();
-                if (usuarioLogeado != null)
+            if (usuarioLogeado != null)
                 {
                     string userData = JsonConvert.SerializeObject(new UsuarioLogueado
                     {
@@ -114,7 +114,7 @@ namespace Dictamenes.Controllers
 
             //}
 
-           
+
 
             ViewBag.Error = "Los datos ingresados son incorrectos";
             return View();

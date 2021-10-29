@@ -11,6 +11,11 @@ namespace Dictamenes.Controllers
     {
         public ActionResult Menu()
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
             return View();
         }
     }

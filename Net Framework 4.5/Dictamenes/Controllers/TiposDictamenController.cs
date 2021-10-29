@@ -18,28 +18,22 @@ namespace Dictamenes.Controllers
         // GET: TiposDictamen
         public ActionResult Index()
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
             var tipoDictamen = db.TiposDictamen;
             return View(tipoDictamen.ToList());
         }
 
-        // GET: TiposDictamen/Details/5
-        public ActionResult Details(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            TipoDictamen tipoDictamen = db.TiposDictamen.Find(id);
-            if (tipoDictamen == null)
-            {
-                return HttpNotFound();
-            }
-            return View(tipoDictamen);
-        }
 
         // GET: TiposDictamen/Create
         public ActionResult Create()
-        {   
+        {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
             return View();
         }
 
@@ -50,6 +44,10 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoDictamen tipoDictamen)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
             tipoDictamen.IdUsuarioModificacion = 1;
             tipoDictamen.FechaModificacion = DateTime.Now;
             if (ModelState.IsValid)
@@ -65,6 +63,10 @@ namespace Dictamenes.Controllers
         // GET: TiposDictamen/Edit/5
         public ActionResult Edit(int? id)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -84,6 +86,10 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoDictamen tipoDictamen)
         {
+            if ((string)Session["rol"] != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
             if (ModelState.IsValid)
             {
                 var tipoSujetoDictamenViejo = db.TiposDictamen.AsNoTracking().First(d => d.Id == tipoDictamen.Id);               

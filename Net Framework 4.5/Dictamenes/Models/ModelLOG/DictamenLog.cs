@@ -57,6 +57,7 @@ namespace Dictamenes.Models
 
         public bool Borrado{ get; set; }
 
+        public bool HaySujetoObligado { get; set; }
         public DateTime FechaModificacion { get; set; }
 
         [ForeignKey("UsuarioModificacion")]
