@@ -14,6 +14,7 @@ namespace Dictamenes.Models
         public int Id { get; set; }
 
         [MaxLength(100, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
+        [DisplayName("Decripción")]
         public string Descripcion { get; set; }
 
         [DisplayName("Esta habilitado")]
@@ -21,10 +22,10 @@ namespace Dictamenes.Models
 
         public DateTime FechaModificacion { get; set; }
 
-        [ForeignKey("UsuarioModificacion")]
+        
         public int? IdUsuarioModificacion { get; set; }
 
-        public Usuario UsuarioModificacion { get; set; }
+        
 
     }
 }

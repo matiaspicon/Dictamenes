@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Detalles";
 }
+@{string rol = Dictamenes.Controllers.LoginController.GetUserData(User.Identity).GrupoDescripcion;}
 
 <h2>Detalles del Dictamen</h2>
 
@@ -32,11 +33,11 @@
         @Html.DisplayFor(model => model.Detalle)
     </p>
     @*<label class="form-label align-self-center col-3">
-        @Html.DisplayNameFor(model => model.EsPublico)
-    </label>
-    <p class="col-9 card p-2">
-        @Html.DisplayFor(model => model.EsPublico)
-    </p>*@
+            @Html.DisplayNameFor(model => model.EsPublico)
+        </label>
+        <p class="col-9 card p-2">
+            @Html.DisplayFor(model => model.EsPublico)
+        </p>*@
     <label class="align-self-center col-3 col-form-label">
         @Html.DisplayNameFor(model => model.Asunto)
     </label>
@@ -96,33 +97,33 @@
     }
     else
     {
-        
-            <h5 class="form-label col-3 align-self-center">
-                Sujeto Obligado
-            </h5>
-            <h6 class="card p-2 col-9">Este dictámen no tiene un Sujeto Obligado</h6>
-        
+
+        <h5 class="form-label col-3 align-self-center">
+            Sujeto Obligado
+        </h5>
+        <h6 class="card p-2 col-9">Este dictámen no tiene un Sujeto Obligado</h6>
+
     }
 
 
     @{ if (Model.ArchivoPDF == null)
         {
-                <h5 class="form-label col-3 align-self-center">
-                    Archivo
-                </h5>
-                <h6 class="card p-2 col-9">Este dictámen no tiene un archivo</h6>
-            
+            <h5 class="form-label col-3 align-self-center">
+                Archivo
+            </h5>
+            <h6 class="card p-2 col-9">Este dictámen no tiene un archivo</h6>
+
         }
         else
         {
             if (!System.IO.File.Exists(Server.MapPath(Model.ArchivoPDF.Path)))
             {
-                
-                    <h5 class="form-label col-3 align-self-center">
-                        Archivo
-                    </h5>
-                    <h6 class="card alert-danger rounded p-2 col-9">Hubo un error con la carga del archivo</h6>
-                
+
+                <h5 class="form-label col-3 align-self-center">
+                    Archivo
+                </h5>
+                <h6 class="card alert-danger rounded p-2 col-9">Hubo un error con la carga del archivo</h6>
+
             }
             else
             {
@@ -144,10 +145,10 @@
 
 <div class="row justify-content-end">
     <div class="col-lg-6 col-md-8 row justify-content-end">
-        @if (Session["rol"] != null && (string)Session["rol"] == "CARGAR")
+        @if (rol != null && (string)rol == "CARGAR")
         {
             <div class="col my-2 row ">
-                <a class="align-self-center m-1 col btn btn-secondary" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atras</a>
+                <a class="align-self-center m-1 col btn btn-secondary" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atrás</a>
                 <a class="align-self-center m-1 col btn btn-danger" href="@Url.Action("Delete", new { id = Model.Id })"><i class="bi bi-trash"></i> Borrar</a>
                 <a class="align-self-center m-1 col-md col-sm-auto btn btn-warning" href="@Url.Action("Edit", new { id = Model.Id })"><i class="bi bi-pencil-square"></i> Editar</a>
             </div>
@@ -156,7 +157,7 @@
         else
         {
             <div class="col-4 my-2">
-                <a class="align-self-center col btn btn-secondary" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atras</a>
+                <a class="align-self-center col btn btn-secondary" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atrás</a>
             </div>
         }
     </div>

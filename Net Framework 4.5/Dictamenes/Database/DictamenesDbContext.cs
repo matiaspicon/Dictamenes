@@ -18,7 +18,6 @@ namespace Dictamenes.Database
         public DbSet<SujetoObligado> SujetosObligados { get; set; }
         public DbSet<TipoDictamen> TiposDictamen { get; set; }
         public DbSet<TipoSujetoObligado> TiposSujetoObligado { get; set; }
-        public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<AsuntoLog> AsuntosLog { get; set; }
         public DbSet<DictamenLog> DictamenesLog { get; set; }
         public DbSet<SujetoObligadoLog> SujetosObligadosLog { get; set; }

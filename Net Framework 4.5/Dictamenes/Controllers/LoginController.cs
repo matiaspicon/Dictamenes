@@ -11,6 +11,7 @@ using BEUU;
 using System.Security.Claims;
 using Microsoft.Owin.Security.Cookies;
 using System.Net;
+using Dictamenes.Models;
 
 namespace Dictamenes.Controllers
 {
@@ -20,39 +21,13 @@ namespace Dictamenes.Controllers
         LogLoginService loginService = new LogLoginService();
         // GET: Login
 
-        class UsuarioLogueado{
-            
-            public string NombreUsuario { get; set; }
-            
-            public int Id { get; set; }
-            
-            public string NombrePersona { get; set; }
-            
-            public string ApellidoPersona { get; set; }
-            
-            public string CUIL_CUIT { get; set; }
-            
-            public string Mail { get; set; }
-            
-            public string Telefono { get; set; }
-
-            public string GrupoDescripcion { get; set; }
-
-            public int IdGrupo { get; set; }
-
-        }
+        
 
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
             if (User.Identity.IsAuthenticated)
-            {
-                if(Session["rol"] == null)
-                {
-                    var usuarioLogeado = JsonConvert.DeserializeObject<UsuarioLogueado>(((FormsIdentity)User.Identity).Ticket.UserData);
-                    Session["rol"] = usuarioLogeado.GrupoDescripcion != "CARGAR" ? Models.Rol.CARGAR.ToString() : Models.Rol.CONSULTAR.ToString();
-                    Session["rolID"] = usuarioLogeado.IdGrupo;
-                }                  
+            {                
                 if (returnUrl != null) return Redirect(returnUrl);
                 return RedirectToAction("Index", "Dictamenes");
                               
@@ -80,16 +55,15 @@ namespace Dictamenes.Controllers
                     {
                         ApellidoPersona = usuarioLogeado.ApellidoPersona,
                         CUIL_CUIT = usuarioLogeado.CUIL_CUIT,
-                        GrupoDescripcion = usuarioLogeado.Grupos.GrupoDescripcion,
+                        //GrupoDescripcion = usuarioLogeado.Grupos.GrupoDescripcion == "CARGAR" ? Models.Rol.CARGAR.ToString() : Models.Rol.CONSULTAR.ToString(),
+                        GrupoDescripcion = Nombre.ToUpper(),
                         IdGrupo = usuarioLogeado.Grupos.IdGrupo,
-                        Id = usuarioLogeado.Id,
+                        Id = 7777,
                         Mail = usuarioLogeado.Mail,
                         NombrePersona = usuarioLogeado.NombrePersona,
                         NombreUsuario = usuarioLogeado.NombreUsuario,
                         Telefono = usuarioLogeado.Telefono
-                    });
-                    Session["rol"] = usuarioLogeado.Grupos.GrupoDescripcion != "CARGAR" ? Models.Rol.CARGAR.ToString() : Models.Rol.CONSULTAR.ToString();
-                    Session["rolID"] = usuarioLogeado.Grupos.IdGrupo;
+                    });    
 
                     FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
                         1,
@@ -123,10 +97,23 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Logout()
         {
-            Session["rol"] = null;
-            Session["rolId"] = null;
             FormsAuthentication.SignOut();
             return RedirectToAction("Login","Login");
+        }
+
+
+        static public UsuarioLogueado GetUserData(object usuario)
+        {
+            var identity = usuario as FormsIdentity;
+            if (identity == null) return null;
+            return JsonConvert.DeserializeObject<UsuarioLogueado>(identity.Ticket.UserData);
+        }
+
+        static public string GetUserRol(object usuario)
+        {
+            UsuarioLogueado user = GetUserData(usuario);
+            if (user == null) return "";
+            return user.GrupoDescripcion;
         }
 
         public ActionResult ErrorNoPermisos()

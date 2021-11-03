@@ -2,6 +2,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@model String
+
+
 
 <div class="container">
 
@@ -15,8 +18,8 @@
 
     <div class="row justify-content-end">
         <div class="col-lg-6 col-md-8 row justify-content-end">
-            <a class="col-4 btn btn-secondary m-1" href="@Url.Action("Index","Dictamenes")"><i class="bi bi-arrow-left"></i>  Volver atras</a>
-            <a class="btn btn-dark col-4 m-1" href="@Url.Action("Logout", "Login")"><i class="bi bi-person-circle"></i>  Cerrar sesion </a>
+            <a class="col-4 btn btn-secondary m-1" href="@Url.Action("Index","Dictamenes")"><i class="bi bi-arrow-left"></i>  Volver atrás</a>
+            <a class="btn btn-dark col-4 m-1" href="@Url.Action("Logout", "Login", new { ReturnURL = Model})"><i class="bi bi-person-circle"></i>  Cerrar sesion </a>
         </div>
     </div>
 
