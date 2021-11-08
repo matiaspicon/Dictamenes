@@ -23,6 +23,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamen
         public ActionResult Index()
         {
+            //Trae todos los dictamenes que sean del anio actual
             var dictamenes = db.Dictamenes.Where(d => d.FechaCarga.Year == DateTime.Today.Year).Include(d => d.Asunto).Include(d => d.TipoDictamen);
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
@@ -47,8 +48,6 @@ namespace Dictamenes.Controllers
                     return HttpNotFound();
                 }
             }
-
-            ViewData["IdDenunciante"] = db.TiposSujetoObligado.FirstOrDefault(m => m.Descripcion == "Denunciante").Id;
             return View(dictamen);
         }
 
@@ -56,6 +55,8 @@ namespace Dictamenes.Controllers
         // GET: Dictamenes/Create
         public ActionResult CargarFile()
         {
+
+            //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
             if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
@@ -68,12 +69,14 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CargarFile(HttpPostedFileBase file)
         {
+            //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
             if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
 
             Dictamen dictamen = new Dictamen();
+
             //separo informacion del archivo
             var fileName = Guid.NewGuid().ToString();
             var extension = Path.GetExtension(file.FileName);
@@ -104,13 +107,15 @@ namespace Dictamenes.Controllers
             // extraigo la informacion del PDF del dictamen y creo el objeto con la misma
             dictamen = ExtratDictamenFromString(archivo.Contenido);
             dictamen.IdArchivoPDF = archivo.Id;
-            dictamen.ArchivoPDF = archivo;
-            // cargo la informacion para el formulario Create y devuelvo la VIEW del create con la informacion precargada
-            // o sin la informacion precargada si no se pudo obtener nada del PDF
+            dictamen.ArchivoPDF = archivo;           
+
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["TipoSujetoObligado"] = new SelectList(db.TiposSujetoObligado.Where(m => m.EstaHabilitado), "Id", "Descripcion");
+
+            // cargo la informacion para el formulario Create y devuelvo la VIEW del create con la informacion extraida del Archivo
+            //que esta dentro de la variable dictamen
             return View("Create", dictamen);
         }
 
@@ -118,6 +123,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Create
         public ActionResult Create()
         {
+            //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
             if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
@@ -138,56 +144,68 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion, SujetoObligado")] Dictamen dictamen)
         {
+            //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
+            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+            
+            //en caso de que exista un dictamen con el mismo numero de GDE
             if (db.Dictamenes.FirstOrDefault(d => d.NroGDE == dictamen.NroGDE) != null)
             {
+                //se agrega un error en ese campo y se vuelve a solicitar la carga
                 ModelState.AddModelError("NroGDE", "Ya existe un Dictamen con ese Número de GDE");
             }
 
+            //limpio y estandarizo la informacion
             dictamen.FechaModificacion = DateTime.Now;
             dictamen.IdUsuarioModificacion = LoginController.GetUserData(User.Identity).Id;
             dictamen.NroGDE = dictamen.NroGDE.ToUpper();
             dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
-            dictamen.Detalle = dictamen.Detalle != null ? dictamen.Detalle.ToUpper() : ".";
+            dictamen.Detalle = dictamen.Detalle.ToUpper();
             dictamen.EsPublico = false;
 
+
+            //compruebo si la data del formulario del denunciante es distinto al valor por defecto
             if (dictamen.SujetoObligado.CuilCuit > 0)
             {
+                //busco si existe otro sujeto obligado con el mismo cuilCuit
                 SujetoObligado sujetoObligadoExistente = db.SujetosObligados.FirstOrDefault(s => s.CuilCuit == dictamen.SujetoObligado.CuilCuit);
                 if (sujetoObligadoExistente != null)
                 {
+                    //chequeo si el sujetoObligado existente no es denunciante
                     if (sujetoObligadoExistente.IdTipoSujetoObligado != db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id)
                     {
+                        //devuelvo un error ya que ese cuilCuit corresponde a una empresa
                         ModelState.AddModelError("SujetosObligados.CuilCuit", "Ya existe un Sujeto Obligado con ese Número de Cuil");
                     }
                     else
                     {
+                        //en caso de ser un denunciante, simplemente uso el sujetoObligado denunciante existente
                         dictamen.SujetoObligado = sujetoObligadoExistente;
                     }
                 }
+                //en caso de no existir un sujetoObligado con el mismo cuilCuit, lo creo
                 else
                 {
                     dictamen.SujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
                     dictamen.SujetoObligado.IdUsuarioModificacion = LoginController.GetUserData(User.Identity).Id;
                     dictamen.SujetoObligado.FechaModificacion = DateTime.Now;
                     db.SujetosObligados.Add(dictamen.SujetoObligado);
-                    //db.SaveChanges();
-                    //dictamen.IdSujetoObligado = dictamen.SujetoObligado.Id;
                 }
             }
+            //en caso de no haber un valor en el formulario de Denunciante
             else
             {
+                //remuevo la comprobacion del campo cuilCuit
                 ModelState.Remove("SujetoObligado.CuilCuit");
+                //seteo el SujetoObligado para que corresponda con el IdSujetoObligado
+                //en caso que el IdSujetoObligado sea null Find() devuelve null tambien
                 dictamen.SujetoObligado = db.SujetosObligados.Find(dictamen.IdSujetoObligado);
             }
 
-            if(dictamen.IdSujetoObligado == null)
-            {
-                dictamen.HaySujetoObligado = false;
-            }
-            else
-            {
-                dictamen.HaySujetoObligado = true;
-            }
+            //seteo el valor del HaySujetoObligado basado en el valor de IdSujetoObligado
+            dictamen.HaySujetoObligado = dictamen.IdSujetoObligado != null;
 
             if (ModelState.IsValid)
             {
@@ -205,14 +223,22 @@ namespace Dictamenes.Controllers
         [HttpPost]
         public ActionResult Buscar(Busqueda busqueda)
         {
+            //seteo valor para la busqueda
             var idTipoSujetoObligado = busqueda.EsDenunciante ? db.TiposSujetoObligado.First(d => d.Descripcion == "Denunciante").Id : busqueda.IdTipoSujetoObligado;
 
+            //ejecuto el StoreProcedure "sp_FiltrarDictamenes" de la base de datos con los valores pasado por parametro
             var dictamenes = db.Sp_FiltrarDictamenes(busqueda.NroGDE, busqueda.NroExp, busqueda.FechaCargaInicio, busqueda.FechaCargaFinal, busqueda.Detalle, busqueda.Contenido, busqueda.IdAsunto, busqueda.IdTipoDictamen, busqueda.IdSujetoObligado, idTipoSujetoObligado, busqueda.CuilCuit, busqueda.Nombre, busqueda.Apellido);
+            
+            //cargo las listas desplegables
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["TipoSujetoObligado"] = new SelectList(db.TiposSujetoObligado.Where(m => m.EstaHabilitado && m.Descripcion != "Denunciante"), "Id", "Descripcion");
+            
+            //envio los parametros actuales de busqueda para que puedan ser mostrado en la vista
             ViewData["Busqueda"] = busqueda;
+
+            //envio los dictamenes filtrados a la vista
             return View("Index", dictamenes);
         }
 
@@ -253,20 +279,26 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion,IdOriginal, SujetoObligado")] Dictamen dictamen, bool EsDenunciante, bool BorrarArchivo, HttpPostedFileBase file)
         {
+            //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
             if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
 
-
+            //obtengo una copia del dictamen anterior
             Dictamen dictamenViejo = db.Dictamenes.Include(d => d.SujetoObligado).AsNoTracking().First(d => d.Id == dictamen.Id);
+
+            //en caso de que se haya modificado el numero de GDE y que el numero de GDE se encuentre presente en otro dictamen
             if (dictamenViejo.NroGDE != dictamen.NroGDE && db.Dictamenes.FirstOrDefault(d => d.NroGDE == dictamen.NroGDE) != null)
             {
+                //se agrega un error en ese campo y se vuelve a solicitar la carga
                 ModelState.AddModelError("NroGDE", "Ya existe un Dictamen con ese Número de GDE");
             }
             
+            
             if (!EsDenunciante)
             {
+                //remuevo la comprobacion del campo cuilCuit
                 ModelState.Remove("SujetoObligado.CuilCuit");
             }
 
@@ -274,6 +306,8 @@ namespace Dictamenes.Controllers
 
             if (ModelState.IsValid)
             {
+
+                //creo un dictamenLog con todos los datos del Dictamen anterior
                 DictamenLog dictamenLog = new DictamenLog
                 {
                     IdOriginal = dictamenViejo.Id,
@@ -292,13 +326,17 @@ namespace Dictamenes.Controllers
                     IdUsuarioModificacion = dictamenViejo.IdUsuarioModificacion
                 };
 
+                //limpio y estandarizo la informacion
                 dictamen.FechaModificacion = DateTime.Now;
                 dictamen.IdUsuarioModificacion = LoginController.GetUserData(User.Identity).Id;
                 dictamen.NroGDE = dictamen.NroGDE.ToUpper();
                 dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
                 dictamen.Detalle = dictamen.Detalle.ToUpper();
+
+
                 if (BorrarArchivo)
                 {
+                    //borro el archivo
                     dictamen.ArchivoPDF = null;
                     dictamen.IdArchivoPDF = null;
                 }
@@ -340,10 +378,15 @@ namespace Dictamenes.Controllers
 
                 if (EsDenunciante) //es denuciante
                 {
+                    //compruebo que en el dictamen viejo haya un sujeto obligado de tipo denunciante
                     if (dictamenViejo.IdSujetoObligado.HasValue && dictamenViejo.SujetoObligado.RazonSocial == null)
                     {
+                        //compruebo si se hizo alguna modificacion o si esta igual
                         if (dictamen.SujetoObligado.CuilCuit != dictamenViejo.SujetoObligado.CuilCuit || dictamen.SujetoObligado.Nombre != dictamenViejo.SujetoObligado.Nombre || dictamen.SujetoObligado.Apellido != dictamenViejo.SujetoObligado.Apellido)
                         {
+
+                            //hago la modificacion del sujetoObligado
+
                             SujetoObligado sujetoObligadoViejo = db.SujetosObligados.AsNoTracking().FirstOrDefault(d => d.Id == dictamen.IdSujetoObligado);
                             
                             SujetoObligadoLog sujetoObligadoLog = new SujetoObligadoLog
@@ -368,25 +411,31 @@ namespace Dictamenes.Controllers
 
                             db.Entry(sujetoObligadoViejo).State = EntityState.Modified;
 
+                            //guardo al nuevo sujetoObligado dentro del dictamen
                             dictamen.SujetoObligado = sujetoObligadoViejo;
 
+                            //guardo el log del sujetoObligado que se modifico
                             db.SujetosObligadosLog.Add(sujetoObligadoLog);
                             db.SaveChanges();
                             
                         }
                         else
                         {
+                            //completo el id del sujeto obligado en caso de que no se hayan realizado modificaciones
                             dictamen.SujetoObligado.Id = dictamen.IdSujetoObligado.Value;
                         }
                     }
+                    //en caso de que el dictamen anterior no tenga un sujetobligado o no sea denunciante
                     else
                     {
+                        //se crea el nuevo sujeto obligado
                         dictamen.SujetoObligado.Id = 0;
                         dictamen.SujetoObligado.FechaModificacion = DateTime.Now;
                         dictamen.SujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.FirstOrDefault(d => d.Descripcion == "Denunciante").Id;
                         dictamen.SujetoObligado.IdUsuarioModificacion = LoginController.GetUserData(User.Identity).Id;
                         db.SujetosObligados.Add(dictamen.SujetoObligado);
                         db.SaveChanges();
+                        //guardo al nuevo sujetoObligado dentro del dictamen
                         dictamen.IdSujetoObligado = dictamen.SujetoObligado.Id;
                     }
                 }
@@ -394,32 +443,34 @@ namespace Dictamenes.Controllers
                 {
                     if (dictamen.IdSujetoObligado.HasValue)
                     {
+                        //busco el sujeto obligado completo para agregarlo al dictamen
                         dictamen.SujetoObligado = db.SujetosObligados.Find(dictamen.IdSujetoObligado);
                     }
                     else
                     {
+                        //si no tiene valor, es porque fue seleccionada la opcion de "Sin sujeto obligado"
                         dictamen.IdSujetoObligado = null;
                         dictamen.SujetoObligado = null;
                     }
                 }
 
 
-                if (dictamen.IdSujetoObligado == null)
-                {
-                    dictamen.HaySujetoObligado = false;
-                }
-                else
-                {
-                    dictamen.HaySujetoObligado = true;
-                }
+                //seteo el valor del HaySujetoObligado basado en el valor de IdSujetoObligado
+                dictamen.HaySujetoObligado = dictamen.IdSujetoObligado != null;
+
                 //-----------------------------------------------------------------------------
 
+                //modifico el dictamen
                 db.Entry(dictamen).State = EntityState.Modified;
+
+                //agrego el log del dictamen
                 db.DictamenesLog.Add(dictamenLog);
                 db.SaveChanges();
 
                 return RedirectToAction("Index");
             }
+
+            //en caso de haber un error con la modificacion se devuelve el dictamen con los errores correspondientes
             ViewBag.IdAsunto = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdAsunto);
             ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial", dictamen.IdSujetoObligado);
             ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdTipoDictamen);
@@ -476,8 +527,9 @@ namespace Dictamenes.Controllers
                 IdTipoDictamen = dictamenViejo.IdTipoDictamen,
                 FechaCarga = dictamenViejo.FechaCarga,
                 FechaModificacion = DateTime.Now,
+                //valor para indicar que el dictamen fue borrado y no modificado
                 Borrado = true,
-                IdUsuarioModificacion = 3
+                IdUsuarioModificacion = LoginController.GetUserData(User.Identity).Id
             };
 
             db.DictamenesLog.Add(dictamenLog);
@@ -538,7 +590,8 @@ namespace Dictamenes.Controllers
             {
                 dictamenes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<DictamenData>>(JSONDictamenes);
             }
-            catch {
+            catch 
+            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             if(dictamenes != null)
@@ -562,7 +615,7 @@ namespace Dictamenes.Controllers
                             ArchivoPDF = null,
                             FechaModificacion = DateTime.Now,
                             IdSujetoObligado = null,
-                            IdUsuarioModificacion = 1,
+                            IdUsuarioModificacion = LoginController.GetUserData(User.Identity).Id,
                             IdTipoDictamen = db.TiposDictamen.First(m => m.Descripcion == "Sin valor").Id
                         };
 
@@ -656,12 +709,12 @@ namespace Dictamenes.Controllers
             MatchCollection matches = numeroGDE.Matches(contenido);
             try
             {
+                //obtiene el primer resultado
                 dict.NroGDE = matches[0].Value;
             }
-            catch
-            {
+            //en caso de que no encuentre ninguna, no hace nada y deja el valor por defecto
+            catch { }
 
-            }
 
             Regex numeroExpediente = new Regex("[E][X] *-* *[0-9]{4} *- *[0-9]+? ?- ?-? ?APN *- *[A-Z]+ *# *[A-Z]+|[E][X] *-* *[0-9]{4} *- *[0-9]+", RegexOptions.IgnoreCase);
 
@@ -669,23 +722,24 @@ namespace Dictamenes.Controllers
 
             try
             {
+                //obtiene el primer resultado y normaliza el campo
+                //ya que el numero de expediente es extraido directamente de la descripcion del dictamen
                 dict.NroExpediente = matches[0].Value.Replace(" ", "").Replace("--", "-");
             }
-            catch
-            {
-
-            }
+            catch { }
             Regex date = new Regex("[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", RegexOptions.IgnoreCase);
 
             matches = date.Matches(contenido);
             try
             {
                 DateTime fecha;
+                //trata de parsear la fecha con ese formato
                 DateTime.TryParseExact(matches[0].Value, "yyyy.MM.dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out fecha);
                 dict.FechaCarga = fecha;
             }
             catch
             {
+                //en caso de no lograrlo o no haber resultado de la busqueda, devuelve la fecha actual
                 dict.FechaCarga = DateTime.Now;
             }
             return dict;

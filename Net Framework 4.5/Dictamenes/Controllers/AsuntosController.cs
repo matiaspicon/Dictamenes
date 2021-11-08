@@ -90,7 +90,7 @@ namespace Dictamenes.Controllers
                     EstaHabilitado = true,
                     Descripcion = a,
                     FechaModificacion = DateTime.Now,
-                    IdUsuarioModificacion = 1
+                    IdUsuarioModificacion = LoginController.GetUserData(User.Identity).Id
                 };
 
                 if (ModelState.IsValid)

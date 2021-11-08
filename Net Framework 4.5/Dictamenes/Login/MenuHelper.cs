@@ -24,7 +24,11 @@ namespace WCFLoginUniversal
                 //if (row["ItemLink"] != null)
                 //{
                 //Esta Condicion indica que son padres
-                if (!row["ItemOrden"].Equals(row["ItemPadre"])) continue;
+                //if (!row["ItemOrden"].Equals(row["ItemPadre"])) continue;
+
+                //Comentario desde aplicacion Dictamenes: 
+                // tuve que comentar esa linea ya que estaba provocando que no devuelva nada
+
                 string imagen = "";
                 string link = "";
 
@@ -52,11 +56,8 @@ namespace WCFLoginUniversal
             return ISOByteArrayToString(((MemoryStream)xmlTextWriter.BaseStream).ToArray());
         }
 
-
-
         private static String ISOByteArrayToString(Byte[] characters)
         {
-
             Encoding encoding = Encoding.GetEncoding("ISO-8859-1"); // UTF8Encoding.UTF8)
             String constructedString = encoding.GetString(characters);
             return (constructedString);
@@ -64,7 +65,6 @@ namespace WCFLoginUniversal
 
         private static String UTF8ByteArrayToString(Byte[] characters)
         {
-
             var encoding = new UTF8Encoding();
             String constructedString = encoding.GetString(characters);
             return (constructedString);

@@ -26,5 +26,9 @@ namespace Dictamenes.Models
 
         public int IdGrupo { get; set; }
 
+        public string Menu { get; set; }
+
+        public string MenuXML { get; set; }
+
     }
 }

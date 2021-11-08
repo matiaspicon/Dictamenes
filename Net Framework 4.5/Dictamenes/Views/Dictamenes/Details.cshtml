@@ -70,7 +70,16 @@
         <p class="col-9 card p-2">
             @Html.DisplayFor(model => model.SujetoObligado.CuilCuit)
         </p>
-        if (Model.SujetoObligado.IdTipoSujetoObligado == ViewBag.IdDenunciante)
+        if (Model.SujetoObligado.RazonSocial != null)
+        {
+            <label class="form-label align-self-center col-3">
+                @Html.DisplayNameFor(model => model.SujetoObligado.RazonSocial)
+            </label>
+            <p class="col-9 card p-2">
+                @Html.DisplayFor(model => model.SujetoObligado.RazonSocial)
+            </p>
+        }
+        else
         {
             <label class="form-label align-self-center col-3">
                 @Html.DisplayNameFor(model => model.SujetoObligado.Nombre)
@@ -83,15 +92,6 @@
             </label>
             <p class="col-9 card p-2">
                 @Html.DisplayFor(model => model.SujetoObligado.Apellido)
-            </p>
-        }
-        else
-        {
-            <label class="form-label align-self-center col-3">
-                @Html.DisplayNameFor(model => model.SujetoObligado.RazonSocial)
-            </label>
-            <p class="col-9 card p-2">
-                @Html.DisplayFor(model => model.SujetoObligado.RazonSocial)
             </p>
         }
     }

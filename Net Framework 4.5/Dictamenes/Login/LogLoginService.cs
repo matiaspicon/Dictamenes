@@ -100,7 +100,9 @@ namespace WCFLoginUniversal
                 app = lstapp.First();
             else
                 return null;
+            NGerencia.ObtengoGerenciasPorCuil(usua.CUIL_CUIT);
 
+            NGrupos.ObtenerGrupoPorAPPUsuario(app, usua);
             if (usua != null)
             {
                 var wcfll = new WCFUsuarioLogeado
@@ -134,7 +136,7 @@ namespace WCFLoginUniversal
 
                     wcfll.MenuXML = menu;
 
-                    //wcfll.Menu = MenuHelper.armarMenu(menu);
+                    wcfll.Menu = MenuHelper.armarMenu(menu);
                 }
 
                 return wcfll;

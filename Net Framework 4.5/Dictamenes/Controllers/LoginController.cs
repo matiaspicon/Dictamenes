@@ -32,43 +32,37 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("Index", "Dictamenes");
                               
             }
-            ViewBag.ReturnUrl = returnUrl;
             return View();           
         }
         [AllowAnonymous]
         [HttpPost]
         public ActionResult Login(string CuilCuit, string Idcomp, string Nombre, string Pass, string ReturnURL)
         {
-            //if (CuilCuit != "" && Idcomp != "" && Nombre != "" && Pass != "")
-            //{
-            //    WCFUsuarioLogeado usuarioLogeado = loginService.LogeoUsuario(CuilCuit, Idcomp, Nombre, Pass, ConfigurationManager.AppSettings["IdApp"], false);
-            //var algo = loginservice.obtengolistausuarioslogeados();
-            //var algo1 = loginService.ObtengoPersonaByAplicativo(259);
-            //var app = neguu.naplicaciones.obteneraplicacionbyid(259);
-            //var usuariolog = loginservice.obtengolistausuarioslogeados();
-            //WCFUsuarioLogeado usuarioLogeado = null;
-
-            WCFUsuarioLogeado usuarioLogeado = new WCFUsuarioLogeado();
-            if (usuarioLogeado != null)
+            if (CuilCuit != "" && Idcomp != "" && Nombre != "" && Pass != "")
+            {
+                WCFUsuarioLogeado usuarioLogeado = loginService.LogeoUsuario(CuilCuit, Idcomp, Nombre, Pass, ConfigurationManager.AppSettings["IdApp"], true);
+                //WCFUsuarioLogeado usuarioLogeado = new WCFUsuarioLogeado();
+                if (usuarioLogeado != null)
                 {
+                    string rol = setRol(usuarioLogeado.Grupos.IdGrupo.ToString());
+
                     string userData = JsonConvert.SerializeObject(new UsuarioLogueado
                     {
                         ApellidoPersona = usuarioLogeado.ApellidoPersona,
                         CUIL_CUIT = usuarioLogeado.CUIL_CUIT,
-                        //GrupoDescripcion = usuarioLogeado.Grupos.GrupoDescripcion == "CARGAR" ? Models.Rol.CARGAR.ToString() : Models.Rol.CONSULTAR.ToString(),
-                        GrupoDescripcion = Nombre.ToUpper(),
+                        GrupoDescripcion = rol,
                         IdGrupo = usuarioLogeado.Grupos.IdGrupo,
-                        Id = 7777,
+                        Id = usuarioLogeado.Id,
                         Mail = usuarioLogeado.Mail,
                         NombrePersona = usuarioLogeado.NombrePersona,
                         NombreUsuario = usuarioLogeado.NombreUsuario,
-                        Telefono = usuarioLogeado.Telefono
-                    });    
-
+                        Telefono = usuarioLogeado.Telefono,
+                        Menu = usuarioLogeado.Menu
+                        
+                    });
                     FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
                         1,
-                        //Nombre.ToUpper(),
-                        "USER",
+                        Nombre.ToUpper(),
                         DateTime.Now,
                         DateTime.Now.AddMinutes(30),
                         false,
@@ -81,17 +75,33 @@ namespace Dictamenes.Controllers
                     // Create the cookie.
                     Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, encTicket));
 
-                // Redirect back to original URL.
+                    // Redirect back to original URL.
+                    if (rol == null) return RedirectToAction("ErrorNoPermisos");
                     if (ReturnURL != null) return Redirect(ReturnURL);
                     return RedirectToAction("Index", "Dictamenes");
             }
 
-            //}
+            }
 
 
 
             ViewBag.Error = "Los datos ingresados son incorrectos";
             return View();
+        }
+
+        private string setRol(string idGrupo)
+        {
+            string rol = null;
+
+            if (idGrupo == ConfigurationManager.AppSettings["IdGrupoConsultas"])
+            {
+                rol = Rol.CONSULTAR.ToString();
+            }else if(idGrupo == ConfigurationManager.AppSettings["IdGrupoCarga"])
+            {
+                rol = Rol.CARGAR.ToString();
+            }
+            return rol;
+
         }
 
         [Authorize]
