@@ -18,7 +18,7 @@ namespace Dictamenes.Controllers
         // GET: SujetosObligados
         public ActionResult Index()
         {
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -30,7 +30,7 @@ namespace Dictamenes.Controllers
         // GET: SujetosObligados/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -53,7 +53,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado, EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion, IdOriginal")] SujetoObligado sujetoObligado)
         {
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -73,7 +73,7 @@ namespace Dictamenes.Controllers
                     FechaModificacion = sujetoObligadoViejo.FechaModificacion,
                     IdUsuarioModificacion = sujetoObligadoViejo.IdUsuarioModificacion
                 };
-                sujetoObligado.IdUsuarioModificacion = LoginController.GetUserData(User.Identity).Id;
+                sujetoObligado.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
                 sujetoObligado.FechaModificacion = DateTime.Now;
 
                 db.Entry(sujetoObligado).State = EntityState.Modified;

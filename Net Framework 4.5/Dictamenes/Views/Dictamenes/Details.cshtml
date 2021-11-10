@@ -3,7 +3,10 @@
 @{
     ViewBag.Title = "Detalles";
 }
-@{string rol = Dictamenes.Controllers.LoginController.GetUserData(User.Identity).GrupoDescripcion;}
+
+
+
+@{string rol = Dictamenes.Controllers.LoginController.GetUserRolIdentity(User.Identity);}
 
 <h2>Detalles del Dictamen</h2>
 

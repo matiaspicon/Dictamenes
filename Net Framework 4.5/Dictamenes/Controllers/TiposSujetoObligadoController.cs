@@ -18,7 +18,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoObligado
         public ActionResult Index()
         {
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -29,7 +29,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoObligado/Create
         public ActionResult Create()
         {
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -43,12 +43,12 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoObligado tipoSujetoObligado)
         {
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
             tipoSujetoObligado.FechaModificacion = DateTime.Now;
-            tipoSujetoObligado.IdUsuarioModificacion = LoginController.GetUserData(User.Identity).Id;
+            tipoSujetoObligado.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
             if (ModelState.IsValid)
             {
                 db.TiposSujetoObligado.Add(tipoSujetoObligado);
@@ -62,7 +62,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoObligado/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -85,7 +85,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoObligado tipoSujetoObligado)
         {
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -102,7 +102,7 @@ namespace Dictamenes.Controllers
                     IdUsuarioModificacion = tipoSujetoObligadoViejo.IdUsuarioModificacion
                 };
 
-                tipoSujetoObligado.IdUsuarioModificacion = LoginController.GetUserData(User.Identity).Id;
+                tipoSujetoObligado.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
                 tipoSujetoObligado.FechaModificacion = DateTime.Now;
 
                 db.Entry(tipoSujetoObligado).State = EntityState.Modified;

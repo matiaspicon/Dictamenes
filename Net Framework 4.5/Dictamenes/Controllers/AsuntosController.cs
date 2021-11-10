@@ -21,7 +21,7 @@ namespace Dictamenes.Controllers
         public ActionResult Index()
         {
 
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -33,7 +33,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Create()
         {
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -47,12 +47,12 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
             asunto.FechaModificacion = DateTime.Now;
-            asunto.IdUsuarioModificacion = LoginController.GetUserData(User.Identity).Id;
+            asunto.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
             if (ModelState.IsValid)
             {
                 db.Asuntos.Add(asunto);
@@ -64,7 +64,7 @@ namespace Dictamenes.Controllers
 
         public ActionResult CargarAsuntos()
         {
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -76,7 +76,7 @@ namespace Dictamenes.Controllers
         public ActionResult CargarAsuntos(string JSONAsuntos)
         {
 
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -90,7 +90,7 @@ namespace Dictamenes.Controllers
                     EstaHabilitado = true,
                     Descripcion = a,
                     FechaModificacion = DateTime.Now,
-                    IdUsuarioModificacion = LoginController.GetUserData(User.Identity).Id
+                    IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id
                 };
 
                 if (ModelState.IsValid)
@@ -113,7 +113,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Edit(int? id)
         {
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -137,7 +137,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Edit([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
-            if (LoginController.GetUserRol(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -155,7 +155,7 @@ namespace Dictamenes.Controllers
                     IdUsuarioModificacion = asuntoViejo.IdUsuarioModificacion
                };
 
-                asunto.IdUsuarioModificacion = LoginController.GetUserData(User.Identity).Id;
+                asunto.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
                 asunto.FechaModificacion = DateTime.Now;
 
                 db.Entry(asunto).State = EntityState.Modified;

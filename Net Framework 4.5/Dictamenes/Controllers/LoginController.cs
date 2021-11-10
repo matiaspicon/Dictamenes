@@ -29,8 +29,7 @@ namespace Dictamenes.Controllers
             if (User.Identity.IsAuthenticated)
             {                
                 if (returnUrl != null) return Redirect(returnUrl);
-                return RedirectToAction("Index", "Dictamenes");
-                              
+                return RedirectToAction("Index", "Dictamenes");                              
             }
             return View();           
         }
@@ -40,11 +39,13 @@ namespace Dictamenes.Controllers
         {
             if (CuilCuit != "" && Idcomp != "" && Nombre != "" && Pass != "")
             {
+                //hago el logeo del usuario con el modulo provisto
                 WCFUsuarioLogeado usuarioLogeado = loginService.LogeoUsuario(CuilCuit, Idcomp, Nombre, Pass, ConfigurationManager.AppSettings["IdApp"], true);
                 //WCFUsuarioLogeado usuarioLogeado = new WCFUsuarioLogeado();
                 if (usuarioLogeado != null)
                 {
-                    string rol = setRol(usuarioLogeado.Grupos.IdGrupo.ToString());
+                    //a partir del usuario logeado obtengo el rol del mismo
+                    string rol = SetRol(usuarioLogeado.Grupos.IdGrupo.ToString());
 
                     string userData = JsonConvert.SerializeObject(new UsuarioLogueado
                     {
@@ -69,30 +70,34 @@ namespace Dictamenes.Controllers
                         userData,
                         FormsAuthentication.FormsCookiePath);
 
-                    // Encrypt the ticket.
+                    // Encripta el ticket.
                     string encTicket = FormsAuthentication.Encrypt(ticket);
 
-                    // Create the cookie.
-                    Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, encTicket));
-
-                    // Redirect back to original URL.
+                    // Crea la cookie.
+                    Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, encTicket));   
+                    
+                    //en caso de que no tenga alguno de los dos roles habilitados, no se le permitira navegar
                     if (rol == null) return RedirectToAction("ErrorNoPermisos");
+
+                    //en caso de que haya se haya pasado una URL
                     if (ReturnURL != null) return Redirect(ReturnURL);
+
+                    //redirrecionamiento al listado de todos los dictamenes
                     return RedirectToAction("Index", "Dictamenes");
+                }
             }
-
-            }
-
-
-
+            //si el logeo fallo por alguna razon, se devuelve este error generico
             ViewBag.Error = "Los datos ingresados son incorrectos";
             return View();
         }
 
-        private string setRol(string idGrupo)
+        private string SetRol(string idGrupo)
         {
-            string rol = null;
+            //si pertenece a alguno de los dos grupos de la aplicacion se le otorga el rol correspondiente
+            //sino por defecto devuelve null
 
+            string rol = null;
+                        
             if (idGrupo == ConfigurationManager.AppSettings["IdGrupoConsultas"])
             {
                 rol = Rol.CONSULTAR.ToString();
@@ -108,24 +113,24 @@ namespace Dictamenes.Controllers
         public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
-            return RedirectToAction("Login","Login");
+            return RedirectToAction("Index","Dictamenes");
         }
 
-
-        static public UsuarioLogueado GetUserData(object usuario)
+        static public UsuarioLogueado GetUserDataIdentity(object identityUser)
         {
-            var identity = usuario as FormsIdentity;
+            var identity = identityUser as FormsIdentity;
             if (identity == null) return null;
             return JsonConvert.DeserializeObject<UsuarioLogueado>(identity.Ticket.UserData);
         }
 
-        static public string GetUserRol(object usuario)
+        static public string GetUserRolIdentity(object identityUser)
         {
-            UsuarioLogueado user = GetUserData(usuario);
+            UsuarioLogueado user = GetUserDataIdentity(identityUser);
             if (user == null) return "";
             return user.GrupoDescripcion;
         }
 
+        [AllowAnonymous]
         public ActionResult ErrorNoPermisos()
         {
             return View();
