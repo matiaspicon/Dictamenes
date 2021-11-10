@@ -41,7 +41,8 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Details/5
         public ActionResult Details(int? id)
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString() || LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CONSULTAR.ToString())
+            //El usuario que no sea tenga rol de Cargar o Consulta no podra acceder a esta opcion
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString() && LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CONSULTAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -92,8 +93,8 @@ namespace Dictamenes.Controllers
             var fileName = Guid.NewGuid().ToString();
             var extension = Path.GetExtension(file.FileName);
             // compruebo directorio
-            var basePath = Server.MapPath("~/Files");
-            var filePath = Path.Combine("~", "Files", fileName + extension);
+            var basePath = Server.MapPath("~/Archivos");
+            var filePath = Path.Combine("~", "Archivos", fileName + extension);
 
             bool basePathExists = System.IO.Directory.Exists(basePath);
             if (!basePathExists) Directory.CreateDirectory(basePath);
@@ -361,8 +362,8 @@ namespace Dictamenes.Controllers
                         var fileName = Guid.NewGuid().ToString();
                         var extension = Path.GetExtension(file.FileName);
                         // compruebo directorio
-                        var basePath = Server.MapPath("~/Files");
-                        var filePath = Path.Combine("~", "Files", fileName + extension);
+                        var basePath = Server.MapPath("~/Archivos");
+                        var filePath = Path.Combine("~", "Archivos", fileName + extension);
 
                         bool basePathExists = System.IO.Directory.Exists(basePath);
                         if (!basePathExists) Directory.CreateDirectory(basePath);
@@ -654,8 +655,8 @@ namespace Dictamenes.Controllers
                     var extension = Path.GetExtension(file.FileName);
 
                     // compruebo directorio
-                    var basePath = Server.MapPath("~/Files");
-                    var filePath = Path.Combine("~", "Files", fileName + extension);
+                    var basePath = Server.MapPath("~/Archivos");
+                    var filePath = Path.Combine("~", "Archivos", fileName + extension);
 
                     bool basePathExists = System.IO.Directory.Exists(basePath);
                     if (!basePathExists) Directory.CreateDirectory(basePath);

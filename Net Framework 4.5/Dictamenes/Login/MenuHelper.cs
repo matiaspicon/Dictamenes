@@ -24,10 +24,7 @@ namespace WCFLoginUniversal
                 //if (row["ItemLink"] != null)
                 //{
                 //Esta Condicion indica que son padres
-                //if (!row["ItemOrden"].Equals(row["ItemPadre"])) continue;
-
-                //Comentario desde aplicacion Dictamenes: 
-                // tuve que comentar esa linea ya que estaba provocando que no devuelva nada
+                if (!row["ItemOrden"].Equals(row["ItemPadre"])) continue;
 
                 string imagen = "";
                 string link = "";

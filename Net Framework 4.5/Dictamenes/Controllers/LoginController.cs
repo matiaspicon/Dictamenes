@@ -47,6 +47,11 @@ namespace Dictamenes.Controllers
                     //a partir del usuario logeado obtengo el rol del mismo
                     string rol = SetRol(usuarioLogeado.Grupos.IdGrupo.ToString());
 
+                    string menuBootstrap = usuarioLogeado.Menu
+                        .Replace("<li><a href=\"#\">Dictamenes</a><ul>", "") //Borro el menu padre
+                        .Replace("sf-menu", "navbar-nav mr-auto") //Cambio la clase para bootstrap
+                        .Replace("<a ", "<a class=\"nav-link\""); //Le agrego la clase para los elementos
+
                     string userData = JsonConvert.SerializeObject(new UsuarioLogueado
                     {
                         ApellidoPersona = usuarioLogeado.ApellidoPersona,
@@ -58,8 +63,7 @@ namespace Dictamenes.Controllers
                         NombrePersona = usuarioLogeado.NombrePersona,
                         NombreUsuario = usuarioLogeado.NombreUsuario,
                         Telefono = usuarioLogeado.Telefono,
-                        Menu = usuarioLogeado.Menu
-                        
+                        Menu = menuBootstrap
                     });
                     FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(
                         1,
