@@ -84,9 +84,17 @@ namespace Dictamenes.Controllers
                     if (rol == null) return RedirectToAction("ErrorNoPermisos");
 
                     //en caso de que haya se haya pasado una URL
-                    if (ReturnURL != null) return Redirect(ReturnURL);
+                    if (ReturnURL != null)
+                    {
+                        try
+                        {
+                            var algo = ReturnURL.Split('/').Last();
+                            if (algo == "index") return Redirect(ReturnURL);
+                        }
+                        catch { }
+                    }        
 
-                    //redirrecionamiento al listado de todos los dictamenes
+                    //redirrecionamiento al listado de todos los Dictamenes
                     return RedirectToAction("Index", "Dictamenes");
                 }
             }

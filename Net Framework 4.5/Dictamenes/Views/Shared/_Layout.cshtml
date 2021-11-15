@@ -24,20 +24,18 @@
             <div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    @Html.Raw(Dictamenes.Controllers.LoginController.GetUserDataIdentity(User.Identity).Menu)
-
-                    
+                    @Html.Raw(Dictamenes.Controllers.LoginController.GetUserDataIdentity(User.Identity).Menu)                   
                 }
                 <div class="navbar-nav ml-auto ">
                     @if (User.Identity.IsAuthenticated)
                     {
                         <div class="nav-item dropdown ">
                             <a class="nav-link dropdown-toggle px-3" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                @User.Identity.Name
+                                <i class="bi bi-person-fill"></i>    @User.Identity.Name
                             </a>
                             <div class="dropdown-menu dropdown-menu-right ml-auto" aria-labelledby="navbarDropdownMenuLink">
                                 <a href="@Url.Action("Logout", "Login")" class="dropdown-item">
-                                    <i class="fas fa-sign-out-alt"></i> Cerrar sesion
+                                     Cerrar sesion <i class="bi bi-box-arrow-in-right"></i>
                                 </a>
                             </div>
                         </div>
@@ -48,11 +46,11 @@
 
     </header>
     <div class="container-fluid" style="max-width:1320px">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-3 m-3">
             @RenderBody()
-        </main>
-        
-    </div>    
+        </main>        
+    </div>   
+    
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)

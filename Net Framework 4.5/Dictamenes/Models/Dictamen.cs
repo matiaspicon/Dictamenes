@@ -49,6 +49,7 @@ namespace Dictamenes.Models
         public SujetoObligado SujetoObligado { get; set; }
 
         [ForeignKey(nameof(Asunto))]
+        [DisplayName("Asunto")]
         public int IdAsunto { get; set; }
         public Asunto Asunto { get; set; }
 

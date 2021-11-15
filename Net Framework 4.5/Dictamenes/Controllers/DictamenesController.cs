@@ -234,6 +234,12 @@ namespace Dictamenes.Controllers
             return View(dictamen);
         }
 
+
+        public ActionResult Buscar()
+        {
+            return RedirectToAction("Index");
+        }
+
         [HttpPost]
         public ActionResult Buscar(Busqueda busqueda)
         {
@@ -390,68 +396,90 @@ namespace Dictamenes.Controllers
                 }
 
 
-                if (EsDenunciante) //es denuciante
+                if (EsDenunciante)
                 {
-                    //compruebo que en el dictamen viejo haya un sujeto obligado de tipo denunciante
-                    if (dictamenViejo.IdSujetoObligado.HasValue && dictamenViejo.SujetoObligado.RazonSocial == null)
+                    bool EsElMismo = false;
+                    if(dictamen.SujetoObligado != null)
                     {
-                        //compruebo si se hizo alguna modificacion o si esta igual
-                        if (dictamen.SujetoObligado.CuilCuit != dictamenViejo.SujetoObligado.CuilCuit || dictamen.SujetoObligado.Nombre != dictamenViejo.SujetoObligado.Nombre || dictamen.SujetoObligado.Apellido != dictamenViejo.SujetoObligado.Apellido)
+                        if (dictamen.SujetoObligado.CuilCuit == dictamenViejo.SujetoObligado.CuilCuit)
                         {
+                            EsElMismo = true;
+                            if (dictamen.SujetoObligado.Nombre != dictamenViejo.SujetoObligado.Nombre || dictamen.SujetoObligado.Apellido != dictamenViejo.SujetoObligado.Apellido)
+                            {                                
+                                //hago la modificacion del sujetoObligado
 
-                            //hago la modificacion del sujetoObligado
+                                SujetoObligado sujetoObligadoViejo = db.SujetosObligados.AsNoTracking().FirstOrDefault(d => d.Id == dictamen.IdSujetoObligado);
 
-                            SujetoObligado sujetoObligadoViejo = db.SujetosObligados.AsNoTracking().FirstOrDefault(d => d.Id == dictamen.IdSujetoObligado);
-                            
-                            SujetoObligadoLog sujetoObligadoLog = new SujetoObligadoLog
+                                SujetoObligadoLog sujetoObligadoLog = new SujetoObligadoLog
+                                {
+                                    CuilCuit = sujetoObligadoViejo.CuilCuit,
+                                    Nombre = sujetoObligadoViejo.Nombre,
+                                    Apellido = sujetoObligadoViejo.Apellido,
+                                    RazonSocial = sujetoObligadoViejo.RazonSocial,
+                                    IdOriginal = sujetoObligadoViejo.Id,
+                                    EstaHabilitado = sujetoObligadoViejo.EstaHabilitado,
+                                    IdTipoSujetoObligado = db.TiposSujetoObligado.FirstOrDefault(d => d.Descripcion == "Denunciante").Id,
+                                    FechaModificacion = sujetoObligadoViejo.FechaModificacion,
+                                    IdUsuarioModificacion = sujetoObligadoViejo.IdUsuarioModificacion
+                                };
+                                sujetoObligadoViejo.CuilCuit = dictamen.SujetoObligado.CuilCuit;
+                                sujetoObligadoViejo.Nombre = dictamen.SujetoObligado.Nombre;
+                                sujetoObligadoViejo.Apellido = dictamen.SujetoObligado.Apellido;
+                                sujetoObligadoViejo.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
+                                sujetoObligadoViejo.FechaModificacion = DateTime.Now;
+                                sujetoObligadoViejo.IdTipoSujetoObligado = sujetoObligadoViejo.IdTipoSujetoObligado;
+                                sujetoObligadoViejo.EstaHabilitado = sujetoObligadoViejo.EstaHabilitado;
+
+                                db.Entry(sujetoObligadoViejo).State = EntityState.Modified;
+
+                                //guardo al nuevo sujetoObligado dentro del dictamen
+                                dictamen.SujetoObligado = sujetoObligadoViejo;
+
+                                //guardo el log del sujetoObligado que se modifico
+                                db.SujetosObligadosLog.Add(sujetoObligadoLog);
+                                db.SaveChanges();
+                                
+                            }
+                            else
                             {
-                                CuilCuit = sujetoObligadoViejo.CuilCuit,
-                                Nombre = sujetoObligadoViejo.Nombre,
-                                Apellido = sujetoObligadoViejo.Apellido,
-                                RazonSocial = sujetoObligadoViejo.RazonSocial,
-                                IdOriginal = sujetoObligadoViejo.Id,
-                                EstaHabilitado = sujetoObligadoViejo.EstaHabilitado,
-                                IdTipoSujetoObligado = db.TiposSujetoObligado.FirstOrDefault(d => d.Descripcion == "Denunciante").Id,
-                                FechaModificacion = sujetoObligadoViejo.FechaModificacion,
-                                IdUsuarioModificacion = sujetoObligadoViejo.IdUsuarioModificacion
-                            };
-                            sujetoObligadoViejo.CuilCuit = dictamen.SujetoObligado.CuilCuit;
-                            sujetoObligadoViejo.Nombre = dictamen.SujetoObligado.Nombre;
-                            sujetoObligadoViejo.Apellido = dictamen.SujetoObligado.Apellido;
-                            sujetoObligadoViejo.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
-                            sujetoObligadoViejo.FechaModificacion = DateTime.Now;
-                            sujetoObligadoViejo.IdTipoSujetoObligado = sujetoObligadoViejo.IdTipoSujetoObligado;
-                            sujetoObligadoViejo.EstaHabilitado = sujetoObligadoViejo.EstaHabilitado;
-
-                            db.Entry(sujetoObligadoViejo).State = EntityState.Modified;
-
-                            //guardo al nuevo sujetoObligado dentro del dictamen
-                            dictamen.SujetoObligado = sujetoObligadoViejo;
-
-                            //guardo el log del sujetoObligado que se modifico
-                            db.SujetosObligadosLog.Add(sujetoObligadoLog);
-                            db.SaveChanges();
-                            
+                                //completo el id del sujeto obligado en caso de que no se hayan realizado modificaciones
+                                dictamen.SujetoObligado.Id = dictamen.IdSujetoObligado.Value;
+                            }
                         }
+                    }
+                    if (!EsElMismo)
+                    {
+                        //busco si existe otro sujeto obligado con el mismo cuilCuit
+                        SujetoObligado sujetoObligadoExistente = db.SujetosObligados.FirstOrDefault(s => s.CuilCuit == dictamen.SujetoObligado.CuilCuit);
+                        if (sujetoObligadoExistente != null)
+                        {
+                            //chequeo si el sujetoObligado existente no es denunciante
+                            if (sujetoObligadoExistente.IdTipoSujetoObligado != db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id)
+                            {
+                                //devuelvo un error ya que ese cuilCuit corresponde a una empresa
+                                ModelState.AddModelError("SujetosObligados.CuilCuit", "Ya existe un Sujeto Obligado con ese Número de Cuil");
+                            }
+                            else
+                            {
+                                //en caso de ser un denunciante, simplemente uso el sujetoObligado denunciante existente
+                                dictamen.SujetoObligado = sujetoObligadoExistente;
+                                dictamen.IdSujetoObligado = sujetoObligadoExistente.Id;
+                            }
+                        }
+                        //en caso de no existir un sujetoObligado con el mismo cuilCuit, lo creo
                         else
                         {
-                            //completo el id del sujeto obligado en caso de que no se hayan realizado modificaciones
-                            dictamen.SujetoObligado.Id = dictamen.IdSujetoObligado.Value;
+                            //se crea el nuevo sujeto obligado
+                            dictamen.SujetoObligado.Id = 0;
+                            dictamen.SujetoObligado.FechaModificacion = DateTime.Now;
+                            dictamen.SujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.FirstOrDefault(d => d.Descripcion == "Denunciante").Id;
+                            dictamen.SujetoObligado.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
+                            db.SujetosObligados.Add(dictamen.SujetoObligado);
+                            db.SaveChanges();
+                            //guardo al nuevo sujetoObligado dentro del dictamen
+                            dictamen.IdSujetoObligado = dictamen.SujetoObligado.Id;
                         }
-                    }
-                    //en caso de que el dictamen anterior no tenga un sujetobligado o no sea denunciante
-                    else
-                    {
-                        //se crea el nuevo sujeto obligado
-                        dictamen.SujetoObligado.Id = 0;
-                        dictamen.SujetoObligado.FechaModificacion = DateTime.Now;
-                        dictamen.SujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.FirstOrDefault(d => d.Descripcion == "Denunciante").Id;
-                        dictamen.SujetoObligado.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
-                        db.SujetosObligados.Add(dictamen.SujetoObligado);
-                        db.SaveChanges();
-                        //guardo al nuevo sujetoObligado dentro del dictamen
-                        dictamen.IdSujetoObligado = dictamen.SujetoObligado.Id;
-                    }
+                    } 
                 }
                 else //no es denunciante
                 {

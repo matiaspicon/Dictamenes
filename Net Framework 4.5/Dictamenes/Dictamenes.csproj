@@ -369,7 +369,7 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Dictamenes\CargarFile.cshtml" />
-    <Content Include="Views\Login\login.cshtml" />
+    <Content Include="Views\Login\Login.cshtml" />
     <Content Include="Views\Login\ErrorNoPermisos.cshtml" />
     <Content Include="Views\_ViewImports.cshtml" />
     <Content Include="Views\Asuntos\CargarAsuntos.cshtml" />

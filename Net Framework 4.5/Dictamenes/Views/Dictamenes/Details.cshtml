@@ -151,7 +151,7 @@
         @if (rol != null && (string)rol == "CARGAR")
         {
             <div class="col my-2 row ">
-                <a class="align-self-center m-1 col btn btn-secondary" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atrás</a>
+                <a class="align-self-center m-1 col btn btn-secondary" onclick="history.back();"><i class="bi bi-arrow-left"></i>  Volver atrás</a>
                 <a class="align-self-center m-1 col btn btn-danger" href="@Url.Action("Delete", new { id = Model.Id })"><i class="bi bi-trash"></i> Borrar</a>
                 <a class="align-self-center m-1 col-md col-sm-auto btn btn-warning" href="@Url.Action("Edit", new { id = Model.Id })"><i class="bi bi-pencil-square"></i> Editar</a>
             </div>

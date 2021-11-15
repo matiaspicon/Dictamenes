@@ -1,14 +1,14 @@
 ﻿@model IEnumerable<Dictamenes.Models.Dictamen>
 @using Dictamenes.Models
 @{
-    ViewBag.Title = "Listado de Dictamenes";
+    ViewBag.Title = "Listado de Dictámenes";
 }
 @{string rol = Dictamenes.Controllers.LoginController.GetUserRolIdentity(User.Identity);}
 
 @if (rol != null && rol == "CARGAR")
 {
     <h2>
-        @(ViewBag.Busqueda == null ? "Listado de todos los Dictamenes del Año " + DateTime.Now.Year : "Listado de filtrado de Dictamenes" )
+        @(ViewBag.Busqueda == null ? "Listado de todos los Dictámenes del Año " + DateTime.Now.Year : "Listado de filtrado de Dictámenes" )
     </h2>
     <hr />
     <div class="row justify-content-between my-2">
@@ -29,7 +29,7 @@ else
 {
     <div class="row justify-content-between my-2">
         <div class="col-auto align-self-center mb-0">
-            <h2>@(ViewBag.Busqueda == null ? "Listado de todos los Dictamenes del Año " + DateTime.Now.Year : "Listado de filtrado de Dictamenes" ) </h2>
+            <h2>@(ViewBag.Busqueda == null ? "Listado de todos los Dictámenes del Año " + DateTime.Now.Year : "Listado de filtrado de Dictámenes" ) </h2>
         </div>
         <div class="col-auto m-2">
             <button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -126,7 +126,7 @@ else
 {
     <hr />
     <div class="row justify-content-center">
-        <h4 class="text-danger">No se encontraron Dictamenes con los filtros actuales</h4>
+        <h4 class="text-danger">No se encontraron Dictámenes con los filtros actuales</h4>
     </div>
 
 }
