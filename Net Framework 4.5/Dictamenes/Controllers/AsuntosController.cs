@@ -146,7 +146,8 @@ namespace Dictamenes.Controllers
             if (ModelState.IsValid)
             {
                Asunto asuntoViejo = db.Asuntos.AsNoTracking().First(d => d.Id == asunto.Id);
-               AsuntoLog asuntoLog = new AsuntoLog
+              
+                AsuntoLog asuntoLog = new AsuntoLog
                {
                     IdOriginal = asuntoViejo.Id,
                     Descripcion = asuntoViejo.Descripcion,
@@ -159,9 +160,9 @@ namespace Dictamenes.Controllers
                 asunto.FechaModificacion = DateTime.Now;
 
                 db.Entry(asunto).State = EntityState.Modified;
-
                 db.AsuntosLog.Add(asuntoLog);
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
             return View(asunto);

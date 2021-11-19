@@ -104,7 +104,7 @@ namespace Dictamenes.Controllers
                 file.SaveAs(Server.MapPath(filePath));
             }
 
-            // creo el archivo para la base de datos
+            // creo el objeto archivo para agregar al dictamen
             var archivo = new ArchivoPDF
             {
                 FechaCarga = DateTime.Now,
@@ -171,8 +171,6 @@ namespace Dictamenes.Controllers
 
             //limpio y estandarizo la informacion
             dictamen.FechaModificacion = DateTime.Now;
-
-
             dictamen.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
             dictamen.NroGDE = dictamen.NroGDE.ToUpper();
             dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
@@ -243,11 +241,13 @@ namespace Dictamenes.Controllers
         [HttpPost]
         public ActionResult Buscar(Busqueda busqueda)
         {
-            //seteo valor para la busqueda
+            //seteo el valor para la busqueda ya que viene el formato bool y necesito un int de id
             var idTipoSujetoObligado = busqueda.EsDenunciante ? db.TiposSujetoObligado.First(d => d.Descripcion == "Denunciante").Id : busqueda.IdTipoSujetoObligado;
 
             //ejecuto el StoreProcedure "sp_FiltrarDictamenes" de la base de datos con los valores pasado por parametro
-            var dictamenes = db.Sp_FiltrarDictamenes(busqueda.NroGDE, busqueda.NroExp, busqueda.FechaCargaInicio, busqueda.FechaCargaFinal, busqueda.Detalle, busqueda.Contenido, busqueda.IdAsunto, busqueda.IdTipoDictamen, busqueda.IdSujetoObligado, idTipoSujetoObligado, busqueda.CuilCuit, busqueda.Nombre, busqueda.Apellido);
+            var dictamenes = db.Sp_FiltrarDictamenes(busqueda.NroGDE, busqueda.NroExp, busqueda.FechaCargaInicio, busqueda.FechaCargaFinal, 
+                busqueda.Detalle, busqueda.Contenido, busqueda.IdAsunto, busqueda.IdTipoDictamen, busqueda.IdSujetoObligado, 
+                idTipoSujetoObligado, busqueda.CuilCuit, busqueda.Nombre, busqueda.Apellido);
             
             //cargo las listas desplegables
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
@@ -285,9 +285,9 @@ namespace Dictamenes.Controllers
 
             if (dictamen.SujetoObligado != null && dictamen.SujetoObligado.Nombre == null) dictamen.SujetoObligado.CuilCuit = 0; //en caso de que el sujetoObligado no sea denunciante, se elimina el valor de cuilCuit
 
-            ViewBag.IdAsunto = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdAsunto);
-            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial", dictamen.IdSujetoObligado);
-            ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdTipoDictamen);
+            ViewBag.IdAsunto = new SelectList(db.Asuntos, "Id", "Descripcion", dictamen.IdAsunto);
+            ViewBag.IdSujetoObligado = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null), "Id", "RazonSocial", dictamen.IdSujetoObligado);
+            ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen, "Id", "Descripcion", dictamen.IdTipoDictamen);
 
             return View(dictamen);
         }
@@ -399,6 +399,7 @@ namespace Dictamenes.Controllers
                 if (EsDenunciante)
                 {
                     bool EsElMismo = false;
+                    //reviso que el sujeto no sea null
                     if(dictamen.SujetoObligado != null)
                     {
                         if (dictamen.SujetoObligado.CuilCuit == dictamenViejo.SujetoObligado.CuilCuit)
@@ -747,7 +748,6 @@ namespace Dictamenes.Controllers
             Dictamen dict = new Dictamen();
 
             Regex numeroGDE = new Regex("IF-[0-9]{4}-[0-9]+-APN-[A-Z]+#[A-Z]+", RegexOptions.IgnoreCase);
-
             MatchCollection matches = numeroGDE.Matches(contenido);
             try
             {
@@ -757,11 +757,8 @@ namespace Dictamenes.Controllers
             //en caso de que no encuentre ninguna, no hace nada y deja el valor por defecto
             catch { }
 
-
             Regex numeroExpediente = new Regex("[E][X] *-* *[0-9]{4} *- *[0-9]+? ?- ?-? ?APN *- *[A-Z]+ *# *[A-Z]+|[E][X] *-* *[0-9]{4} *- *[0-9]+", RegexOptions.IgnoreCase);
-
             matches = numeroExpediente.Matches(contenido);
-
             try
             {
                 //obtiene el primer resultado y normaliza el campo
@@ -769,14 +766,15 @@ namespace Dictamenes.Controllers
                 dict.NroExpediente = matches[0].Value.Replace(" ", "").Replace("--", "-");
             }
             catch { }
-            Regex date = new Regex("[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", RegexOptions.IgnoreCase);
 
+            Regex date = new Regex("[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", RegexOptions.IgnoreCase);
             matches = date.Matches(contenido);
             try
             {
                 DateTime fecha;
                 //trata de parsear la fecha con ese formato
                 DateTime.TryParseExact(matches[0].Value, "yyyy.MM.dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out fecha);
+                //si la instruccion anterior no eleva una excepcion, guarda la fecha en el dictamen
                 dict.FechaCarga = fecha;
             }
             catch
@@ -785,8 +783,6 @@ namespace Dictamenes.Controllers
                 dict.FechaCarga = DateTime.Now;
             }
             return dict;
-
-
         }
     }
 }
