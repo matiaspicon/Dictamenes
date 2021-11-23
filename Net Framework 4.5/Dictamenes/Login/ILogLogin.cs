@@ -1,8 +1,7 @@
-﻿using System;
+﻿using BEUU;
 using System.Collections.Generic;
-using System.ServiceModel;
 using System.Runtime.Serialization;
-using BEUU;
+using System.ServiceModel;
 //using BEUU.ClasesRpt;
 
 namespace WCFLoginUniversal

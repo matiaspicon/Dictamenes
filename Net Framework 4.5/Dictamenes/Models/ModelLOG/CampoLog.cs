@@ -1,9 +1,6 @@
-﻿ 
+﻿
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Web.Mvc;
 
 namespace Dictamenes.Models
 {
@@ -21,10 +18,10 @@ namespace Dictamenes.Models
 
         public DateTime FechaModificacion { get; set; }
 
-        
+
         public int? IdUsuarioModificacion { get; set; }
-        
-        
+
+
 
     }
 }

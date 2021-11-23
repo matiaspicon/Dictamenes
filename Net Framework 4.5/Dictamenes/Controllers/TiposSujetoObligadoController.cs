@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using Dictamenes.Database;
+using Dictamenes.Models;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using Dictamenes.Database;
-using Dictamenes.Models;
 
 namespace Dictamenes.Controllers
 {
@@ -75,7 +72,7 @@ namespace Dictamenes.Controllers
             {
                 return HttpNotFound();
             }
-                         return View(tipoSujetoObligado);
+            return View(tipoSujetoObligado);
         }
 
         // POST: TiposSujetoObligado/Edit/5

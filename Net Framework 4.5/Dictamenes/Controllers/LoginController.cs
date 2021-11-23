@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Dictamenes.Models;
+using Newtonsoft.Json;
+using System;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using WCFLoginUniversal;
 using System.Web.Security;
-using Newtonsoft.Json;
-using System.Configuration;
-using BEUU;
-using System.Security.Claims;
-using Microsoft.Owin.Security.Cookies;
-using System.Net;
-using Dictamenes.Models;
+using WCFLoginUniversal;
 
 namespace Dictamenes.Controllers
 {
@@ -21,17 +16,17 @@ namespace Dictamenes.Controllers
         LogLoginService loginService = new LogLoginService();
         // GET: Login
 
-        
+
 
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
             if (User.Identity.IsAuthenticated)
-            {                
+            {
                 if (returnUrl != null) return Redirect(returnUrl);
-                return RedirectToAction("Index", "Dictamenes");                              
+                return RedirectToAction("Index", "Dictamenes");
             }
-            return View();           
+            return View();
         }
         [AllowAnonymous]
         [HttpPost]
@@ -78,8 +73,8 @@ namespace Dictamenes.Controllers
                     string encTicket = FormsAuthentication.Encrypt(ticket);
 
                     // Crea la cookie.
-                    Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, encTicket));   
-                    
+                    Response.Cookies.Add(new HttpCookie(FormsAuthentication.FormsCookieName, encTicket));
+
                     //en caso de que no tenga alguno de los dos roles habilitados, no se le permitira navegar
                     if (rol == null) return RedirectToAction("ErrorNoPermisos");
 
@@ -92,7 +87,7 @@ namespace Dictamenes.Controllers
                             if (algo == "index") return Redirect(ReturnURL);
                         }
                         catch { }
-                    }        
+                    }
 
                     //redirrecionamiento al listado de todos los Dictamenes
                     return RedirectToAction("Index", "Dictamenes");
@@ -109,11 +104,12 @@ namespace Dictamenes.Controllers
             //sino por defecto devuelve null
 
             string rol = null;
-                        
+
             if (idGrupo == ConfigurationManager.AppSettings["IdGrupoConsultas"])
             {
                 rol = Rol.CONSULTAR.ToString();
-            }else if(idGrupo == ConfigurationManager.AppSettings["IdGrupoCarga"])
+            }
+            else if (idGrupo == ConfigurationManager.AppSettings["IdGrupoCarga"])
             {
                 rol = Rol.CARGAR.ToString();
             }
@@ -125,7 +121,7 @@ namespace Dictamenes.Controllers
         public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
-            return RedirectToAction("Index","Dictamenes");
+            return RedirectToAction("Index", "Dictamenes");
         }
 
         static public UsuarioLogueado GetUserDataIdentity(object identityUser)

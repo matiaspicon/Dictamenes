@@ -1,13 +1,13 @@
-﻿using System;
-using System.Linq;
-using UsuarioUniversal.Entities;
+﻿using NegUU;
+using System;
 using System.Data;
-using System.Xml.Serialization;
 using System.IO;
-using System.Xml;
+using System.Linq;
 using System.Text;
-using NegUU;
+using System.Xml;
+using System.Xml.Serialization;
 using System.Xml.Xsl;
+using UsuarioUniversal.Entities;
 
 
 namespace WCFLoginUniversal
@@ -29,13 +29,13 @@ namespace WCFLoginUniversal
                 string imagen = "";
                 string link = "";
 
-                if (row["ItemLink"]!=DBNull.Value)
+                if (row["ItemLink"] != DBNull.Value)
                     link = (string)row["ItemLink"];
 
-                if (row["ItemImagen"] !=DBNull.Value)
+                if (row["ItemImagen"] != DBNull.Value)
                     imagen = (string)row["ItemImagen"];
 
-                            
+
                 var current = new Nodo(row["ItemOrden"].ToString(), link, imagen, (string)row["ItemDescripcion"]);
                 //Agregamos el item al menu principal
                 root.Agregar(current);
@@ -73,7 +73,7 @@ namespace WCFLoginUniversal
 
             foreach (DataRow row in from DataRow row in dt.Rows where row["ItemPadre"].ToString().Equals(nodo.id) && !row["ItemOrden"].Equals(row["ItemPadre"]) where row["ItemLink"] != null select row)
             {
-                if (row["ItemLink"].ToString().Substring(0, 1) == "#" && opf!=null)
+                if (row["ItemLink"].ToString().Substring(0, 1) == "#" && opf != null)
                 {
                     byte[] encriptado = Encript.ENC(idusua + "|" + idapp + "|" + idgrupo + "|" + opf.IdPF);
 

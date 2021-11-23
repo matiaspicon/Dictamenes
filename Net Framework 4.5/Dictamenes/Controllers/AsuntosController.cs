@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Dictamenes.Database;
+using Dictamenes.Models;
+using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using Dictamenes.Database;
-using Dictamenes.Models;
 
 
 namespace Dictamenes.Controllers
@@ -83,8 +81,8 @@ namespace Dictamenes.Controllers
 
             var asuntos = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(JSONAsuntos);
 
-            foreach (string a in asuntos) 
-            {                
+            foreach (string a in asuntos)
+            {
                 Asunto asunto = new Asunto
                 {
                     EstaHabilitado = true,
@@ -95,7 +93,7 @@ namespace Dictamenes.Controllers
 
                 if (ModelState.IsValid)
                 {
-                        db.Asuntos.Add(asunto);                    
+                    db.Asuntos.Add(asunto);
                 }
             }
             try
@@ -106,7 +104,7 @@ namespace Dictamenes.Controllers
             catch
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }            
+            }
         }
 
         // GET: Asuntos/Edit/5
@@ -145,16 +143,16 @@ namespace Dictamenes.Controllers
 
             if (ModelState.IsValid)
             {
-               Asunto asuntoViejo = db.Asuntos.AsNoTracking().First(d => d.Id == asunto.Id);
-              
+                Asunto asuntoViejo = db.Asuntos.AsNoTracking().First(d => d.Id == asunto.Id);
+
                 AsuntoLog asuntoLog = new AsuntoLog
-               {
+                {
                     IdOriginal = asuntoViejo.Id,
                     Descripcion = asuntoViejo.Descripcion,
                     EstaHabilitado = asuntoViejo.EstaHabilitado,
                     FechaModificacion = asuntoViejo.FechaModificacion,
                     IdUsuarioModificacion = asuntoViejo.IdUsuarioModificacion
-               };
+                };
 
                 asunto.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
                 asunto.FechaModificacion = DateTime.Now;

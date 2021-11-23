@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Xml.Serialization;
 
 namespace UsuarioUniversal.Entities
@@ -18,9 +16,9 @@ namespace UsuarioUniversal.Entities
         [XmlElement("id")]
         public String id { get; set; }
 
-          
-        public Nodo(String id,String link,String icono,String descripcion)
-            
+
+        public Nodo(String id, String link, String icono, String descripcion)
+
         {
             this.id = id;
             this.url = link;
@@ -31,19 +29,19 @@ namespace UsuarioUniversal.Entities
         public Nodo()
         {
         }
-        
+
         [XmlArray("hijos")]
         public List<Nodo> _hijos = new List<Nodo>();
-        public  void Agregar(Nodo c)
+        public void Agregar(Nodo c)
         {
-          _hijos.Add(c);
+            _hijos.Add(c);
         }
 
-        public  void Remover(Nodo c)
+        public void Remover(Nodo c)
         {
             _hijos.Remove(c);
         }
-        
-       
+
+
     }
 }

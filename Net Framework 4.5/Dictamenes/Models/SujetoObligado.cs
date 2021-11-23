@@ -38,14 +38,14 @@ namespace Dictamenes.Models
         public bool EstaHabilitado { get; set; }
 
         public DateTime FechaModificacion { get; set; }
-        
+
         public int? IdUsuarioModificacion { get; set; }
 
     }
 
     public class CuilCuitValidator : ValidationAttribute
     {
-       
+
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
             if (value == null)
@@ -53,7 +53,7 @@ namespace Dictamenes.Models
                 var errorMessage = "El Cuit/Cuil no debe der nulo";
                 return new ValidationResult(errorMessage);
             }
-            string cuilCuit = value.ToString() ;
+            string cuilCuit = value.ToString();
 
             if (cuilCuit.Length != 11)
             {
@@ -66,7 +66,7 @@ namespace Dictamenes.Models
             {
                 var errorMessage = "El Cuit/Cuil no es valido";
                 return new ValidationResult(errorMessage);
-            }               
+            }
 
             char[] cuitArray = cuilCuit.ToCharArray();
             double sum = 0;

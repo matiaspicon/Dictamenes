@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Dictamenes.Models
 {
@@ -55,14 +52,14 @@ namespace Dictamenes.Models
         public TipoDictamen TipoDictamen { get; set; }
         public int IdOriginal { set; get; }
 
-        public bool Borrado{ get; set; }
+        public bool Borrado { get; set; }
 
         public bool HaySujetoObligado { get; set; }
         public DateTime FechaModificacion { get; set; }
 
-        
+
         public int? IdUsuarioModificacion { get; set; }
-        
+
 
 
     }

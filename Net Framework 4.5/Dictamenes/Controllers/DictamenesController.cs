@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Dictamenes.Database;
+using Dictamenes.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
@@ -10,8 +12,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
-using Dictamenes.Database;
-using Dictamenes.Models;
 
 namespace Dictamenes.Controllers
 {
@@ -73,7 +73,7 @@ namespace Dictamenes.Controllers
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
-            
+
             return View();
         }
 
@@ -94,7 +94,7 @@ namespace Dictamenes.Controllers
             var extension = Path.GetExtension(file.FileName);
 
             //si el archivo no es de tipo PDF, no se carga se crea el archivo en la base de datos ni se almacena el archivo
-            if(extension != ".pdf")
+            if (extension != ".pdf")
             {
                 //seteo los valores del dictamen a null
                 dictamen.IdArchivoPDF = null;
@@ -181,7 +181,7 @@ namespace Dictamenes.Controllers
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
-            
+
             //en caso de que exista un dictamen con el mismo numero de GDE
             if (db.Dictamenes.FirstOrDefault(d => d.NroGDE == dictamen.NroGDE) != null)
             {
@@ -265,16 +265,16 @@ namespace Dictamenes.Controllers
             var idTipoSujetoObligado = busqueda.EsDenunciante ? db.TiposSujetoObligado.First(d => d.Descripcion == "Denunciante").Id : busqueda.IdTipoSujetoObligado;
 
             //ejecuto el StoreProcedure "sp_FiltrarDictamenes" de la base de datos con los valores pasado por parametro
-            var dictamenes = db.Sp_FiltrarDictamenes(busqueda.NroGDE, busqueda.NroExp, busqueda.FechaCargaInicio, busqueda.FechaCargaFinal, 
-                busqueda.Detalle, busqueda.Contenido, busqueda.IdAsunto, busqueda.IdTipoDictamen, busqueda.IdSujetoObligado, 
+            var dictamenes = db.Sp_FiltrarDictamenes(busqueda.NroGDE, busqueda.NroExp, busqueda.FechaCargaInicio, busqueda.FechaCargaFinal,
+                busqueda.Detalle, busqueda.Contenido, busqueda.IdAsunto, busqueda.IdTipoDictamen, busqueda.IdSujetoObligado,
                 idTipoSujetoObligado, busqueda.CuilCuit, busqueda.Nombre, busqueda.Apellido);
-            
+
             //cargo las listas desplegables
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
             ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["TipoSujetoObligado"] = new SelectList(db.TiposSujetoObligado.Where(m => m.EstaHabilitado && m.Descripcion != "Denunciante"), "Id", "Descripcion");
-            
+
             //envio los parametros actuales de busqueda para que puedan ser mostrado en la vista
             ViewData["Busqueda"] = busqueda;
 
@@ -334,8 +334,8 @@ namespace Dictamenes.Controllers
                 //se agrega un error en ese campo y se vuelve a solicitar la carga
                 ModelState.AddModelError("NroGDE", "Ya existe un Dictamen con ese Número de GDE");
             }
-            
-            
+
+
             if (!EsDenunciante)
             {
                 //remuevo la comprobacion del campo cuilCuit
@@ -420,13 +420,13 @@ namespace Dictamenes.Controllers
                 {
                     bool EsElMismo = false;
                     //reviso que el sujeto no sea null
-                    if(dictamen.SujetoObligado != null)
+                    if (dictamen.SujetoObligado != null)
                     {
                         if (dictamen.SujetoObligado.CuilCuit == dictamenViejo.SujetoObligado.CuilCuit)
                         {
                             EsElMismo = true;
                             if (dictamen.SujetoObligado.Nombre != dictamenViejo.SujetoObligado.Nombre || dictamen.SujetoObligado.Apellido != dictamenViejo.SujetoObligado.Apellido)
-                            {                                
+                            {
                                 //hago la modificacion del sujetoObligado
 
                                 SujetoObligado sujetoObligadoViejo = db.SujetosObligados.AsNoTracking().FirstOrDefault(d => d.Id == dictamen.IdSujetoObligado);
@@ -459,7 +459,7 @@ namespace Dictamenes.Controllers
                                 //guardo el log del sujetoObligado que se modifico
                                 db.SujetosObligadosLog.Add(sujetoObligadoLog);
                                 db.SaveChanges();
-                                
+
                             }
                             else
                             {
@@ -500,7 +500,7 @@ namespace Dictamenes.Controllers
                             //guardo al nuevo sujetoObligado dentro del dictamen
                             dictamen.IdSujetoObligado = dictamen.SujetoObligado.Id;
                         }
-                    } 
+                    }
                 }
                 else //no es denunciante
                 {
@@ -653,11 +653,11 @@ namespace Dictamenes.Controllers
             {
                 dictamenes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<DictamenData>>(JSONDictamenes);
             }
-            catch 
+            catch
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if(dictamenes != null)
+            if (dictamenes != null)
             {
                 foreach (DictamenData dictamenData in dictamenes)
                 {
@@ -748,10 +748,10 @@ namespace Dictamenes.Controllers
                         archivosPDFError.Add(archivo);
                     }
                 }
-            }           
-            
+            }
+
             db.SaveChanges();
-            return Json(new {archivosPDFError, dictamenesError});          
+            return Json(new { archivosPDFError, dictamenesError });
         }
 
         protected override void Dispose(bool disposing)

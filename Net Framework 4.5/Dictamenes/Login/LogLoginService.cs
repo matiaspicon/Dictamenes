@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using BEUU;
 using BEUU.ClasesRpt;
 using NegUU;
-using BEUU;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Configuration;
+using System.Linq;
+using System.Text;
 
 namespace WCFLoginUniversal
 {
@@ -32,7 +32,7 @@ namespace WCFLoginUniversal
 
                 if (logl == null)
                     return null;
-                
+
 
                 Usuarios usua = logl.Usuario;
 
@@ -102,18 +102,18 @@ namespace WCFLoginUniversal
             if (usua != null)
             {
                 var wcfll = new WCFUsuarioLogeado
-                                {
-                                    ApellidoPersona = usua.ApellidoPersona,
-                                    CUIL_CUIT = usua.CUIL_CUIT,
-                                    Ent = usua.Ent,
-                                    Gerencias = NGerencia.ObtengoGerenciasPorCuil(usua.CUIL_CUIT),
-                                    Grupos = NGrupos.ObtenerGrupoPorAPPUsuario(app, usua),
-                                    Id = usua.Id,
-                                    Mail = usua.Mail,
-                                    NombrePersona = usua.NombrePersona,
-                                    NombreUsuario = usua.NombreUsuario,
-                                    Telefono = usua.Telefono
-                                };
+                {
+                    ApellidoPersona = usua.ApellidoPersona,
+                    CUIL_CUIT = usua.CUIL_CUIT,
+                    Ent = usua.Ent,
+                    Gerencias = NGerencia.ObtengoGerenciasPorCuil(usua.CUIL_CUIT),
+                    Grupos = NGrupos.ObtenerGrupoPorAPPUsuario(app, usua),
+                    Id = usua.Id,
+                    Mail = usua.Mail,
+                    NombrePersona = usua.NombrePersona,
+                    NombreUsuario = usua.NombreUsuario,
+                    Telefono = usua.Telefono
+                };
 
                 if (PF)
                 {

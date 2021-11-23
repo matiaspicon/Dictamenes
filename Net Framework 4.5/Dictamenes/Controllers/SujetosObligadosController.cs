@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Dictamenes.Database;
+using Dictamenes.Models;
+using System;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using Dictamenes.Database;
-using Dictamenes.Models;
 
 namespace Dictamenes.Controllers
 {
@@ -23,7 +21,7 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
 
-            var sujetoObligado = db.SujetosObligados.Where(d =>  d.RazonSocial != null).Include(s => s.TipoSujetoObligado);
+            var sujetoObligado = db.SujetosObligados.Where(d => d.RazonSocial != null).Include(s => s.TipoSujetoObligado);
             return View(sujetoObligado.ToList());
         }
 
@@ -35,7 +33,7 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
 
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d =>  d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion");
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion");
             return View();
         }
 
@@ -65,7 +63,7 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d =>  d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
@@ -86,7 +84,7 @@ namespace Dictamenes.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d =>  d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
@@ -110,8 +108,8 @@ namespace Dictamenes.Controllers
 
             if (ModelState.IsValid)
             {
-                SujetoObligadoLog sujetoObligadoLog = new SujetoObligadoLog 
-                {                    
+                SujetoObligadoLog sujetoObligadoLog = new SujetoObligadoLog
+                {
                     CuilCuit = sujetoObligadoViejo.CuilCuit,
                     Nombre = sujetoObligadoViejo.Nombre,
                     Apellido = sujetoObligadoViejo.Apellido,
@@ -131,7 +129,7 @@ namespace Dictamenes.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d =>  d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 

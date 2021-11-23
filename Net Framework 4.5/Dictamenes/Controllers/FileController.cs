@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Dictamenes.Database;
+using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
+using System;
 using System.Data;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web;
-using System.Web.Mvc;
-using Dictamenes.Database;
-using Dictamenes.Models;
-using iTextSharp.text.pdf;
-using iTextSharp.text.pdf.parser;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Hosting;
+using System.Web.Mvc;
 
 namespace Dictamenes.Controllers
 {
@@ -65,7 +60,7 @@ namespace Dictamenes.Controllers
             {
 
             }
-            
+
             return strText;
         }
     }

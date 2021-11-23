@@ -1,8 +1,5 @@
-﻿  
+﻿
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Dictamenes.Models
 {
@@ -10,7 +7,7 @@ namespace Dictamenes.Models
     {
         public bool Collapse { get; set; }
         public string NroGDE { get; set; }
-        
+
         public string NroExp { get; set; }
 
         public DateTime? FechaCargaInicio { get; set; }
@@ -20,7 +17,7 @@ namespace Dictamenes.Models
         //public bool EsPublico { get; set; }
 
         public string Contenido { get; set; }
-        
+
         public string Detalle { get; set; }
 
         public int? IdAsunto { get; set; }

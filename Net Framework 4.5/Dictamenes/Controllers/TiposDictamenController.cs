@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using Dictamenes.Database;
+using Dictamenes.Models;
+using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using Dictamenes.Database;
-using Dictamenes.Models;
 
 namespace Dictamenes.Controllers
 {
@@ -76,7 +73,7 @@ namespace Dictamenes.Controllers
             {
                 return HttpNotFound();
             }
-                         return View(tipoDictamen);
+            return View(tipoDictamen);
         }
 
         // POST: TiposDictamen/Edit/5
@@ -92,7 +89,7 @@ namespace Dictamenes.Controllers
             }
             if (ModelState.IsValid)
             {
-                var tipoSujetoDictamenViejo = db.TiposDictamen.AsNoTracking().First(d => d.Id == tipoDictamen.Id);               
+                var tipoSujetoDictamenViejo = db.TiposDictamen.AsNoTracking().First(d => d.Id == tipoDictamen.Id);
                 TipoDictamenLog tipoDictamenLog = new TipoDictamenLog
                 {
                     IdOriginal = tipoSujetoDictamenViejo.Id,
@@ -110,7 +107,7 @@ namespace Dictamenes.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-        return View(tipoDictamen);
+            return View(tipoDictamen);
         }
 
         protected override void Dispose(bool disposing)

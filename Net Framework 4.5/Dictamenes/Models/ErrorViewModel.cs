@@ -1,5 +1,3 @@
-using System;
-
 namespace Dictamenes.Models
 {
     public class ErrorViewModel
