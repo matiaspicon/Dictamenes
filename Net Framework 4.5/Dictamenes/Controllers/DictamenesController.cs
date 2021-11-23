@@ -92,6 +92,26 @@ namespace Dictamenes.Controllers
             //separo informacion del archivo
             var fileName = Guid.NewGuid().ToString();
             var extension = Path.GetExtension(file.FileName);
+
+            //si el archivo no es de tipo PDF, no se carga se crea el archivo en la base de datos ni se almacena el archivo
+            if(extension != ".pdf")
+            {
+                //seteo los valores del dictamen a null
+                dictamen.IdArchivoPDF = null;
+                dictamen.ArchivoPDF = null;
+                //seteo la fecha de Carga a la actual para facilidad de carga
+                dictamen.FechaCarga = DateTime.Now;
+
+                ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
+                ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
+                ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
+                ViewData["TipoSujetoObligado"] = new SelectList(db.TiposSujetoObligado.Where(m => m.EstaHabilitado), "Id", "Descripcion");
+
+                //cargo la informacion para el formulario Create y devuelvo la VIEW del create con un dictamen sin archivo
+                //que esta dentro de la variable dictamen
+                return View("Create", dictamen);
+            }
+
             // compruebo directorio
             var basePath = Server.MapPath("~/Archivos");
             var filePath = Path.Combine("~", "Archivos", fileName + extension);
@@ -119,7 +139,7 @@ namespace Dictamenes.Controllers
             // extraigo la informacion del PDF del dictamen y creo el objeto con la misma
             dictamen = ExtratDictamenFromString(archivo.Contenido);
             dictamen.IdArchivoPDF = archivo.Id;
-            dictamen.ArchivoPDF = archivo;           
+            dictamen.ArchivoPDF = archivo;
 
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");

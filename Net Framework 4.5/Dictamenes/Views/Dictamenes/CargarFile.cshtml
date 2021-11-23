@@ -10,8 +10,8 @@
 <hr />
 
 <div class="justify-content-center">
-    <p>Si no tiene el archivo del Dictamen, puede continuar sin cargar el archivo</p>
-    <a class="btn btn-outline-primary" href="@Url.Action("Create")">Continuar sin Archivo  <i class="bi bi-arrow-right"></i></a>
+    <p>Si no tiene el archivo del Dictamen, puede continuar sin cargar el archivo:</p>
+    <a class="btn btn-outline-primary" href="@Url.Action("Create")"><i class="bi bi-file-earmark-x"></i> Continuar sin Archivo  <i class="bi bi-arrow-right"></i></a>
 </div>
 
 <hr style="width:50%;text-align:left;margin-left:0">
@@ -22,14 +22,14 @@
         {
             @Html.AntiForgeryToken()
             <div class="form-group">
-                <p class="">     Ingrese el Archivo PDF</p>
-                <input type="file" class="" accept=".pdf" name="file" required>
+                <p class="">     Ingrese el Archivo PDF:</p>
+                <input type="file" class="col p-1" accept=".pdf" name="file" required>
             </div>
 
             <div class="form-group">
                 <div class="col row justify-content-start">
                     <a class="col-auto btn btn-secondary m-1" href="@Url.Action("Index")"><i class="bi bi-arrow-left"></i>  Volver atrás</a>
-                    <button type="submit" class="col-auto btn btn-primary m-1">Continuar con Archivo  <i class="bi bi-arrow-right"></i> </button>
+                    <button type="submit" class="col-auto btn btn-primary m-1"><i class="bi bi-file-earmark-arrow-up"></i> Continuar con Archivo  <i class="bi bi-arrow-right"></i> </button>
                 </div>
             </div>
         }

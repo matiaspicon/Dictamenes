@@ -44,19 +44,28 @@ namespace Dictamenes.Controllers
         public static string ExtractTextFromPdf(string path)
         {
             string pathAbsolute = HostingEnvironment.MapPath(path);
-            PdfReader reader2 = new PdfReader(pathAbsolute);
-            string strText = string.Empty;
-
-            for (int page = 1; page <= reader2.NumberOfPages; page++)
+            string strText = String.Empty;
+            try
             {
-                ITextExtractionStrategy its = new SimpleTextExtractionStrategy();
-                PdfReader reader = new PdfReader(pathAbsolute);
-                String s = PdfTextExtractor.GetTextFromPage(reader, page, its);
+                PdfReader reader2 = new PdfReader(pathAbsolute);
+                strText = string.Empty;
 
-                s = Encoding.UTF8.GetString(ASCIIEncoding.Convert(Encoding.Default, Encoding.UTF8, Encoding.Default.GetBytes(s)));
-                strText += s;
-                reader.Close();
+                for (int page = 1; page <= reader2.NumberOfPages; page++)
+                {
+                    ITextExtractionStrategy its = new SimpleTextExtractionStrategy();
+                    PdfReader reader = new PdfReader(pathAbsolute);
+                    String s = PdfTextExtractor.GetTextFromPage(reader, page, its);
+
+                    s = Encoding.UTF8.GetString(ASCIIEncoding.Convert(Encoding.Default, Encoding.UTF8, Encoding.Default.GetBytes(s)));
+                    strText += s;
+                    reader.Close();
+                }
             }
+            catch
+            {
+
+            }
+            
             return strText;
         }
     }
