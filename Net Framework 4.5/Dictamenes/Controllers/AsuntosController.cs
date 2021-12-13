@@ -1,6 +1,5 @@
 ﻿using Dictamenes.Database;
 using Dictamenes.Models;
-using Dictamenes.Security;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -20,7 +19,7 @@ namespace Dictamenes.Controllers
         public ActionResult Index()
         {
 
-            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -32,7 +31,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Create()
         {
-            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -46,12 +45,12 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
-            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
             asunto.FechaModificacion = DateTime.Now;
-            asunto.IdUsuarioModificacion =  Security.LoginService.Current.UsuarioID;
+            asunto.IdUsuarioModificacion = Dictamenes.Framework.Security.LoginService.Current.UsuarioID;
             if (ModelState.IsValid)
             {
                 db.Asuntos.Add(asunto);
@@ -63,7 +62,7 @@ namespace Dictamenes.Controllers
 
         public ActionResult CargarAsuntos()
         {
-            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -75,7 +74,7 @@ namespace Dictamenes.Controllers
         public ActionResult CargarAsuntos(string JSONAsuntos)
         {
 
-            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -89,7 +88,7 @@ namespace Dictamenes.Controllers
                     EstaHabilitado = true,
                     Descripcion = a,
                     FechaModificacion = DateTime.Now,
-                    IdUsuarioModificacion =  Security.LoginService.Current.UsuarioID
+                    IdUsuarioModificacion = Dictamenes.Framework.Security.LoginService.Current.UsuarioID
                 };
 
                 if (ModelState.IsValid)
@@ -112,7 +111,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Edit(int? id)
         {
-            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -136,7 +135,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Edit([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
-            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -155,7 +154,7 @@ namespace Dictamenes.Controllers
                     IdUsuarioModificacion = asuntoViejo.IdUsuarioModificacion
                 };
 
-                asunto.IdUsuarioModificacion =  Security.LoginService.Current.UsuarioID;
+                asunto.IdUsuarioModificacion = Dictamenes.Framework.Security.LoginService.Current.UsuarioID;
                 asunto.FechaModificacion = DateTime.Now;
 
                 db.Entry(asunto).State = EntityState.Modified;
