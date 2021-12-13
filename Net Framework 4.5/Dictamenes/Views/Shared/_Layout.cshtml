@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" />
     <link rel="icon" href="@Url.Content("~/favicon.ico")" type="image/x-icon" />
     @using Dictamenes.Models
-    @{string rol = Dictamenes.Security.LoginService.Current.GrupoNombre;}
+    @{string rol = Dictamenes.Framework.Security.LoginService.Current.GrupoNombre;}
 </head>
 <body class="p-0">
     <header>
@@ -24,7 +24,7 @@
             <div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    @Html.Raw(Dictamenes.Security.LoginService.Current.Menu)                   
+                    @Html.Raw(Dictamenes.Framework.Security.LoginService.Current.Menu)                   
                 }
                 <div class="navbar-nav ml-auto ">
                     @if (User.Identity.IsAuthenticated)
