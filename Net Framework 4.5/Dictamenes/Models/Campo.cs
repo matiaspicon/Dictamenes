@@ -11,10 +11,10 @@ namespace Dictamenes.Models
         public int Id { get; set; }
 
         [MaxLength(100, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
-        [DisplayName("Decripción")]
+        [DisplayName("Descripción")]
         public string Descripcion { get; set; }
 
-        [DisplayName("Esta habilitado")]
+        [DisplayName("Está habilitado")]
         public bool EstaHabilitado { get; set; }
 
         public DateTime FechaModificacion { get; set; }

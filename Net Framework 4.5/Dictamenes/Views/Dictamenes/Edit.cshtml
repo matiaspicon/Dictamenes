@@ -109,9 +109,9 @@
             @Html.HiddenFor(model => model.IdSujetoObligado)
             @if (Model.SujetoObligado != null) { Html.HiddenFor(model => model.SujetoObligado.Id); }
             <div class="form-group row">
-                <label class="form-label col-md-3 align-self-end">CUIL/CUIT </label>
+                <label class="form-label col-md-3 align-self-end">Cuil/Cuit </label>
                 <div class="col-md-9">
-                    @Html.EditorFor(model => model.SujetoObligado.CuilCuit, new { htmlAttributes = new { @class = "form-control col-auto", id = "InputCuilCuit", placeholder = "Ingrese el CUIL/CUIT del Sujeto Obligado" } })
+                    @Html.EditorFor(model => model.SujetoObligado.CuilCuit, new { htmlAttributes = new { @class = "form-control col-auto", id = "InputCuilCuit", placeholder = "Ingrese el Cuil/Cuit del Sujeto Obligado" } })
                     @Html.ValidationMessageFor(model => model.SujetoObligado.CuilCuit, "", new { @class = "text-danger" })
                 </div>
             </div>

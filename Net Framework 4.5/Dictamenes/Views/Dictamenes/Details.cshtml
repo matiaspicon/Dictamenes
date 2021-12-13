@@ -6,7 +6,7 @@
 
 
 
-@{string rol = Dictamenes.Controllers.LoginController.GetUserRolIdentity(User.Identity);}
+@{string rol = Dictamenes.Security.LoginService.Current.GrupoNombre;}
 
 <h2>Detalles del Dictamen</h2>
 
@@ -109,7 +109,7 @@
         </h6>
     }
 
-
+    
     @{ if (Model.ArchivoPDF == null)
         {
             <h5 class="form-label col-3 align-self-center">
@@ -141,7 +141,6 @@
             }
         }
     }
-
 </div>
 <div id="collapseOne" class="collapse m-3">
     <div class="embed-responsive embed-responsive-16by9">

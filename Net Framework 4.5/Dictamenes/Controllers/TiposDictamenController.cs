@@ -15,7 +15,7 @@ namespace Dictamenes.Controllers
         // GET: TiposDictamen
         public ActionResult Index()
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -27,7 +27,7 @@ namespace Dictamenes.Controllers
         // GET: TiposDictamen/Create
         public ActionResult Create()
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -41,11 +41,11 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoDictamen tipoDictamen)
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
-            tipoDictamen.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
+            tipoDictamen.IdUsuarioModificacion =  Security.LoginService.Current.UsuarioID;
             tipoDictamen.FechaModificacion = DateTime.Now;
             if (ModelState.IsValid)
             {
@@ -60,7 +60,7 @@ namespace Dictamenes.Controllers
         // GET: TiposDictamen/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -83,7 +83,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoDictamen tipoDictamen)
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -99,7 +99,7 @@ namespace Dictamenes.Controllers
                     IdUsuarioModificacion = tipoSujetoDictamenViejo.IdUsuarioModificacion
                 };
 
-                tipoDictamen.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
+                tipoDictamen.IdUsuarioModificacion =  Security.LoginService.Current.UsuarioID;
                 tipoDictamen.FechaModificacion = DateTime.Now;
                 db.Entry(tipoDictamen).State = EntityState.Modified;
 

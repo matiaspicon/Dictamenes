@@ -3,14 +3,14 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Dictamenes</title>
+    <title>@ViewData["Title"] - Dictámenes </title>
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" />
     <link rel="icon" href="@Url.Content("~/favicon.ico")" type="image/x-icon" />
     @using Dictamenes.Models
-    @{string rol = Dictamenes.Controllers.LoginController.GetUserRolIdentity(User.Identity);}
+    @{string rol = Dictamenes.Security.LoginService.Current.GrupoNombre;}
 </head>
 <body class="p-0">
     <header>
@@ -24,7 +24,7 @@
             <div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
                 @if (User.Identity.IsAuthenticated)
                 {
-                    @Html.Raw(Dictamenes.Controllers.LoginController.GetUserDataIdentity(User.Identity).Menu)                   
+                    @Html.Raw(Dictamenes.Security.LoginService.Current.Menu)                   
                 }
                 <div class="navbar-nav ml-auto ">
                     @if (User.Identity.IsAuthenticated)

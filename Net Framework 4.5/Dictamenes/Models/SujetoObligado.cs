@@ -15,6 +15,7 @@ namespace Dictamenes.Models
 
         [Required]
         [CuilCuitValidator]
+        [DisplayName("Cuil/Cuit")]
         public long CuilCuit { get; set; }
 
         [MaxLength(50, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
@@ -23,7 +24,7 @@ namespace Dictamenes.Models
         [MaxLength(50, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string Apellido { get; set; }
 
-        [DisplayName("Razon Social")]
+        [DisplayName("Razón Social")]
         [MaxLength(80, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string RazonSocial { get; set; }
 
@@ -34,7 +35,7 @@ namespace Dictamenes.Models
         [DisplayName("Tipo de Sujeto Obligado")]
         public TipoSujetoObligado TipoSujetoObligado { get; set; }
 
-        [DisplayName("Esta habilitado")]
+        [DisplayName("Está habilitado")]
         public bool EstaHabilitado { get; set; }
 
         public DateTime FechaModificacion { get; set; }

@@ -16,7 +16,7 @@ namespace Dictamenes.Controllers
         // GET: SujetosObligados
         public ActionResult Index()
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -28,12 +28,12 @@ namespace Dictamenes.Controllers
         // GET: SujetosObligados/Create
         public ActionResult Create()
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
 
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion");
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaHabilitado && d.Descripcion != "Denunciante").OrderBy(m => m.Descripcion), "Id", "Descripcion");
             return View();
         }
 
@@ -44,7 +44,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoObligado sujetoObligado)
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -54,7 +54,7 @@ namespace Dictamenes.Controllers
                 ModelState.AddModelError("CuilCuit", "Ya existe un Sujeto Obligado con ese Cuil/Cuit");
             }
 
-            sujetoObligado.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
+            sujetoObligado.IdUsuarioModificacion = Security.LoginService.Current.UsuarioID;
             sujetoObligado.FechaModificacion = DateTime.Now;
             if (ModelState.IsValid)
             {
@@ -63,14 +63,14 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaHabilitado && d.Descripcion != "Denunciante").OrderBy(m => m.Descripcion), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
         // GET: SujetosObligados/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -84,7 +84,7 @@ namespace Dictamenes.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaHabilitado && d.Descripcion != "Denunciante").OrderBy(m => m.Descripcion), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 
@@ -95,7 +95,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado, EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion, IdOriginal")] SujetoObligado sujetoObligado)
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -120,7 +120,7 @@ namespace Dictamenes.Controllers
                     FechaModificacion = sujetoObligadoViejo.FechaModificacion,
                     IdUsuarioModificacion = sujetoObligadoViejo.IdUsuarioModificacion
                 };
-                sujetoObligado.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
+                sujetoObligado.IdUsuarioModificacion =  Security.LoginService.Current.UsuarioID;
                 sujetoObligado.FechaModificacion = DateTime.Now;
 
                 db.Entry(sujetoObligado).State = EntityState.Modified;
@@ -129,7 +129,7 @@ namespace Dictamenes.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
+            ViewBag.IdTipoSujetoObligado = new SelectList(db.TiposSujetoObligado.Where(d => d.EstaHabilitado && d.Descripcion != "Denunciante").OrderBy(m => m.Descripcion), "Id", "Descripcion", sujetoObligado.IdTipoSujetoObligado);
             return View(sujetoObligado);
         }
 

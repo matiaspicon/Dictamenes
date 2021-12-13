@@ -5,10 +5,9 @@ using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 
-
 namespace Dictamenes.Database
-{
-    public class DictamenesDbContext : DbContext
+{ 
+    public class DictamenesDbContext : System.Data.Entity.DbContext
     {
         public DictamenesDbContext() : base("name=SQLServer") { }
 
