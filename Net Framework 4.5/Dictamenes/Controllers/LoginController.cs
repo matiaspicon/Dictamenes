@@ -1,6 +1,13 @@
-﻿using System.Web.Mvc;
+﻿using Dictamenes.Models;
+using Newtonsoft.Json;
+using System;
+using System.Configuration;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
 using System.Web.Security;
-
+using NegUU;
+using Dictamenes.Framework.Security;
 
 namespace Dictamenes.Controllers
 {
@@ -9,23 +16,23 @@ namespace Dictamenes.Controllers
 
 
         [AllowAnonymous]
-        public void Login()
+        public ActionResult Login()
         {
             if (!User.Identity.IsAuthenticated)
             {
-                Dictamenes.Framework.Security.LoginService.LoginUniversalCallback(Request["ID"]);
+                return Redirect(LoginService.LoginUniversalCallback(Request["ID"]));
             }
             else
             {
-                HttpContext.Response.Redirect("/");
+                return Redirect("/");
             }
-        }
+        }        
 
         [Authorize]
         public void Logout()
         {
             FormsAuthentication.SignOut();
-            Dictamenes.Framework.Security.LoginService.RedirectToUserHome();
+            LoginService.RedirectToUserHome();
         }
 
         [AllowAnonymous]

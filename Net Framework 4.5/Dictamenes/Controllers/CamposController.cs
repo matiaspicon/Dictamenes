@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using Dictamenes.Framework.Security;
 
 namespace Dictamenes.Controllers
 {
@@ -6,7 +7,7 @@ namespace Dictamenes.Controllers
     {
         public ActionResult Menu()
         {
-            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }

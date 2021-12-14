@@ -12,6 +12,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
+using Dictamenes.Framework.Security;
 
 namespace Dictamenes.Controllers
 {
@@ -24,7 +25,7 @@ namespace Dictamenes.Controllers
         public ActionResult Index()
         {
             //El usuario que no sea tenga rol de Cargar o Consulta no podra acceder a esta opcion
-            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString() && Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CONSULTAR.ToString())
+            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString() && Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CONSULTAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -42,7 +43,7 @@ namespace Dictamenes.Controllers
         public ActionResult Details(int? id)
         {
             //El usuario que no sea tenga rol de Cargar o Consulta no podra acceder a esta opcion
-            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString() && Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CONSULTAR.ToString())
+            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString() && Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CONSULTAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -69,7 +70,7 @@ namespace Dictamenes.Controllers
         {
 
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -82,7 +83,7 @@ namespace Dictamenes.Controllers
         public ActionResult CargarFile(HttpPostedFileBase file)
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -156,7 +157,7 @@ namespace Dictamenes.Controllers
         public ActionResult Create()
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -174,10 +175,10 @@ namespace Dictamenes.Controllers
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion, SujetoObligado")] Dictamen dictamen)
+        public ActionResult Create([Bind(Include = "ArchivoPDF, Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion, SujetoObligado")] Dictamen dictamen)
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -191,11 +192,12 @@ namespace Dictamenes.Controllers
 
             //limpio y estandarizo la informacion
             dictamen.FechaModificacion = DateTime.Now;
-            dictamen.IdUsuarioModificacion = Dictamenes.Framework.Security.LoginService.Current.UsuarioID;
+            dictamen.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
             dictamen.NroGDE = dictamen.NroGDE.ToUpper();
             dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
             dictamen.Detalle = dictamen.Detalle.ToUpper();
             dictamen.EsPublico = false;
+            dictamen.ArchivoPDF = db.ArchivosPDF.Find(dictamen.IdArchivoPDF);
 
 
             //compruebo si la data del formulario del denunciante es distinto al valor por defecto
@@ -222,7 +224,7 @@ namespace Dictamenes.Controllers
                 else
                 {
                     dictamen.SujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
-                    dictamen.SujetoObligado.IdUsuarioModificacion = Dictamenes.Framework.Security.LoginService.Current.UsuarioID;
+                    dictamen.SujetoObligado.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
                     dictamen.SujetoObligado.FechaModificacion = DateTime.Now;
                     db.SujetosObligados.Add(dictamen.SujetoObligado);
                 }
@@ -239,7 +241,7 @@ namespace Dictamenes.Controllers
 
             //seteo el valor del HaySujetoObligado basado en el valor de IdSujetoObligado
             dictamen.HaySujetoObligado = dictamen.IdSujetoObligado != null;
-
+            
             if (ModelState.IsValid)
             {
                 db.Dictamenes.Add(dictamen);
@@ -287,7 +289,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return View("ErrorNoPermisos", "Login");
             }
@@ -297,7 +299,7 @@ namespace Dictamenes.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Dictamen dictamen = db.Dictamenes.Include(d => d.SujetoObligado).FirstOrDefault(d => d.Id == id);
+            Dictamen dictamen = db.Dictamenes.Include(d => d.SujetoObligado).Include(d => d.ArchivoPDF).FirstOrDefault(d => d.Id == id);
 
             if (dictamen == null)
             {
@@ -318,10 +320,10 @@ namespace Dictamenes.Controllers
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion,IdOriginal, SujetoObligado")] Dictamen dictamen, bool EsDenunciante, bool BorrarArchivo, HttpPostedFileBase file)
+        public ActionResult Edit([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion,IdOriginal, SujetoObligado, Archivo")] Dictamen dictamen, bool EsDenunciante, bool BorrarArchivo, HttpPostedFileBase file)
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -369,13 +371,13 @@ namespace Dictamenes.Controllers
 
                 //limpio y estandarizo la informacion
                 dictamen.FechaModificacion = DateTime.Now;
-                dictamen.IdUsuarioModificacion = Dictamenes.Framework.Security.LoginService.Current.UsuarioID;
+                dictamen.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
                 dictamen.NroGDE = dictamen.NroGDE.ToUpper();
                 dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
                 dictamen.Detalle = dictamen.Detalle.ToUpper();
+                dictamen.ArchivoPDF = db.ArchivosPDF.Find(dictamen.IdArchivoPDF);
 
-
-                if (BorrarArchivo)
+                if (BorrarArchivo) 
                 {
                     //borro el archivo
                     dictamen.ArchivoPDF = null;
@@ -447,7 +449,7 @@ namespace Dictamenes.Controllers
                                 sujetoObligadoViejo.CuilCuit = dictamen.SujetoObligado.CuilCuit;
                                 sujetoObligadoViejo.Nombre = dictamen.SujetoObligado.Nombre;
                                 sujetoObligadoViejo.Apellido = dictamen.SujetoObligado.Apellido;
-                                sujetoObligadoViejo.IdUsuarioModificacion = Dictamenes.Framework.Security.LoginService.Current.UsuarioID;
+                                sujetoObligadoViejo.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
                                 sujetoObligadoViejo.FechaModificacion = DateTime.Now;
                                 sujetoObligadoViejo.IdTipoSujetoObligado = sujetoObligadoViejo.IdTipoSujetoObligado;
                                 sujetoObligadoViejo.EstaHabilitado = sujetoObligadoViejo.EstaHabilitado;
@@ -495,7 +497,7 @@ namespace Dictamenes.Controllers
                             dictamen.SujetoObligado.Id = 0;
                             dictamen.SujetoObligado.FechaModificacion = DateTime.Now;
                             dictamen.SujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.FirstOrDefault(d => d.Descripcion == "Denunciante").Id;
-                            dictamen.SujetoObligado.IdUsuarioModificacion = Dictamenes.Framework.Security.LoginService.Current.UsuarioID;
+                            dictamen.SujetoObligado.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
                             db.SujetosObligados.Add(dictamen.SujetoObligado);
                             db.SaveChanges();
                             //guardo al nuevo sujetoObligado dentro del dictamen
@@ -529,13 +531,13 @@ namespace Dictamenes.Controllers
                     db.Entry(dictamen).State = EntityState.Modified;
 
                     //agrego el log del dictamen
-                    db.DictamenesLog.Add(dictamenLog);
+                    db.DictamenesLog.Add(dictamenLog);                    
                     db.SaveChanges();
 
                     return RedirectToAction("Index");
                 }
-
-
+                
+                
             }
 
             //en caso de haber un error con la modificacion se devuelve el dictamen con los errores correspondientes
@@ -548,7 +550,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Delete/5
         public ActionResult Delete(int? id)
         {
-            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -570,7 +572,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -597,7 +599,7 @@ namespace Dictamenes.Controllers
                 FechaModificacion = DateTime.Now,
                 //valor para indicar que el dictamen fue borrado y no modificado
                 Borrado = true,
-                IdUsuarioModificacion = Dictamenes.Framework.Security.LoginService.Current.UsuarioID
+                IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID
             };
 
             db.DictamenesLog.Add(dictamenLog);
@@ -645,7 +647,7 @@ namespace Dictamenes.Controllers
         [HttpPost]
         public ActionResult CargarDictamenes(string JSONDictamenes, HttpPostedFileBase[] files)
         {
-            if (Dictamenes.Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -683,7 +685,7 @@ namespace Dictamenes.Controllers
                             ArchivoPDF = null,
                             FechaModificacion = DateTime.Now,
                             IdSujetoObligado = null,
-                            IdUsuarioModificacion = Dictamenes.Framework.Security.LoginService.Current.UsuarioID,
+                            IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID,
                             IdTipoDictamen = db.TiposDictamen.First(m => m.Descripcion == "Sin valor").Id
                         };
 

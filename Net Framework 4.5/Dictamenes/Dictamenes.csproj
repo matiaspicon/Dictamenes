@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\EntityFramework.6.4.0\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.Default.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -63,19 +62,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BEUU">
-      <HintPath>D:\Todo lo del trabajo\Dictamenes\Dictamenes\lib\references\BEUU.dll</HintPath>
+      <HintPath>..\packages\BEUU.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.6.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="DaoUU">
-      <HintPath>D:\Todo lo del trabajo\Dictamenes\Dictamenes\lib\references\DaoUU.dll</HintPath>
+      <HintPath>..\packages\DaoUU.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="itextsharp, Version=5.5.13.2, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>..\packages\iTextSharp.5.5.13.2\lib\itextsharp.dll</HintPath>
@@ -94,7 +94,7 @@
     </Reference>
     <Reference Include="NegUU, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\NegUU.dll</HintPath>
+      <HintPath>..\packages\NegUU.dll</HintPath>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -210,22 +210,13 @@
     <Compile Include="Framework\Configuration\IElement.cs" />
     <Compile Include="Framework\Configuration\UIGenerationElement.cs" />
     <Compile Include="Framework\Configuration\WebReferenceElement.cs" />
-    <Compile Include="Framework\DynamicExtensions\Attributes\ComputedColumnAttribute.cs" />
-    <Compile Include="Framework\DynamicExtensions\ComputedFieldGridViewTemplate.cs" />
-    <Compile Include="Framework\Error\ErrorHandler.cs" />
-    <Compile Include="Framework\Error\FileSystemErrorNotifier.cs" />
-    <Compile Include="Framework\Error\IErrorNotifier.cs" />
-    <Compile Include="Framework\Error\MailErrorNotifier.cs" />
     <Compile Include="Framework\Exceptions\ConfigurationException.cs" />
     <Compile Include="Framework\Exceptions\DatabaseException.cs" />
-    <Compile Include="Framework\Helpers\FormHelper.cs" />
-    <Compile Include="Framework\Helpers\ListControlHelper.cs" />
-    <Compile Include="Framework\Helpers\MenuBuilder.cs" />
-    <Compile Include="Framework\Helpers\UrlHelper.cs" />
     <Compile Include="Framework\Login\Aplicaciones.cs" />
     <Compile Include="Framework\Login\Entidades.cs" />
     <Compile Include="Framework\Login\Gerencia.cs" />
     <Compile Include="Framework\Login\Grupos.cs" />
+    <Compile Include="Framework\Login\ILogLogin.cs" />
     <Compile Include="Framework\Login\ILogLoginChannel.cs" />
     <Compile Include="Framework\Login\LogLogin.cs" />
     <Compile Include="Framework\Login\LogLoginClient.cs" />
@@ -240,13 +231,11 @@
     <Compile Include="Framework\Login\TipoEntidad.cs" />
     <Compile Include="Framework\Login\Usuarios.cs" />
     <Compile Include="Framework\Login\WCFUsuarioLogeado.cs" />
-    <Compile Include="Framework\Mail\SsnSmtpClient.cs" />
     <Compile Include="Framework\Security\LoginService.cs" />
     <Compile Include="Framework\Security\SessionToken.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Framework\Login\ILogLogin.cs" />
     <Compile Include="Models\ArchivoPDF.cs" />
     <Compile Include="Models\Asunto.cs" />
     <Compile Include="Models\Busqueda.cs" />
@@ -491,11 +480,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
     <Error Condition="!Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.0\build\net45\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.0\build\net45\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
-    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0\build\EntityFramework.props'))" />
-    <Error Condition="!Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.0\build\EntityFramework.targets'))" />
   </Target>
   <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.0\build\net45\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.115.0\build\net45\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
-  <Import Project="..\packages\EntityFramework.6.4.0\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.0\build\EntityFramework.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
