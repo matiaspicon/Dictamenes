@@ -139,8 +139,10 @@ namespace Dictamenes.Controllers
             db.SaveChanges();
             // extraigo la informacion del PDF del dictamen y creo el objeto con la misma
             dictamen = ExtratDictamenFromString(archivo.Contenido);
+
             dictamen.IdArchivoPDF = archivo.Id;
             dictamen.ArchivoPDF = archivo;
+            dictamen.NroGDE = Path.GetFileNameWithoutExtension(file.FileName).Replace("%","#");
 
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion");
             ViewData["IdSujetoObligado"] = new SelectList(db.SujetosObligados.Where(m => m.RazonSocial != null && m.EstaHabilitado).OrderBy(m => m.RazonSocial), "Id", "RazonSocial");
@@ -773,16 +775,17 @@ namespace Dictamenes.Controllers
         private static Dictamen ExtratDictamenFromString(string contenido)
         {
             Dictamen dict = new Dictamen();
+            MatchCollection matches;
 
-            Regex numeroGDE = new Regex("IF-[0-9]{4}-[0-9]+-APN-[A-Z]+#[A-Z]+", RegexOptions.IgnoreCase);
-            MatchCollection matches = numeroGDE.Matches(contenido);
-            try
-            {
-                //obtiene el primer resultado
-                dict.NroGDE = matches[0].Value;
-            }
-            //en caso de que no encuentre ninguna, no hace nada y deja el valor por defecto
-            catch { }
+            //Regex numeroGDE = new Regex("IF-[0-9]{4}-[0-9]+-APN-[A-Z]+#[A-Z]+", RegexOptions.IgnoreCase);
+            //matches = numeroGDE.Matches(contenido);
+            //try
+            //{
+            //    //obtiene el primer resultado
+            //    dict.NroGDE = matches[0].Value;
+            //}
+            ////en caso de que no encuentre ninguna, no hace nada y deja el valor por defecto
+            //catch { }
 
             Regex numeroExpediente = new Regex("[E][X] *-* *[0-9]{4} *- *[0-9]+? ?- ?-? ?APN *- *[A-Z]+ *# *[A-Z]+|[E][X] *-* *[0-9]{4} *- *[0-9]+", RegexOptions.IgnoreCase);
             matches = numeroExpediente.Matches(contenido);

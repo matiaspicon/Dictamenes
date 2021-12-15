@@ -20,19 +20,21 @@ namespace Dictamenes.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return Redirect(LoginService.LoginUniversalCallback(Request["ID"]));
+                var returnURL = LoginService.LoginUniversalCallback(Request["ID"]);
+                if (returnURL != "/") return Redirect(returnURL);
+                else return RedirectToAction("Index", "Dictamenes");
             }
             else
             {
-                return Redirect("/");
+                return RedirectToAction("Index","Dictamenes");
             }
         }        
 
         [Authorize]
-        public void Logout()
+        public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
-            LoginService.RedirectToUserHome();
+            return RedirectToAction("Index", "Dictamenes");
         }
 
         [AllowAnonymous]
