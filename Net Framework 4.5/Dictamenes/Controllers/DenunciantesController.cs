@@ -16,7 +16,7 @@ namespace Dictamenes.Controllers
         // GET: SujetosObligados
         public ActionResult Index()
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -28,7 +28,7 @@ namespace Dictamenes.Controllers
         // GET: SujetosObligados/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -51,7 +51,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoObligado, EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion, IdOriginal")] SujetoObligado sujetoObligado)
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }

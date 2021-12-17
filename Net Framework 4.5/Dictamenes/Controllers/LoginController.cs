@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using NegUU;
 using Dictamenes.Framework.Security;
+using System.Collections.Generic;
 
 namespace Dictamenes.Controllers
 {
@@ -16,18 +17,16 @@ namespace Dictamenes.Controllers
 
 
         [AllowAnonymous]
-        public ActionResult Login()
+        public ActionResult Login(string ID)
         {
             if (!User.Identity.IsAuthenticated)
-            {
-                var returnURL = LoginService.LoginUniversalCallback(Request["ID"]);
-                if (returnURL != "/") return Redirect(returnURL);
-                else return RedirectToAction("Index", "Dictamenes");
+            { 
+                if (!LoginService.LoginUniversalCallback(ID))
+                {
+                    return Redirect(LoginService.RedirectToLogin());
+                }
             }
-            else
-            {
-                return RedirectToAction("Index","Dictamenes");
-            }
+            return RedirectToAction("Index", "Dictamenes");
         }        
 
         [Authorize]

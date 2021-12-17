@@ -15,7 +15,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoObligado
         public ActionResult Index()
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -26,7 +26,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoObligado/Create
         public ActionResult Create()
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -40,7 +40,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoObligado tipoSujetoObligado)
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -59,7 +59,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoObligado/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -82,7 +82,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoObligado tipoSujetoObligado)
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }

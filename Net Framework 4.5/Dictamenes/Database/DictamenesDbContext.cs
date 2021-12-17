@@ -88,6 +88,31 @@ namespace Dictamenes.Database
 
         }
 
+        public class Algo
+        {
+            Int32 CompaniaID { get; set; }
+
+            String CiaID { get; set; }
+
+            String Denominacion { get; set; }
+
+            String CUIT { get; set; }
+
+            String DenominacionCorta { get; set; }
+        }
+
+
+        public virtual List<Algo> Sp_GetAseguradoras()
+        {
+            return this.Database.SqlQuery<Algo>("Traer_Aseguradoras").ToList();
+        }
+
+        public virtual List<Algo> Sp_GetReaseguradoras()
+        {
+            return this.Database.SqlQuery<Algo>("Traer_Reaseguradoras").ToList();
+        }
+
+
     }
 
 }

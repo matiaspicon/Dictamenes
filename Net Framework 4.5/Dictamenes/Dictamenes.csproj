@@ -208,6 +208,7 @@
     <Compile Include="Framework\Configuration\HomePageElement.cs" />
     <Compile Include="Framework\Configuration\HomePagesCollection.cs" />
     <Compile Include="Framework\Configuration\IElement.cs" />
+    <Compile Include="Framework\Configuration\RolElement.cs" />
     <Compile Include="Framework\Configuration\UIGenerationElement.cs" />
     <Compile Include="Framework\Configuration\WebReferenceElement.cs" />
     <Compile Include="Framework\Exceptions\ConfigurationException.cs" />

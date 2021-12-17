@@ -20,7 +20,7 @@ namespace Dictamenes.Controllers
         public ActionResult Index()
         {
 
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -32,7 +32,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Create()
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -46,7 +46,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -63,7 +63,7 @@ namespace Dictamenes.Controllers
 
         public ActionResult CargarAsuntos()
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -75,7 +75,7 @@ namespace Dictamenes.Controllers
         public ActionResult CargarAsuntos(string JSONAsuntos)
         {
 
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -112,7 +112,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Edit(int? id)
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -136,7 +136,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Edit([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }

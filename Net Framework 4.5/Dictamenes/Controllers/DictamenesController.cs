@@ -12,7 +12,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
-using Dictamenes.Framework.Security;
 
 namespace Dictamenes.Controllers
 {
@@ -25,11 +24,10 @@ namespace Dictamenes.Controllers
         public ActionResult Index()
         {
             //El usuario que no sea tenga rol de Cargar o Consulta no podra acceder a esta opcion
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString() && Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CONSULTAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString(), Models.Rol.CONSULTAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
-
             //Trae todos los dictamenes que sean del anio actual
             var dictamenes = db.Dictamenes.Where(d => d.FechaCarga.Year == DateTime.Today.Year).Include(d => d.Asunto).Include(d => d.TipoDictamen);
             ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion).OrderBy(m => m.Descripcion), "Id", "Descripcion");
@@ -43,7 +41,7 @@ namespace Dictamenes.Controllers
         public ActionResult Details(int? id)
         {
             //El usuario que no sea tenga rol de Cargar o Consulta no podra acceder a esta opcion
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString() && Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CONSULTAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString(), Models.Rol.CONSULTAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -70,7 +68,7 @@ namespace Dictamenes.Controllers
         {
 
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -83,7 +81,7 @@ namespace Dictamenes.Controllers
         public ActionResult CargarFile(HttpPostedFileBase file)
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -159,7 +157,7 @@ namespace Dictamenes.Controllers
         public ActionResult Create()
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -180,7 +178,7 @@ namespace Dictamenes.Controllers
         public ActionResult Create([Bind(Include = "ArchivoPDF, Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion, SujetoObligado")] Dictamen dictamen)
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -291,7 +289,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return View("ErrorNoPermisos", "Login");
             }
@@ -325,7 +323,7 @@ namespace Dictamenes.Controllers
         public ActionResult Edit([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoObligado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion,IdOriginal, SujetoObligado, Archivo")] Dictamen dictamen, bool EsDenunciante, bool BorrarArchivo, HttpPostedFileBase file)
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -552,7 +550,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Delete/5
         public ActionResult Delete(int? id)
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -574,7 +572,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -649,7 +647,7 @@ namespace Dictamenes.Controllers
         [HttpPost]
         public ActionResult CargarDictamenes(string JSONDictamenes, HttpPostedFileBase[] files)
         {
-            if (Framework.Security.LoginService.Current.GrupoNombre != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
