@@ -1,5 +1,4 @@
 ﻿using System.Web.Mvc;
-using Dictamenes.Framework.Security;
 
 namespace Dictamenes.Controllers
 {

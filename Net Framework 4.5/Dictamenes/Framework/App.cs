@@ -1,14 +1,11 @@
 ﻿
 using Dictamenes.Framework.Configuration;
-using Dictamenes.Framework.Exceptions;
-using System;
 using System.Configuration;
-using System.Linq;
 using System.Web;
 
 namespace Dictamenes.Framework
 {
-  public static class App
+    public static class App
   {
     private static FrameworkSection _config;
 

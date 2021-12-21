@@ -1,45 +1,43 @@
-﻿using Dictamenes.Models;
-using Dictamenes.Framework;
-using Dictamenes.Framework.Configuration;
-using Dictamenes.Framework.Login;
-using Dictamenes.Framework.Security;
+﻿using Dictamenes.Framework.Login;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security;
 using System.ServiceModel;
-using System.Text;
 using System.Web;
 using System.Web.Security;
-using System.Xml;
-using System.Xml.Linq;
-using System.Xml.Xsl;
 
 namespace Dictamenes.Framework.Security
 {
     public static class LoginService
-    {        
-        public static bool LoginUniversalCallback(string sessionId)
+    {
+        /// <summary>
+        /// Este metodo recupera los datos del login universal y setea la cookie de Autenticacion.
+        /// </summary>
+        /// <param name="sessionId">El ID de sesion encriptado que provee el Login Universal luego de loguearse.</param>
+        /// <param name="menuNavBarBootstrap">Booleano para parsear el Menu obtenido a formato bootstrap.</param>
+        /// <returns>Devuelve true si el logueo se realizo correctamente y se creo la cookie de autenticación. Devuelve false si el ID de sesion es null o si hubo un error en el proceso.</returns>
+        public static bool LoginUniversalCallbackCookie(string sessionId, bool menuNavBarBootstrap = false, int minsCookieTimeout = 30)
         {
-            if (string.IsNullOrEmpty(sessionId))
-            {
-                return false;
-            }
-            LogLoginClient loginUniversalClient = LoginUniversalClient;
-            string str = loginUniversalClient.Desencriptar(sessionId);
-            WCFUsuarioLogeado datosLogin = loginUniversalClient.GetDatosLogin(Convert.ToInt32(str.Substring(0, str.IndexOf('-'))), false);
+            WCFUsuarioLogeado datosLogin = LoginUniversalCallback(sessionId);
             if (datosLogin == null) return false;
 
             //a partir del usuario logeado obtengo el rol del mismo
-
-            string menuBootstrap = datosLogin.Menu
+            string menu;
+            if (menuNavBarBootstrap)
+            {
+                menu = datosLogin.Menu
                 .Replace("<li><a href=\"#\">Dictamenes</a><ul>", "") //Borro el menu padre
                 .Replace("sf-menu", "navbar-nav mr-auto") //Cambio la clase para bootstrap
-                .Replace("<a ", "<a class=\"nav-link\""); //Le agrego la clase para los elementos
+                .Replace("<a ", "<a class=\"nav-link\"") //Le agrego la clase para los elementos
+                .Replace("<ul></ul>", ""); //Borro etiquetas sin usar
+            }
+            else
+            {
+                menu = datosLogin.Menu;
+            }
 
             SessionToken token = new SessionToken
             {
@@ -53,7 +51,7 @@ namespace Dictamenes.Framework.Security
                 Cuil = datosLogin.CUIL_CUIT,
                 Gerencia = datosLogin.Gerencias,
                 OperacionID = "",
-                Menu = menuBootstrap,
+                Menu = menu,
                 Dictionary = new Dictionary<string, object>()
             };
 
@@ -62,7 +60,7 @@ namespace Dictamenes.Framework.Security
                 1,
                 datosLogin.NombreUsuario.ToUpper(),
                 DateTime.Now,
-                DateTime.Now.AddMinutes(30),
+                DateTime.Now.AddMinutes(minsCookieTimeout),
                 false,
                 userData,
                 FormsAuthentication.FormsCookiePath);
@@ -77,14 +75,34 @@ namespace Dictamenes.Framework.Security
 
         }
 
-        public static String RedirectToLogin()
+        /// <summary>
+        /// Este metodo recupera los datos del logueo en el login universal.
+        /// </summary>
+        /// <param name="sessionId">El ID de sesion encriptado que provee el Login Universal luego de loguearse.</param>
+        /// <returns>Devuelve el usuario loguedo o null en caso de no poder obtener los datos.</returns>
+        public static WCFUsuarioLogeado LoginUniversalCallback(string sessionId)
         {
-            IPAddress address;
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                return null;
+            }
+            LogLoginClient loginUniversalClient = LoginUniversalClient;
+            string str = loginUniversalClient.Desencriptar(sessionId);
+            WCFUsuarioLogeado datosLogin = loginUniversalClient.GetDatosLogin(Convert.ToInt32(str.Substring(0, str.IndexOf('-'))), false);
+            return datosLogin;
+        }
+
+        /// <summary>
+        /// Este metodo se encarga de generar la URL a la que redirigir a el usuario para realizar el logueo en el Login Universal.
+        /// </summary>
+        /// <returns>Devuelve en string la URL a la que se debe redigir al usuario.</returns>
+        public static String GetURLLoginUniversal()
+        {
             string ipString = HttpContext.Current.Request.ServerVariables["REMOTE_HOST"];
             string str2 = LoginUniversalClient.Encriptar(App.Config.AppID.Value.ToString());
-            return string.Format(App.Config.LoginUrl.Value, str2, (((ipString.Split(new char[] { '.' }).Length != 4) || !IPAddress.TryParse(ipString, out address)) || ipString.Contains("127.0")) ? "1" : "0");
+            return string.Format(App.Config.LoginUrl.Value, str2, (((ipString.Split(new char[] { '.' }).Length != 4) || !IPAddress.TryParse(ipString, out IPAddress address)) || ipString.Contains("127.0")) ? "1" : "0");
         }
-        
+
         public static LogLoginClient LoginUniversalClient
         {
             get
@@ -97,8 +115,11 @@ namespace Dictamenes.Framework.Security
             }
         }
 
-
-
+        /// <summary>
+        /// Este metodo se encarga de buscar el ID de grupo en las framework.config.
+        /// </summary>
+        /// <param name="idGrupo">ID del grupo buscado.</param>
+        /// <returns>El nombre del grupo al que pertenece el usuario o null si no se encontro.</returns>
         private static string SetRol(string idGrupo)
         {
             //si pertenece a alguno de los dos grupos de la aplicacion se le otorga el rol correspondiente
@@ -117,11 +138,19 @@ namespace Dictamenes.Framework.Security
 
         }
 
-
-
+        /// <summary>
+        /// Obtiene los datos del usuario de las Cookies.
+        /// </summary>
         public static SessionToken Current
         {
-            get => GetCurrent();
+            get
+            {
+                var cookie = HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName];
+                if (cookie == null) return new SessionToken();
+                var cookieValue = HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName].Value;
+                var cookieDecrypt = FormsAuthentication.Decrypt(cookieValue);
+                return JsonConvert.DeserializeObject<SessionToken>(cookieDecrypt.UserData);
+            }
         }
 
         public static bool IsAllowed(string[] roles)
@@ -132,15 +161,5 @@ namespace Dictamenes.Framework.Security
 
             return allowed;
         }
-
-        public static SessionToken GetCurrent()
-        {
-            var cookie = HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName];
-            if (cookie == null) return null;
-            var cookieValue = HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName].Value;
-            var cookieDecrypt = FormsAuthentication.Decrypt(cookieValue);
-            return JsonConvert.DeserializeObject<SessionToken>(cookieDecrypt.UserData);
-        }
-
     }
 }

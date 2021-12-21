@@ -1,6 +1,5 @@
 ﻿using Dictamenes.Database;
 using Dictamenes.Models;
-using Dictamenes.Framework.Security;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;

@@ -26,7 +26,7 @@ namespace Dictamenes.Framework.Configuration.Generics
 
     protected override object GetElementKey(ConfigurationElement element) => (object) this._elements.Find((Predicate<T>) (e => e.Equals((object) element)));
 
-    public IEnumerator<T> GetEnumerator() => (IEnumerator<T>) this._elements.GetEnumerator();
+    public new IEnumerator<T> GetEnumerator() => (IEnumerator<T>) this._elements.GetEnumerator();
 
     public T this[object index] => this._elements.FirstOrDefault<T>((Func<T, bool>) (c => ((IElement) (object) c).GetKey().Equals(index)));
 
