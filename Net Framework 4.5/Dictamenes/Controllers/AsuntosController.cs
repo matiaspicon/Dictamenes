@@ -19,7 +19,7 @@ namespace Dictamenes.Controllers
         public ActionResult Index()
         {
 
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -31,7 +31,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Create()
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -45,12 +45,12 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
             asunto.FechaModificacion = DateTime.Now;
-            asunto.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
+            asunto.IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID;
             if (ModelState.IsValid)
             {
                 db.Asuntos.Add(asunto);
@@ -62,7 +62,7 @@ namespace Dictamenes.Controllers
 
         public ActionResult CargarAsuntos()
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -74,7 +74,7 @@ namespace Dictamenes.Controllers
         public ActionResult CargarAsuntos(string JSONAsuntos)
         {
 
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -88,7 +88,7 @@ namespace Dictamenes.Controllers
                     EstaHabilitado = true,
                     Descripcion = a,
                     FechaModificacion = DateTime.Now,
-                    IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID
+                    IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID
                 };
 
                 if (ModelState.IsValid)
@@ -111,7 +111,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Edit(int? id)
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -135,7 +135,7 @@ namespace Dictamenes.Controllers
         [Authorize]
         public ActionResult Edit([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] Asunto asunto)
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -154,7 +154,7 @@ namespace Dictamenes.Controllers
                     IdUsuarioModificacion = asuntoViejo.IdUsuarioModificacion
                 };
 
-                asunto.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
+                asunto.IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID;
                 asunto.FechaModificacion = DateTime.Now;
 
                 db.Entry(asunto).State = EntityState.Modified;

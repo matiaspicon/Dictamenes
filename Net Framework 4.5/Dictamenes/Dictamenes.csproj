@@ -61,21 +61,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BEUU">
-      <HintPath>..\packages\BEUU.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.6.1\lib\BouncyCastle.Crypto.dll</HintPath>
-    </Reference>
-    <Reference Include="DaoUU">
-      <HintPath>..\packages\DaoUU.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="FrameworkMVC">
+      <HintPath>..\packages\FrameworkMVC.dll</HintPath>
     </Reference>
     <Reference Include="itextsharp, Version=5.5.13.2, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>..\packages\iTextSharp.5.5.13.2\lib\itextsharp.dll</HintPath>
@@ -92,9 +88,8 @@
     <Reference Include="Microsoft.Owin.Security.Cookies, Version=4.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.Security.Cookies.4.2.0\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
     </Reference>
-    <Reference Include="NegUU, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NegUU.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -164,9 +159,6 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -195,45 +187,6 @@
     <Compile Include="Controllers\TiposDictamenController.cs" />
     <Compile Include="Controllers\TiposSujetoObligadoController.cs" />
     <Compile Include="Database\DictamenesDbContext.cs" />
-    <Compile Include="Framework\App.cs" />
-    <Compile Include="Framework\Configuration\ColoSchemeElement.cs" />
-    <Compile Include="Framework\Configuration\DataSourceElement.cs" />
-    <Compile Include="Framework\Configuration\EmailElement.cs" />
-    <Compile Include="Framework\Configuration\ErrorReportingElement.cs" />
-    <Compile Include="Framework\Configuration\FrameworkSection.cs" />
-    <Compile Include="Framework\Configuration\Generics\BoolElement.cs" />
-    <Compile Include="Framework\Configuration\Generics\GenericCollection`1.cs" />
-    <Compile Include="Framework\Configuration\Generics\IntElement.cs" />
-    <Compile Include="Framework\Configuration\Generics\StringElement.cs" />
-    <Compile Include="Framework\Configuration\HomePageElement.cs" />
-    <Compile Include="Framework\Configuration\HomePagesCollection.cs" />
-    <Compile Include="Framework\Configuration\IElement.cs" />
-    <Compile Include="Framework\Configuration\RolElement.cs" />
-    <Compile Include="Framework\Configuration\UIGenerationElement.cs" />
-    <Compile Include="Framework\Configuration\WebReferenceElement.cs" />
-    <Compile Include="Framework\Exceptions\ConfigurationException.cs" />
-    <Compile Include="Framework\Exceptions\DatabaseException.cs" />
-    <Compile Include="Framework\Login\Aplicaciones.cs" />
-    <Compile Include="Framework\Login\Entidades.cs" />
-    <Compile Include="Framework\Login\Gerencia.cs" />
-    <Compile Include="Framework\Login\Grupos.cs" />
-    <Compile Include="Framework\Login\ILogLogin.cs" />
-    <Compile Include="Framework\Login\ILogLoginChannel.cs" />
-    <Compile Include="Framework\Login\LogLogin.cs" />
-    <Compile Include="Framework\Login\LogLoginClient.cs" />
-    <Compile Include="Framework\Login\Personas.cs" />
-    <Compile Include="Framework\Login\PregFrec.cs" />
-    <Compile Include="Framework\Login\Referente.cs" />
-    <Compile Include="Framework\Login\ReferenteSuplente.cs" />
-    <Compile Include="Framework\Login\Responsable.cs" />
-    <Compile Include="Framework\Login\ResponsableSuplente.cs" />
-    <Compile Include="Framework\Login\RptRankings.cs" />
-    <Compile Include="Framework\Login\RptUsuaLogeados.cs" />
-    <Compile Include="Framework\Login\TipoEntidad.cs" />
-    <Compile Include="Framework\Login\Usuarios.cs" />
-    <Compile Include="Framework\Login\WCFUsuarioLogeado.cs" />
-    <Compile Include="Framework\Security\LoginService.cs" />
-    <Compile Include="Framework\Security\SessionToken.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
