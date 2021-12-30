@@ -39,11 +39,11 @@ namespace Dictamenes.Models
         public int? IdArchivoPDF { get; set; }
         public ArchivoPDF ArchivoPDF { get; set; }
 
-        public bool HaySujetoObligado { get; set; }
+        public bool HaySujetoControlado { get; set; }
 
-        [ForeignKey(nameof(SujetoObligado))]
-        public int? IdSujetoObligado { get; set; }
-        public SujetoObligado SujetoObligado { get; set; }
+        [ForeignKey(nameof(SujetoControlado))]
+        public int? IdSujetoControlado { get; set; }
+        public SujetoControlado SujetoControlado { get; set; }
 
         [ForeignKey(nameof(Asunto))]
         [DisplayName("Asunto")]

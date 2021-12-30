@@ -1,10 +1,10 @@
-﻿@model Dictamenes.Models.SujetoObligado
+﻿@model Dictamenes.Models.SujetoControlado
 
 @{
     ViewBag.Title = "Edit";
 }
 
-<h2>Editar Sujeto Obligado</h2>
+<h2>Editar Sujeto Controlado</h2>
 
 
 @using (Html.BeginForm())
@@ -33,10 +33,10 @@
         </div>
 
         <div class="form-group row">
-            @Html.LabelFor(model => model.IdTipoSujetoObligado, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+            @Html.LabelFor(model => model.IdTipoSujetoControlado, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
             <div class="col-md-9">
-                @Html.DropDownList("IdTipoSujetoObligado", null, htmlAttributes: new { @class = "form-control col-auto" })
-                @Html.ValidationMessageFor(model => model.IdTipoSujetoObligado, "", new { @class = "text-danger" })
+                @Html.DropDownList("IdTipoSujetoControlado", null, htmlAttributes: new { @class = "form-control col-auto" })
+                @Html.ValidationMessageFor(model => model.IdTipoSujetoControlado, "", new { @class = "text-danger" })
             </div>
         </div>
         <div class="form-group row">

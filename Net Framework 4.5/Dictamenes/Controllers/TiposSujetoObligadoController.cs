@@ -8,22 +8,22 @@ using System.Web.Mvc;
 
 namespace Dictamenes.Controllers
 {
-    public class TiposSujetoObligadoController : Controller
+    public class TiposSujetoControladoController : Controller
     {
         private DictamenesDbContext db = new DictamenesDbContext();
 
-        // GET: TiposSujetoObligado
+        // GET: TiposSujetoControlado
         public ActionResult Index()
         {
             if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
-            var tipoSujetoObligado = db.TiposSujetoObligado;
-            return View(tipoSujetoObligado.ToList());
+            var tipoSujetoControlado = db.TiposSujetoControlado;
+            return View(tipoSujetoControlado.ToList());
         }
 
-        // GET: TiposSujetoObligado/Create
+        // GET: TiposSujetoControlado/Create
         public ActionResult Create()
         {
             if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
@@ -33,30 +33,30 @@ namespace Dictamenes.Controllers
             return View();
         }
 
-        // POST: TiposSujetoObligado/Create
+        // POST: TiposSujetoControlado/Create
         // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que quiere enlazarse. Para obtener 
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoObligado tipoSujetoObligado)
+        public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoControlado tipoSujetoControlado)
         {
             if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
-            tipoSujetoObligado.FechaModificacion = DateTime.Now;
-            tipoSujetoObligado.IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID;
+            tipoSujetoControlado.FechaModificacion = DateTime.Now;
+            tipoSujetoControlado.IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID;
             if (ModelState.IsValid)
             {
-                db.TiposSujetoObligado.Add(tipoSujetoObligado);
+                db.TiposSujetoControlado.Add(tipoSujetoControlado);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(tipoSujetoObligado);
+            return View(tipoSujetoControlado);
         }
 
-        // GET: TiposSujetoObligado/Edit/5
+        // GET: TiposSujetoControlado/Edit/5
         public ActionResult Edit(int? id)
         {
             if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
@@ -67,20 +67,20 @@ namespace Dictamenes.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            TipoSujetoObligado tipoSujetoObligado = db.TiposSujetoObligado.Find(id);
-            if (tipoSujetoObligado == null)
+            TipoSujetoControlado tipoSujetoControlado = db.TiposSujetoControlado.Find(id);
+            if (tipoSujetoControlado == null)
             {
                 return HttpNotFound();
             }
-            return View(tipoSujetoObligado);
+            return View(tipoSujetoControlado);
         }
 
-        // POST: TiposSujetoObligado/Edit/5
+        // POST: TiposSujetoControlado/Edit/5
         // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que quiere enlazarse. Para obtener 
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoObligado tipoSujetoObligado)
+        public ActionResult Edit([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoControlado tipoSujetoControlado)
         {
             if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
@@ -88,27 +88,27 @@ namespace Dictamenes.Controllers
             }
             if (ModelState.IsValid)
             {
-                TipoSujetoObligado tipoSujetoObligadoViejo = db.TiposSujetoObligado.AsNoTracking().First(d => d.Id == tipoSujetoObligado.Id);
+                TipoSujetoControlado tipoSujetoControladoViejo = db.TiposSujetoControlado.AsNoTracking().First(d => d.Id == tipoSujetoControlado.Id);
 
-                TipoSujetoObligadoLog tipoSujetoObligadoLog = new TipoSujetoObligadoLog
+                TipoSujetoControladoLog tipoSujetoControladoLog = new TipoSujetoControladoLog
                 {
-                    IdOriginal = tipoSujetoObligadoViejo.Id,
-                    Descripcion = tipoSujetoObligadoViejo.Descripcion,
-                    EstaHabilitado = tipoSujetoObligadoViejo.EstaHabilitado,
-                    FechaModificacion = tipoSujetoObligadoViejo.FechaModificacion,
-                    IdUsuarioModificacion = tipoSujetoObligadoViejo.IdUsuarioModificacion
+                    IdOriginal = tipoSujetoControladoViejo.Id,
+                    Descripcion = tipoSujetoControladoViejo.Descripcion,
+                    EstaHabilitado = tipoSujetoControladoViejo.EstaHabilitado,
+                    FechaModificacion = tipoSujetoControladoViejo.FechaModificacion,
+                    IdUsuarioModificacion = tipoSujetoControladoViejo.IdUsuarioModificacion
                 };
 
-                tipoSujetoObligado.IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID;
-                tipoSujetoObligado.FechaModificacion = DateTime.Now;
+                tipoSujetoControlado.IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID;
+                tipoSujetoControlado.FechaModificacion = DateTime.Now;
 
-                db.Entry(tipoSujetoObligado).State = EntityState.Modified;
+                db.Entry(tipoSujetoControlado).State = EntityState.Modified;
 
-                db.TiposSujetoObligadoLog.Add(tipoSujetoObligadoLog);
+                db.TiposSujetoControladoLog.Add(tipoSujetoControladoLog);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(tipoSujetoObligado);
+            return View(tipoSujetoControlado);
         }
 
         protected override void Dispose(bool disposing)

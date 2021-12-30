@@ -6,7 +6,7 @@
 
 
 
-@{string rol = FrameworkMVC.Security.LoginService.Current.GrupoNombre;}
+@{string rol = Dictamenes.Controllers.LoginController.GetUserRolIdentity(User.Identity);}
 
 <h2>Detalles del Dictamen</h2>
 
@@ -51,8 +51,7 @@
         @Html.DisplayNameFor(model => model.TipoDictamen)
     </label>
     @if (Model.TipoDictamen != null)
-    {
-        <p class="col-9 card p-2">
+    {<p class="col-9 card p-2">
             @Html.DisplayFor(model => model.TipoDictamen.Descripcion)
         </p>
     }
@@ -64,83 +63,82 @@
     }
 
 
-    @if (Model.SujetoObligado != null)
+    @if (Model.SujetoControlado != null)
     {
-        <h5 class="col-12">Sujeto Obligado</h5>
+        <h5 class="col-12">Sujeto Controlado</h5>
         <br class="m-1" />
         <label class="form-label align-self-center col-3">
-            @Html.DisplayNameFor(model => model.SujetoObligado.CuilCuit)
+            @Html.DisplayNameFor(model => model.SujetoControlado.CuilCuit)
         </label>
         <p class="col-9 card p-2">
-            @Html.DisplayFor(model => model.SujetoObligado.CuilCuit)
+            @Html.DisplayFor(model => model.SujetoControlado.CuilCuit)
         </p>
-        if (Model.SujetoObligado.RazonSocial != null)
+        if (Model.SujetoControlado.RazonSocial != null)
         {
             <label class="form-label align-self-center col-3">
-                @Html.DisplayNameFor(model => model.SujetoObligado.RazonSocial)
+                @Html.DisplayNameFor(model => model.SujetoControlado.RazonSocial)
             </label>
             <p class="col-9 card p-2">
-                @Html.DisplayFor(model => model.SujetoObligado.RazonSocial)
+                @Html.DisplayFor(model => model.SujetoControlado.RazonSocial)
             </p>
         }
         else
         {
             <label class="form-label align-self-center col-3">
-                @Html.DisplayNameFor(model => model.SujetoObligado.Nombre)
+                @Html.DisplayNameFor(model => model.SujetoControlado.Nombre)
             </label>
             <p class="col-9 card p-2">
-                @Html.DisplayFor(model => model.SujetoObligado.Nombre)
+                @Html.DisplayFor(model => model.SujetoControlado.Nombre)
             </p>
             <label class="form-label align-self-center col-3">
-                @Html.DisplayNameFor(model => model.SujetoObligado.Apellido)
+                @Html.DisplayNameFor(model => model.SujetoControlado.Apellido)
             </label>
             <p class="col-9 card p-2">
-                @Html.DisplayFor(model => model.SujetoObligado.Apellido)
+                @Html.DisplayFor(model => model.SujetoControlado.Apellido)
             </p>
         }
     }
     else
     {
+
         <h5 class="form-label col-3 align-self-center">
-            Sujeto Obligado
+            Sujeto Controlado
         </h5>
-        <h6 class="card p-2 col-9">
-            Este dictámen no tiene un Sujeto Obligado
-        </h6>
+        <h6 class="card p-2 col-9">Este dictámen no tiene un Sujeto Controlado</h6>
+
     }
 
-    
+
     @{ if (Model.ArchivoPDF == null)
         {
             <h5 class="form-label col-3 align-self-center">
                 Archivo
             </h5>
-            <h6 class="card p-2 col-9">
-                Este dictámen no tiene un archivo
-            </h6>
+            <h6 class="card p-2 col-9">Este dictámen no tiene un archivo</h6>
+
         }
         else
         {
             if (!System.IO.File.Exists(Server.MapPath(Model.ArchivoPDF.Path)))
             {
+
                 <h5 class="form-label col-3 align-self-center">
                     Archivo
                 </h5>
-                <h6 class="card alert-danger rounded p-2 col-9">
-                    Hubo un error con la carga del archivo
-                </h6>
+                <h6 class="card alert-danger rounded p-2 col-9">Hubo un error con la carga del archivo</h6>
+
             }
             else
             {
                 <h5 class="form-label col-3 align-self-center">
                     Archivo
                 </h5>
-                <a class="btn btn-dark col-9" data-toggle="collapse" href="#collapseOne" role="button" aria-expanded="false">
-                    Ver el Achivo del Dictamen
-                </a>
+                <a class="btn btn-dark col-9" data-toggle="collapse" href="#collapseOne" role="button" aria-expanded="false">Ver el Achivo del Dictamen</a>
+
             }
         }
     }
+
 </div>
 <div id="collapseOne" class="collapse m-3">
     <div class="embed-responsive embed-responsive-16by9">

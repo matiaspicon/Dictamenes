@@ -2,8 +2,8 @@
 
 namespace Dictamenes.Models
 {
-    [Table("TiposSujetoObligadoLog")]
-    public class TipoSujetoObligadoLog : CampoLog
+    [Table("TiposSujetoControladoLog")]
+    public class TipoSujetoControladoLog : CampoLog
     {
     }
 }

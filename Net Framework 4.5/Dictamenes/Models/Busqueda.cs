@@ -22,13 +22,13 @@ namespace Dictamenes.Models
 
         public int? IdAsunto { get; set; }
 
-        public int? IdTipoSujetoObligado { get; set; }
+        public int? IdTipoSujetoControlado { get; set; }
 
         public int? IdTipoDictamen { get; set; }
 
         public bool EsDenunciante { get; set; }
 
-        public int? IdSujetoObligado { get; set; }
+        public int? IdSujetoControlado { get; set; }
 
         public long? CuilCuit { get; set; }
 

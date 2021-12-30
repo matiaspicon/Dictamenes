@@ -90,6 +90,7 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -183,7 +184,7 @@
     <Compile Include="Controllers\FileController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\DenunciantesController.cs" />
-    <Compile Include="Controllers\SujetosObligadosController.cs" />
+    <Compile Include="Controllers\SujetosControladosController.cs" />
     <Compile Include="Controllers\TiposDictamenController.cs" />
     <Compile Include="Controllers\TiposSujetoObligadoController.cs" />
     <Compile Include="Database\DictamenesDbContext.cs" />
@@ -197,15 +198,15 @@
     <Compile Include="Models\ModelLOG\AsuntoLog.cs" />
     <Compile Include="Models\ModelLOG\CampoLog.cs" />
     <Compile Include="Models\ModelLOG\DictamenLog.cs" />
-    <Compile Include="Models\ModelLOG\SujetoObligadoLog.cs" />
+    <Compile Include="Models\ModelLOG\SujetoControladoLog.cs" />
     <Compile Include="Models\ModelLOG\TipoDictamenLog.cs" />
-    <Compile Include="Models\ModelLOG\TipoSujetoObligadoLog.cs" />
+    <Compile Include="Models\ModelLOG\TipoSujetoControladoLog.cs" />
     <Compile Include="Models\Rol.cs" />
     <Compile Include="Models\Dictamen.cs" />
     <Compile Include="Models\ErrorViewModel.cs" />
-    <Compile Include="Models\SujetoObligado.cs" />
+    <Compile Include="Models\SujetoControlado.cs" />
     <Compile Include="Models\TipoDictamen.cs" />
-    <Compile Include="Models\TipoSujetoObligado.cs" />
+    <Compile Include="Models\TipoSujetoControlado.cs" />
     <Compile Include="Models\Usuario.cs" />
     <Compile Include="Models\UsuarioLogeado.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -336,18 +337,18 @@
     </Content>
     <Content Include="Views\Campos\Menu.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
-    <Content Include="Views\SujetosObligados\Create.cshtml" />
-    <Content Include="Views\SujetosObligados\Edit.cshtml" />
-    <Content Include="Views\SujetosObligados\Index.cshtml" />
+    <Content Include="Views\SujetosControlados\Create.cshtml" />
+    <Content Include="Views\SujetosControlados\Edit.cshtml" />
+    <Content Include="Views\SujetosControlados\Index.cshtml" />
     <Content Include="Views\TiposDictamen\Create.cshtml" />
     <Content Include="Views\TiposDictamen\Edit.cshtml" />
     <Content Include="Views\TiposDictamen\Index.cshtml" />
     <Content Include="Views\Asuntos\Create.cshtml" />
     <Content Include="Views\Asuntos\Edit.cshtml" />
     <Content Include="Views\Asuntos\Index.cshtml" />
-    <Content Include="Views\TiposSujetoObligado\Create.cshtml" />
-    <Content Include="Views\TiposSujetoObligado\Edit.cshtml" />
-    <Content Include="Views\TiposSujetoObligado\Index.cshtml" />
+    <Content Include="Views\TiposSujetoControlado\Create.cshtml" />
+    <Content Include="Views\TiposSujetoControlado\Edit.cshtml" />
+    <Content Include="Views\TiposSujetoControlado\Index.cshtml" />
     <Content Include="Views\Dictamenes\Create.cshtml" />
     <Content Include="Views\Dictamenes\Delete.cshtml" />
     <Content Include="Views\Dictamenes\Details.cshtml" />
@@ -392,9 +393,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Archivos\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\..\..\LoginUniversal\LoginUniversal\bin\DaoUU.dll" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

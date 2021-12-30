@@ -11,7 +11,7 @@ using Dictamenes.Models;
 
 namespace Dictamenes.Controllers
 {
-    public class DenunciantesController : Controller
+    public class SujetosControladosController : Controller
     {
         private DictamenesDbContext db = new DictamenesDbContext();
 
@@ -23,8 +23,50 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
 
-            var SujetoControlado = db.SujetosControlados.Where(d => d.RazonSocial == null);
+            var SujetoControlado = db.SujetosControlados.Where(d =>  d.RazonSocial != null).Include(s => s.TipoSujetoControlado);
             return View(SujetoControlado.ToList());
+        }
+
+        // GET: SujetosControlados/Create
+        public ActionResult Create()
+        {
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
+            ViewBag.IdTipoSujetoControlado = new SelectList(db.TiposSujetoControlado.Where(d =>  d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion");
+            return View();
+        }
+
+        // POST: SujetosControlados/Create
+        // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que quiere enlazarse. Para obtener 
+        // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoControlado,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] SujetoControlado SujetoControlado)
+        {
+            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            {
+                return RedirectToAction("ErrorNoPermisos", "Login");
+            }
+
+            if (db.SujetosControlados.FirstOrDefault(s => s.CuilCuit == SujetoControlado.CuilCuit) != null)
+            {
+                ModelState.AddModelError("CuilCuit", "Ya existe un Sujeto Controlado con ese Cuil/Cuit");
+            }
+
+            SujetoControlado.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
+            SujetoControlado.FechaModificacion = DateTime.Now;
+            if (ModelState.IsValid)
+            {
+                db.SujetosControlados.Add(SujetoControlado);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.IdTipoSujetoControlado = new SelectList(db.TiposSujetoControlado.Where(d =>  d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", SujetoControlado.IdTipoSujetoControlado);
+            return View(SujetoControlado);
         }
 
         // GET: SujetosControlados/Edit/5
@@ -34,6 +76,7 @@ namespace Dictamenes.Controllers
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -43,6 +86,7 @@ namespace Dictamenes.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.IdTipoSujetoControlado = new SelectList(db.TiposSujetoControlado.Where(d =>  d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", SujetoControlado.IdTipoSujetoControlado);
             return View(SujetoControlado);
         }
 
@@ -87,6 +131,7 @@ namespace Dictamenes.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            ViewBag.IdTipoSujetoControlado = new SelectList(db.TiposSujetoControlado.Where(d =>  d.EstaHabilitado && d.Descripcion != "Denunciante"), "Id", "Descripcion", SujetoControlado.IdTipoSujetoControlado);
             return View(SujetoControlado);
         }
 

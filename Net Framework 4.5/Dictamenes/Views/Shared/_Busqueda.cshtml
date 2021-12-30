@@ -50,7 +50,7 @@
                 </div>
                 <div class="form-group">
                     <label name="Contenido" class="control-label">Contenido</label>
-                    @Html.EditorFor(model => model.Contenido, new { htmlAttributes = new { @class = "form-control col", placeholder = "Ingrese Texto a buscar en el cuerpo de los dictámenes" } })
+                    @Html.EditorFor(model => model.Contenido, new { htmlAttributes = new { @class = "form-control col", placeholder = "Ingrese Texto a buscar en el cuerpo de los dictamenes" } })
                     <span asp-validation-for="Contenido" class="text-danger"></span>
                 </div>
                 <div class="form-group">
@@ -76,24 +76,24 @@
                     </div>*@
 
                 <div class="form-group">
-                    <label class="form-label">Cuil/Cuit </label>
-                    @Html.EditorFor(model => model.CuilCuit, new { htmlAttributes = new { @class = "form-control col", placeholder = "Ingrese el Cuil/Cuit completo del Sujeto Obligado" } })
+                    <label class="form-label">CUIL/CUIT </label>
+                    @Html.EditorFor(model => model.CuilCuit, new { htmlAttributes = new { @class = "form-control col", placeholder = "Ingrese el CUIL/CUIT completo del Sujeto Controlado" } })
                 </div>
 
                 <div class="form-group form-check">
                     <label class="form-check-label">
-                        @Html.CheckBox("EsDenunciante", new { @class = "form-check-input", id = "esDenunciante", onclick = "setForm(this.checked)" }) Sujeto Obligado es Denunciante
+                        @Html.CheckBox("EsDenunciante", new { @class = "form-check-input", id = "esDenunciante", onclick = "setForm(this.checked)" }) Sujeto Controlado es Denunciante
                     </label>
                 </div>
 
                 <div id="FormEmpresas" style="display:none">
                     <div class="form-group">
                         <label class="control-label">Empresas</label>
-                        @Html.DropDownList("IdSujetoObligado", (SelectList)ViewBag.IdSujetoObligado, "Elija uno", new { id = "InputEmpresas", @class = "form-control col" })
+                        @Html.DropDownList("IdSujetoControlado", (SelectList)ViewBag.IdSujetoControlado, "Elija uno", new { id = "InputEmpresas", @class = "form-control col" })
                     </div>
                     <div class="form-group">
-                        <label class="control-label">Tipo de Sujeto Obligado</label>
-                        @Html.DropDownList("IdTipoSujetoObligado", (SelectList)ViewBag.TipoSujetoObligado, "Elija uno", new { id = "InputEmpresasTipo", @class = "form-control col" })
+                        <label class="control-label">Tipo de Sujeto Controlado</label>
+                        @Html.DropDownList("IdTipoSujetoControlado", (SelectList)ViewBag.TipoSujetoControlado, "Elija uno", new { id = "InputEmpresasTipo", @class = "form-control col" })
                     </div>
 
                 </div>
@@ -101,11 +101,11 @@
                 <div id="FormPersonas" style="display:none">
                     <div class="form-group">
                         <label class="form-label">Nombre</label>
-                        @Html.EditorFor(model => model.Nombre, new { htmlAttributes = new { @class = "form-control col", placeholder = "Ingrese el Nombre del Sujeto Obligado", id = "InputNombre" } })
+                        @Html.EditorFor(model => model.Nombre, new { htmlAttributes = new { @class = "form-control col", placeholder = "Ingrese el Nombre del Sujeto Controlado", id = "InputNombre" } })
                     </div>
                     <div class="form-group">
                         <label class="form-label">Apellido</label>
-                        @Html.EditorFor(model => model.Apellido, new { htmlAttributes = new { @class = "form-control col", placeholder = "Ingrese el Apellido del Sujeto Obligado", id = "InputApellido" } })
+                        @Html.EditorFor(model => model.Apellido, new { htmlAttributes = new { @class = "form-control col", placeholder = "Ingrese el Apellido del Sujeto Controlado", id = "InputApellido" } })
                     </div>
                 </div>
             </div>

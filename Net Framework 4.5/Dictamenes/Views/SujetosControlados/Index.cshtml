@@ -1,13 +1,13 @@
-﻿@model IEnumerable<Dictamenes.Models.SujetoObligado>
+﻿@model IEnumerable<Dictamenes.Models.SujetoControlado>
 
 @{
-    ViewBag.Title = "Listado de Sujetos Obligados";
+    ViewBag.Title = "Listado de Sujetos Controlados";
 }
 
-<h2>Listado de todos los Sujetos Obligados</h2>
+<h2>Listado de todos los Sujetos Controlados</h2>
 
 <p class="">
-    <a class="btn btn-primary" href="@Url.Action("Create")"> <i class="bi bi-plus-lg"></i>     Cargar nuevo Sujeto Obligados</a>
+    <a class="btn btn-primary" href="@Url.Action("Create")"> <i class="bi bi-plus-lg"></i>     Cargar nuevo Sujeto Controlados</a>
 </p>
 <table id="dataTable" class="table table-striped table-hover">
     <thead>
@@ -19,7 +19,7 @@
                 @Html.DisplayNameFor(model => model.RazonSocial)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TipoSujetoObligado)
+                @Html.DisplayNameFor(model => model.TipoSujetoControlado)
             </th>
             <th class="no-sort">
                 @Html.DisplayNameFor(model => model.EstaHabilitado)
@@ -39,7 +39,7 @@
                     @Html.DisplayFor(modelItem => item.RazonSocial)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.TipoSujetoObligado.Descripcion)
+                    @Html.DisplayFor(modelItem => item.TipoSujetoControlado.Descripcion)
                 </td>
                 <td>
                     <i class="bi @(item.EstaHabilitado ? "bi-check-circle-fill text-success" : "bi-x-circle-fill text-danger" )"></i>

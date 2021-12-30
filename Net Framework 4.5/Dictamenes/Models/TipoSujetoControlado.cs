@@ -2,8 +2,8 @@
 
 namespace Dictamenes.Models
 {
-    [Table("TiposSujetoObligado")]
-    public class TipoSujetoObligado : Campo
+    [Table("TiposSujetoControlado")]
+    public class TipoSujetoControlado : Campo
     {
     }
 }
