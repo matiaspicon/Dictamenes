@@ -24,7 +24,7 @@ namespace Dictamenes.Controllers
         public ActionResult Index()
         {
             //El usuario que no sea tenga rol de Cargar o Consulta no podra acceder a esta opcion
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString() && LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CONSULTAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString(), Models.Rol.CONSULTAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -42,7 +42,7 @@ namespace Dictamenes.Controllers
         public ActionResult Details(int? id)
         {
             //El usuario que no sea tenga rol de Cargar o Consulta no podra acceder a esta opcion
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString() && LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CONSULTAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString(), Models.Rol.CONSULTAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -69,7 +69,7 @@ namespace Dictamenes.Controllers
         {
 
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -82,7 +82,7 @@ namespace Dictamenes.Controllers
         public ActionResult CargarFile(HttpPostedFileBase file)
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -136,7 +136,7 @@ namespace Dictamenes.Controllers
         public ActionResult Create()
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -157,7 +157,7 @@ namespace Dictamenes.Controllers
         public ActionResult Create([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoControlado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion, SujetoControlado")] Dictamen dictamen)
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -171,9 +171,7 @@ namespace Dictamenes.Controllers
 
             //limpio y estandarizo la informacion
             dictamen.FechaModificacion = DateTime.Now;
-
-
-            dictamen.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
+            dictamen.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
             dictamen.NroGDE = dictamen.NroGDE.ToUpper();
             dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
             dictamen.Detalle = dictamen.Detalle.ToUpper();
@@ -202,10 +200,10 @@ namespace Dictamenes.Controllers
                 //en caso de no existir un SujetoControlado con el mismo cuilCuit, lo creo
                 else
                 {
-                    dictamen.SujetoControlado.IdTipoSujetoControlado = db.TiposSujetoControlado.First(m => m.Descripcion == "Denunciante").Id;
-                    dictamen.SujetoControlado.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
-                    dictamen.SujetoControlado.FechaModificacion = DateTime.Now;
-                    db.SujetosControlados.Add(dictamen.SujetoControlado);
+                    dictamen.SujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
+                    dictamen.SujetoObligado.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
+                    dictamen.SujetoObligado.FechaModificacion = DateTime.Now;
+                    db.SujetosObligados.Add(dictamen.SujetoObligado);
                 }
             }
             //en caso de no haber un valor en el formulario de Denunciante
@@ -266,7 +264,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return View("ErrorNoPermisos", "Login");
             }
@@ -300,7 +298,7 @@ namespace Dictamenes.Controllers
         public ActionResult Edit([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoControlado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion,IdOriginal, SujetoControlado")] Dictamen dictamen, bool EsDenunciante, bool BorrarArchivo, HttpPostedFileBase file)
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -348,7 +346,7 @@ namespace Dictamenes.Controllers
 
                 //limpio y estandarizo la informacion
                 dictamen.FechaModificacion = DateTime.Now;
-                dictamen.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
+                dictamen.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
                 dictamen.NroGDE = dictamen.NroGDE.ToUpper();
                 dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
                 dictamen.Detalle = dictamen.Detalle.ToUpper();
@@ -422,13 +420,13 @@ namespace Dictamenes.Controllers
                                     FechaModificacion = SujetoControladoViejo.FechaModificacion,
                                     IdUsuarioModificacion = SujetoControladoViejo.IdUsuarioModificacion
                                 };
-                                SujetoControladoViejo.CuilCuit = dictamen.SujetoControlado.CuilCuit;
-                                SujetoControladoViejo.Nombre = dictamen.SujetoControlado.Nombre;
-                                SujetoControladoViejo.Apellido = dictamen.SujetoControlado.Apellido;
-                                SujetoControladoViejo.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
-                                SujetoControladoViejo.FechaModificacion = DateTime.Now;
-                                SujetoControladoViejo.IdTipoSujetoControlado = SujetoControladoViejo.IdTipoSujetoControlado;
-                                SujetoControladoViejo.EstaHabilitado = SujetoControladoViejo.EstaHabilitado;
+                                sujetoObligadoViejo.CuilCuit = dictamen.SujetoObligado.CuilCuit;
+                                sujetoObligadoViejo.Nombre = dictamen.SujetoObligado.Nombre;
+                                sujetoObligadoViejo.Apellido = dictamen.SujetoObligado.Apellido;
+                                sujetoObligadoViejo.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
+                                sujetoObligadoViejo.FechaModificacion = DateTime.Now;
+                                sujetoObligadoViejo.IdTipoSujetoObligado = sujetoObligadoViejo.IdTipoSujetoObligado;
+                                sujetoObligadoViejo.EstaHabilitado = sujetoObligadoViejo.EstaHabilitado;
 
                                 db.Entry(SujetoControladoViejo).State = EntityState.Modified;
 
@@ -469,12 +467,12 @@ namespace Dictamenes.Controllers
                         //en caso de no existir un SujetoControlado con el mismo cuilCuit, lo creo
                         else
                         {
-                            //se crea el nuevo Sujeto Controlado
-                            dictamen.SujetoControlado.Id = 0;
-                            dictamen.SujetoControlado.FechaModificacion = DateTime.Now;
-                            dictamen.SujetoControlado.IdTipoSujetoControlado = db.TiposSujetoControlado.FirstOrDefault(d => d.Descripcion == "Denunciante").Id;
-                            dictamen.SujetoControlado.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
-                            db.SujetosControlados.Add(dictamen.SujetoControlado);
+                            //se crea el nuevo sujeto obligado
+                            dictamen.SujetoObligado.Id = 0;
+                            dictamen.SujetoObligado.FechaModificacion = DateTime.Now;
+                            dictamen.SujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.FirstOrDefault(d => d.Descripcion == "Denunciante").Id;
+                            dictamen.SujetoObligado.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
+                            db.SujetosObligados.Add(dictamen.SujetoObligado);
                             db.SaveChanges();
                             //guardo al nuevo SujetoControlado dentro del dictamen
                             dictamen.IdSujetoControlado = dictamen.SujetoControlado.Id;
@@ -522,7 +520,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Delete/5
         public ActionResult Delete(int? id)
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -544,7 +542,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -571,7 +569,7 @@ namespace Dictamenes.Controllers
                 FechaModificacion = DateTime.Now,
                 //valor para indicar que el dictamen fue borrado y no modificado
                 Borrado = true,
-                IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id
+                IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID
             };
 
             db.DictamenesLog.Add(dictamenLog);
@@ -619,7 +617,7 @@ namespace Dictamenes.Controllers
         [HttpPost]
         public ActionResult CargarDictamenes(string JSONDictamenes, HttpPostedFileBase[] files)
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -656,8 +654,8 @@ namespace Dictamenes.Controllers
                             IdAsunto = asunto != null ? asunto.Id : 0,
                             ArchivoPDF = null,
                             FechaModificacion = DateTime.Now,
-                            IdSujetoControlado = null,
-                            IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id,
+                            IdSujetoObligado = null,
+                            IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID,
                             IdTipoDictamen = db.TiposDictamen.First(m => m.Descripcion == "Sin valor").Id
                         };
 

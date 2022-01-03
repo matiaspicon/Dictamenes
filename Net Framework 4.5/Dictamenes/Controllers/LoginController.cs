@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 using System.Web.Security;
-using FrameworkMVC.Security;
+using Dictamenes.Framework.Security;
 
 namespace Dictamenes.Controllers
 {

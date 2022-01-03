@@ -6,7 +6,7 @@
 
 
 
-@{string rol = Dictamenes.Controllers.LoginController.GetUserRolIdentity(User.Identity);}
+@{string rol = Dictamenes.Framework.Security.LoginService.Current.GrupoNombre;}
 
 <h2>Detalles del Dictamen</h2>
 

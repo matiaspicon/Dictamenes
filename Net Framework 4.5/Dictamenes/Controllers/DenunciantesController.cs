@@ -15,10 +15,10 @@ namespace Dictamenes.Controllers
     {
         private DictamenesDbContext db = new DictamenesDbContext();
 
-        // GET: SujetosControlados
+        // GET: SujetosObligados
         public ActionResult Index()
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -30,7 +30,7 @@ namespace Dictamenes.Controllers
         // GET: SujetosControlados/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -53,7 +53,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoControlado, EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion, IdOriginal")] SujetoControlado SujetoControlado)
         {
-            if (LoginController.GetUserRolIdentity(User.Identity) != Models.Rol.CARGAR.ToString())
+            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -78,8 +78,8 @@ namespace Dictamenes.Controllers
                     FechaModificacion = SujetoControladoViejo.FechaModificacion,
                     IdUsuarioModificacion = SujetoControladoViejo.IdUsuarioModificacion
                 };
-                SujetoControlado.IdUsuarioModificacion = LoginController.GetUserDataIdentity(User.Identity).Id;
-                SujetoControlado.FechaModificacion = DateTime.Now;
+                sujetoObligado.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
+                sujetoObligado.FechaModificacion = DateTime.Now;
 
                 db.Entry(SujetoControlado).State = EntityState.Modified;
 

@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Listado de Dictámenes";
 }
-@{string rol = FrameworkMVC.Security.LoginService.Current.GrupoNombre;}
+@{string rol = Dictamenes.Framework.Security.LoginService.Current.GrupoNombre;}
 
 @if (rol != null && rol == "CARGAR")
 {
