@@ -15,14 +15,14 @@ namespace Dictamenes.Models
         [DisplayName("Número de GDE")]
         [RegularExpression("[iI][fF]-[0-9]{4}-[0-9]+-[aA][pP][nN]-[A-Za-z]+#[A-Za-z]+",
          ErrorMessage = "El Número de GDE ingresado no es valido.")]
-        [MaxLength(30, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
+        [MaxLength(50, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string NroGDE { get; set; }
 
         [Required]
         [DisplayName("Número de Expediente")]
         [RegularExpression("[eE][xX]-[0-9]{4}-[0-9]+-[aA][pP][nN]-[A-Za-z]+#[A-Za-z]+",
          ErrorMessage = "El Número de Expediente ingresado no es valido.")]
-        [MaxLength(30, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
+        [MaxLength(50, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string NroExpediente { get; set; }
 
         [DataType(DataType.DateTime), Required]
@@ -30,6 +30,7 @@ namespace Dictamenes.Models
         public DateTime FechaCarga { get; set; }
 
         [Required]
+        [MaxLength(200, ErrorMessage = "{0} admite un máximo de {1} caracteres")]
         public string Detalle { get; set; }
 
         [DisplayName("Es Público")]

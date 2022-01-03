@@ -61,18 +61,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BEUU">
-      <HintPath>..\packages\BEUU.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="BouncyCastle.Crypto, Version=1.8.6.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.6.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="FrameworkMVC">
+      <HintPath>.\FrameworkMVC.dll</HintPath>
     </Reference>
     <Reference Include="itextsharp, Version=5.5.13.2, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>..\packages\iTextSharp.5.5.13.2\lib\itextsharp.dll</HintPath>
@@ -91,7 +91,6 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
@@ -161,9 +160,6 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -190,7 +186,7 @@
     <Compile Include="Controllers\DenunciantesController.cs" />
     <Compile Include="Controllers\SujetosControladosController.cs" />
     <Compile Include="Controllers\TiposDictamenController.cs" />
-    <Compile Include="Controllers\TiposSujetoObligadoController.cs" />
+    <Compile Include="Controllers\TiposSujetoControladoController.cs" />
     <Compile Include="Database\DictamenesDbContext.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -202,9 +198,9 @@
     <Compile Include="Models\ModelLOG\AsuntoLog.cs" />
     <Compile Include="Models\ModelLOG\CampoLog.cs" />
     <Compile Include="Models\ModelLOG\DictamenLog.cs" />
-    <Compile Include="Models\ModelLOG\SujetoControladoLog.cs" />
+    <Compile Include="Models\ModelLOG\SujetoObligadoLog.cs" />
     <Compile Include="Models\ModelLOG\TipoDictamenLog.cs" />
-    <Compile Include="Models\ModelLOG\TipoSujetoControladoLog.cs" />
+    <Compile Include="Models\ModelLOG\TipoSujetoObligadoLog.cs" />
     <Compile Include="Models\Rol.cs" />
     <Compile Include="Models\Dictamen.cs" />
     <Compile Include="Models\ErrorViewModel.cs" />

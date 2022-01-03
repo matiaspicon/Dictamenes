@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Dictamenes.Database;
+using Dictamenes.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
@@ -10,8 +12,6 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
-using Dictamenes.Database;
-using Dictamenes.Models;
 
 namespace Dictamenes.Controllers
 {
@@ -24,17 +24,16 @@ namespace Dictamenes.Controllers
         public ActionResult Index()
         {
             //El usuario que no sea tenga rol de Cargar o Consulta no podra acceder a esta opcion
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString(), Models.Rol.CONSULTAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString(), Models.Rol.CONSULTAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
-
             //Trae todos los dictamenes que sean del anio actual
             var dictamenes = db.Dictamenes.Where(d => d.FechaCarga.Year == DateTime.Today.Year).Include(d => d.Asunto).Include(d => d.TipoDictamen);
-            ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["IdSujetoControlado"] = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
-            ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["TipoSujetoControlado"] = new SelectList(db.TiposSujetoControlado.Where(m => m.EstaHabilitado && m.Descripcion != "Denunciante"), "Id", "Descripcion");
+            ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion).OrderBy(m => m.Descripcion), "Id", "Descripcion");
+            ViewData["IdSujetoControlado"] = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado).OrderBy(m => m.RazonSocial).OrderBy(m => m.RazonSocial), "Id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion");
+            ViewData["TipoSujetoControlado"] = new SelectList(db.TiposSujetoControlado.Where(m => m.EstaHabilitado && m.Descripcion != "Denunciante").OrderBy(m => m.Descripcion), "Id", "Descripcion");
             return View(dictamenes.ToList());
         }
 
@@ -42,7 +41,7 @@ namespace Dictamenes.Controllers
         public ActionResult Details(int? id)
         {
             //El usuario que no sea tenga rol de Cargar o Consulta no podra acceder a esta opcion
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString(), Models.Rol.CONSULTAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString(), Models.Rol.CONSULTAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -69,11 +68,11 @@ namespace Dictamenes.Controllers
         {
 
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
-            
+
             return View();
         }
 
@@ -82,7 +81,7 @@ namespace Dictamenes.Controllers
         public ActionResult CargarFile(HttpPostedFileBase file)
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -92,6 +91,26 @@ namespace Dictamenes.Controllers
             //separo informacion del archivo
             var fileName = Guid.NewGuid().ToString();
             var extension = Path.GetExtension(file.FileName);
+
+            //si el archivo no es de tipo PDF, no se carga se crea el archivo en la base de datos ni se almacena el archivo
+            if (extension != ".pdf")
+            {
+                //seteo los valores del dictamen a null
+                dictamen.IdArchivoPDF = null;
+                dictamen.ArchivoPDF = null;
+                //seteo la fecha de Carga a la actual para facilidad de carga
+                dictamen.FechaCarga = DateTime.Now;
+
+                ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion");
+                ViewData["IdSujetoControlado"] = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado).OrderBy(m => m.RazonSocial), "Id", "RazonSocial");
+                ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion");
+                ViewData["TipoSujetoControlado"] = new SelectList(db.TiposSujetoControlado.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion");
+
+                //cargo la informacion para el formulario Create y devuelvo la VIEW del create con un dictamen sin archivo
+                //que esta dentro de la variable dictamen
+                return View("Create", dictamen);
+            }
+
             // compruebo directorio
             var basePath = Server.MapPath("~/Archivos");
             var filePath = Path.Combine("~", "Archivos", fileName + extension);
@@ -104,7 +123,7 @@ namespace Dictamenes.Controllers
                 file.SaveAs(Server.MapPath(filePath));
             }
 
-            // creo el archivo para la base de datos
+            // creo el objeto archivo para agregar al dictamen
             var archivo = new ArchivoPDF
             {
                 FechaCarga = DateTime.Now,
@@ -118,13 +137,15 @@ namespace Dictamenes.Controllers
             db.SaveChanges();
             // extraigo la informacion del PDF del dictamen y creo el objeto con la misma
             dictamen = ExtratDictamenFromString(archivo.Contenido);
-            dictamen.IdArchivoPDF = archivo.Id;
-            dictamen.ArchivoPDF = archivo;           
 
-            ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["IdSujetoControlado"] = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
-            ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["TipoSujetoControlado"] = new SelectList(db.TiposSujetoControlado.Where(m => m.EstaHabilitado), "Id", "Descripcion");
+            dictamen.IdArchivoPDF = archivo.Id;
+            dictamen.ArchivoPDF = archivo;
+            dictamen.NroGDE = Path.GetFileNameWithoutExtension(file.FileName).Replace("%","#");
+
+            ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion");
+            ViewData["IdSujetoControlado"] = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado).OrderBy(m => m.RazonSocial), "Id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion");
+            ViewData["TipoSujetoControlado"] = new SelectList(db.TiposSujetoControlado.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion");
 
             // cargo la informacion para el formulario Create y devuelvo la VIEW del create con la informacion extraida del Archivo
             //que esta dentro de la variable dictamen
@@ -136,16 +157,16 @@ namespace Dictamenes.Controllers
         public ActionResult Create()
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
 
-            ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["IdSujetoControlado"] = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
-            ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["TipoSujetoControlado"] = new SelectList(db.TiposSujetoControlado.Where(m => m.EstaHabilitado), "Id", "Descripcion");
-            return View();
+            ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion");
+            ViewData["IdSujetoControlado"] = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado).OrderBy(m => m.RazonSocial), "Id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion");
+            ViewData["TipoSujetoControlado"] = new SelectList(db.TiposSujetoControlado.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion");
+            return View(new Dictamen());
         }
 
 
@@ -154,14 +175,14 @@ namespace Dictamenes.Controllers
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoControlado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion, SujetoControlado")] Dictamen dictamen)
+        public ActionResult Create([Bind(Include = "ArchivoPDF, Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoControlado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion, SujetoControlado")] Dictamen dictamen)
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
-            
+
             //en caso de que exista un dictamen con el mismo numero de GDE
             if (db.Dictamenes.FirstOrDefault(d => d.NroGDE == dictamen.NroGDE) != null)
             {
@@ -171,11 +192,12 @@ namespace Dictamenes.Controllers
 
             //limpio y estandarizo la informacion
             dictamen.FechaModificacion = DateTime.Now;
-            dictamen.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
+            dictamen.IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID;
             dictamen.NroGDE = dictamen.NroGDE.ToUpper();
             dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
             dictamen.Detalle = dictamen.Detalle.ToUpper();
             dictamen.EsPublico = false;
+            dictamen.ArchivoPDF = db.ArchivosPDF.Find(dictamen.IdArchivoPDF);
 
 
             //compruebo si la data del formulario del denunciante es distinto al valor por defecto
@@ -189,21 +211,22 @@ namespace Dictamenes.Controllers
                     if (SujetoControladoExistente.IdTipoSujetoControlado != db.TiposSujetoControlado.First(m => m.Descripcion == "Denunciante").Id)
                     {
                         //devuelvo un error ya que ese cuilCuit corresponde a una empresa
-                        ModelState.AddModelError("SujetosControlados.CuilCuit", "Ya existe un Sujeto Controlado con ese Número de Cuil");
+                        ModelState.AddModelError("SujetoControlado.CuilCuit", "Ya existe un Sujeto Controlado con ese Número de Cuil");
                     }
                     else
                     {
                         //en caso de ser un denunciante, simplemente uso el SujetoControlado denunciante existente
+                        dictamen.IdSujetoControlado = SujetoControladoExistente.Id;
                         dictamen.SujetoControlado = SujetoControladoExistente;
                     }
                 }
                 //en caso de no existir un SujetoControlado con el mismo cuilCuit, lo creo
                 else
                 {
-                    dictamen.SujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.First(m => m.Descripcion == "Denunciante").Id;
-                    dictamen.SujetoObligado.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
-                    dictamen.SujetoObligado.FechaModificacion = DateTime.Now;
-                    db.SujetosObligados.Add(dictamen.SujetoObligado);
+                    dictamen.SujetoControlado.IdTipoSujetoControlado = db.TiposSujetoControlado.First(m => m.Descripcion == "Denunciante").Id;
+                    dictamen.SujetoControlado.IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID;
+                    dictamen.SujetoControlado.FechaModificacion = DateTime.Now;
+                    db.SujetosControlados.Add(dictamen.SujetoControlado);
                 }
             }
             //en caso de no haber un valor en el formulario de Denunciante
@@ -218,7 +241,7 @@ namespace Dictamenes.Controllers
 
             //seteo el valor del HaySujetoControlado basado en el valor de IdSujetoControlado
             dictamen.HaySujetoControlado = dictamen.IdSujetoControlado != null;
-
+            
             if (ModelState.IsValid)
             {
                 db.Dictamenes.Add(dictamen);
@@ -226,9 +249,9 @@ namespace Dictamenes.Controllers
                 return RedirectToAction("Index");
             }
             if (dictamen.SujetoControlado != null && dictamen.SujetoControlado.Nombre == null) dictamen.SujetoControlado.CuilCuit = 0; // en caso de que haya un idSujetoControlado seleccionado (una empresa de la tabla) se resetea el cuilCuit
-            ViewBag.IdAsunto = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdAsunto);
-            ViewBag.IdSujetoControlado = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial", dictamen.IdSujetoControlado);
-            ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdTipoDictamen);
+            ViewBag.IdAsunto = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion", dictamen.IdAsunto);
+            ViewBag.IdSujetoControlado = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado).OrderBy(m => m.RazonSocial), "Id", "RazonSocial", dictamen.IdSujetoControlado);
+            ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion", dictamen.IdTipoDictamen);
             return View(dictamen);
         }
 
@@ -241,18 +264,20 @@ namespace Dictamenes.Controllers
         [HttpPost]
         public ActionResult Buscar(Busqueda busqueda)
         {
-            //seteo valor para la busqueda
+            //seteo el valor para la busqueda ya que viene el formato bool y necesito un int de id
             var idTipoSujetoControlado = busqueda.EsDenunciante ? db.TiposSujetoControlado.First(d => d.Descripcion == "Denunciante").Id : busqueda.IdTipoSujetoControlado;
 
             //ejecuto el StoreProcedure "sp_FiltrarDictamenes" de la base de datos con los valores pasado por parametro
-            var dictamenes = db.Sp_FiltrarDictamenes(busqueda.NroGDE, busqueda.NroExp, busqueda.FechaCargaInicio, busqueda.FechaCargaFinal, busqueda.Detalle, busqueda.Contenido, busqueda.IdAsunto, busqueda.IdTipoDictamen, busqueda.IdSujetoControlado, idTipoSujetoControlado, busqueda.CuilCuit, busqueda.Nombre, busqueda.Apellido);
-            
+            var dictamenes = db.Sp_FiltrarDictamenes(busqueda.NroGDE, busqueda.NroExp, busqueda.FechaCargaInicio, busqueda.FechaCargaFinal,
+                busqueda.Detalle, busqueda.Contenido, busqueda.IdAsunto, busqueda.IdTipoDictamen, busqueda.IdSujetoControlado,
+                idTipoSujetoControlado, busqueda.CuilCuit, busqueda.Nombre, busqueda.Apellido);
+
             //cargo las listas desplegables
-            ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["IdSujetoControlado"] = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial");
-            ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion");
-            ViewData["TipoSujetoControlado"] = new SelectList(db.TiposSujetoControlado.Where(m => m.EstaHabilitado && m.Descripcion != "Denunciante"), "Id", "Descripcion");
-            
+            ViewData["IdAsunto"] = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion");
+            ViewData["IdSujetoControlado"] = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado).OrderBy(m => m.RazonSocial), "Id", "RazonSocial");
+            ViewData["IdTipoDictamen"] = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion");
+            ViewData["TipoSujetoControlado"] = new SelectList(db.TiposSujetoControlado.Where(m => m.EstaHabilitado && m.Descripcion != "Denunciante").OrderBy(m => m.Descripcion), "Id", "Descripcion");
+
             //envio los parametros actuales de busqueda para que puedan ser mostrado en la vista
             ViewData["Busqueda"] = busqueda;
 
@@ -264,7 +289,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return View("ErrorNoPermisos", "Login");
             }
@@ -274,7 +299,7 @@ namespace Dictamenes.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Dictamen dictamen = db.Dictamenes.Include(d => d.SujetoControlado).FirstOrDefault(d => d.Id == id);
+            Dictamen dictamen = db.Dictamenes.Include(d => d.SujetoControlado).Include(d => d.ArchivoPDF).FirstOrDefault(d => d.Id == id);
 
             if (dictamen == null)
             {
@@ -283,9 +308,9 @@ namespace Dictamenes.Controllers
 
             if (dictamen.SujetoControlado != null && dictamen.SujetoControlado.Nombre == null) dictamen.SujetoControlado.CuilCuit = 0; //en caso de que el SujetoControlado no sea denunciante, se elimina el valor de cuilCuit
 
-            ViewBag.IdAsunto = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdAsunto);
-            ViewBag.IdSujetoControlado = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial", dictamen.IdSujetoControlado);
-            ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdTipoDictamen);
+            ViewBag.IdAsunto = new SelectList(db.Asuntos.OrderBy(m => m.Descripcion), "Id", "Descripcion", dictamen.IdAsunto);
+            ViewBag.IdSujetoControlado = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null).OrderBy(m => m.RazonSocial), "Id", "RazonSocial", dictamen.IdSujetoControlado);
+            ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.OrderBy(m => m.Descripcion), "Id", "Descripcion", dictamen.IdTipoDictamen);
 
             return View(dictamen);
         }
@@ -295,10 +320,10 @@ namespace Dictamenes.Controllers
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoControlado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion,IdOriginal, SujetoControlado")] Dictamen dictamen, bool EsDenunciante, bool BorrarArchivo, HttpPostedFileBase file)
+        public ActionResult Edit([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoControlado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion,IdOriginal, SujetoControlado, Archivo")] Dictamen dictamen, bool EsDenunciante, bool BorrarArchivo, HttpPostedFileBase file)
         {
             //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -312,8 +337,8 @@ namespace Dictamenes.Controllers
                 //se agrega un error en ese campo y se vuelve a solicitar la carga
                 ModelState.AddModelError("NroGDE", "Ya existe un Dictamen con ese Número de GDE");
             }
-            
-            
+
+
             if (!EsDenunciante)
             {
                 //remuevo la comprobacion del campo cuilCuit
@@ -346,13 +371,13 @@ namespace Dictamenes.Controllers
 
                 //limpio y estandarizo la informacion
                 dictamen.FechaModificacion = DateTime.Now;
-                dictamen.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
+                dictamen.IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID;
                 dictamen.NroGDE = dictamen.NroGDE.ToUpper();
                 dictamen.NroExpediente = dictamen.NroExpediente.ToUpper();
                 dictamen.Detalle = dictamen.Detalle.ToUpper();
+                dictamen.ArchivoPDF = db.ArchivosPDF.Find(dictamen.IdArchivoPDF);
 
-
-                if (BorrarArchivo)
+                if (BorrarArchivo) 
                 {
                     //borro el archivo
                     dictamen.ArchivoPDF = null;
@@ -397,13 +422,14 @@ namespace Dictamenes.Controllers
                 if (EsDenunciante)
                 {
                     bool EsElMismo = false;
-                    if(dictamen.SujetoControlado != null)
+                    //reviso que el sujeto no sea null
+                    if (dictamen.SujetoControlado != null && dictamenViejo.SujetoControlado != null)
                     {
                         if (dictamen.SujetoControlado.CuilCuit == dictamenViejo.SujetoControlado.CuilCuit)
                         {
                             EsElMismo = true;
                             if (dictamen.SujetoControlado.Nombre != dictamenViejo.SujetoControlado.Nombre || dictamen.SujetoControlado.Apellido != dictamenViejo.SujetoControlado.Apellido)
-                            {                                
+                            {
                                 //hago la modificacion del SujetoControlado
 
                                 SujetoControlado SujetoControladoViejo = db.SujetosControlados.AsNoTracking().FirstOrDefault(d => d.Id == dictamen.IdSujetoControlado);
@@ -420,13 +446,13 @@ namespace Dictamenes.Controllers
                                     FechaModificacion = SujetoControladoViejo.FechaModificacion,
                                     IdUsuarioModificacion = SujetoControladoViejo.IdUsuarioModificacion
                                 };
-                                sujetoObligadoViejo.CuilCuit = dictamen.SujetoObligado.CuilCuit;
-                                sujetoObligadoViejo.Nombre = dictamen.SujetoObligado.Nombre;
-                                sujetoObligadoViejo.Apellido = dictamen.SujetoObligado.Apellido;
-                                sujetoObligadoViejo.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
-                                sujetoObligadoViejo.FechaModificacion = DateTime.Now;
-                                sujetoObligadoViejo.IdTipoSujetoObligado = sujetoObligadoViejo.IdTipoSujetoObligado;
-                                sujetoObligadoViejo.EstaHabilitado = sujetoObligadoViejo.EstaHabilitado;
+                                SujetoControladoViejo.CuilCuit = dictamen.SujetoControlado.CuilCuit;
+                                SujetoControladoViejo.Nombre = dictamen.SujetoControlado.Nombre;
+                                SujetoControladoViejo.Apellido = dictamen.SujetoControlado.Apellido;
+                                SujetoControladoViejo.IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID;
+                                SujetoControladoViejo.FechaModificacion = DateTime.Now;
+                                SujetoControladoViejo.IdTipoSujetoControlado = SujetoControladoViejo.IdTipoSujetoControlado;
+                                SujetoControladoViejo.EstaHabilitado = SujetoControladoViejo.EstaHabilitado;
 
                                 db.Entry(SujetoControladoViejo).State = EntityState.Modified;
 
@@ -436,7 +462,7 @@ namespace Dictamenes.Controllers
                                 //guardo el log del SujetoControlado que se modifico
                                 db.SujetosControladosLog.Add(SujetoControladoLog);
                                 db.SaveChanges();
-                                
+
                             }
                             else
                             {
@@ -455,7 +481,7 @@ namespace Dictamenes.Controllers
                             if (SujetoControladoExistente.IdTipoSujetoControlado != db.TiposSujetoControlado.First(m => m.Descripcion == "Denunciante").Id)
                             {
                                 //devuelvo un error ya que ese cuilCuit corresponde a una empresa
-                                ModelState.AddModelError("SujetosControlados.CuilCuit", "Ya existe un Sujeto Controlado con ese Número de Cuil");
+                                ModelState.AddModelError("SujetoControlado.CuilCuit", "Ya existe un Sujeto Controlado con ese Número de Cuil");
                             }
                             else
                             {
@@ -467,17 +493,17 @@ namespace Dictamenes.Controllers
                         //en caso de no existir un SujetoControlado con el mismo cuilCuit, lo creo
                         else
                         {
-                            //se crea el nuevo sujeto obligado
-                            dictamen.SujetoObligado.Id = 0;
-                            dictamen.SujetoObligado.FechaModificacion = DateTime.Now;
-                            dictamen.SujetoObligado.IdTipoSujetoObligado = db.TiposSujetoObligado.FirstOrDefault(d => d.Descripcion == "Denunciante").Id;
-                            dictamen.SujetoObligado.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
-                            db.SujetosObligados.Add(dictamen.SujetoObligado);
+                            //se crea el nuevo Sujeto Controlado
+                            dictamen.SujetoControlado.Id = 0;
+                            dictamen.SujetoControlado.FechaModificacion = DateTime.Now;
+                            dictamen.SujetoControlado.IdTipoSujetoControlado = db.TiposSujetoControlado.FirstOrDefault(d => d.Descripcion == "Denunciante").Id;
+                            dictamen.SujetoControlado.IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID;
+                            db.SujetosControlados.Add(dictamen.SujetoControlado);
                             db.SaveChanges();
                             //guardo al nuevo SujetoControlado dentro del dictamen
                             dictamen.IdSujetoControlado = dictamen.SujetoControlado.Id;
                         }
-                    } 
+                    }
                 }
                 else //no es denunciante
                 {
@@ -499,28 +525,32 @@ namespace Dictamenes.Controllers
                 dictamen.HaySujetoControlado = dictamen.IdSujetoControlado != null;
 
                 //-----------------------------------------------------------------------------
+                if (ModelState.IsValid)
+                {
+                    //modifico el dictamen
+                    db.Entry(dictamen).State = EntityState.Modified;
 
-                //modifico el dictamen
-                db.Entry(dictamen).State = EntityState.Modified;
+                    //agrego el log del dictamen
+                    db.DictamenesLog.Add(dictamenLog);                    
+                    db.SaveChanges();
 
-                //agrego el log del dictamen
-                db.DictamenesLog.Add(dictamenLog);
-                db.SaveChanges();
-
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
+                
+                
             }
 
             //en caso de haber un error con la modificacion se devuelve el dictamen con los errores correspondientes
-            ViewBag.IdAsunto = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdAsunto);
-            ViewBag.IdSujetoControlado = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado), "Id", "RazonSocial", dictamen.IdSujetoControlado);
-            ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado), "Id", "Descripcion", dictamen.IdTipoDictamen);
+            ViewBag.IdAsunto = new SelectList(db.Asuntos.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion", dictamen.IdAsunto);
+            ViewBag.IdSujetoControlado = new SelectList(db.SujetosControlados.Where(m => m.RazonSocial != null && m.EstaHabilitado).OrderBy(m => m.RazonSocial), "Id", "RazonSocial", dictamen.IdSujetoControlado);
+            ViewBag.IdTipoDictamen = new SelectList(db.TiposDictamen.Where(m => m.EstaHabilitado).OrderBy(m => m.Descripcion), "Id", "Descripcion", dictamen.IdTipoDictamen);
             return View(dictamen);
         }
 
         // GET: Dictamen/Delete/5
         public ActionResult Delete(int? id)
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -542,7 +572,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -569,7 +599,7 @@ namespace Dictamenes.Controllers
                 FechaModificacion = DateTime.Now,
                 //valor para indicar que el dictamen fue borrado y no modificado
                 Borrado = true,
-                IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID
+                IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID
             };
 
             db.DictamenesLog.Add(dictamenLog);
@@ -617,7 +647,7 @@ namespace Dictamenes.Controllers
         [HttpPost]
         public ActionResult CargarDictamenes(string JSONDictamenes, HttpPostedFileBase[] files)
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -630,11 +660,11 @@ namespace Dictamenes.Controllers
             {
                 dictamenes = Newtonsoft.Json.JsonConvert.DeserializeObject<List<DictamenData>>(JSONDictamenes);
             }
-            catch 
+            catch
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if(dictamenes != null)
+            if (dictamenes != null)
             {
                 foreach (DictamenData dictamenData in dictamenes)
                 {
@@ -654,8 +684,8 @@ namespace Dictamenes.Controllers
                             IdAsunto = asunto != null ? asunto.Id : 0,
                             ArchivoPDF = null,
                             FechaModificacion = DateTime.Now,
-                            IdSujetoObligado = null,
-                            IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID,
+                            IdSujetoControlado = null,
+                            IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID,
                             IdTipoDictamen = db.TiposDictamen.First(m => m.Descripcion == "Sin valor").Id
                         };
 
@@ -725,10 +755,10 @@ namespace Dictamenes.Controllers
                         archivosPDFError.Add(archivo);
                     }
                 }
-            }           
-            
+            }
+
             db.SaveChanges();
-            return Json(new {archivosPDFError, dictamenesError});          
+            return Json(new { archivosPDFError, dictamenesError });
         }
 
         protected override void Dispose(bool disposing)
@@ -743,23 +773,20 @@ namespace Dictamenes.Controllers
         private static Dictamen ExtratDictamenFromString(string contenido)
         {
             Dictamen dict = new Dictamen();
+            MatchCollection matches;
 
-            Regex numeroGDE = new Regex("IF-[0-9]{4}-[0-9]+-APN-[A-Z]+#[A-Z]+", RegexOptions.IgnoreCase);
-
-            MatchCollection matches = numeroGDE.Matches(contenido);
-            try
-            {
-                //obtiene el primer resultado
-                dict.NroGDE = matches[0].Value;
-            }
-            //en caso de que no encuentre ninguna, no hace nada y deja el valor por defecto
-            catch { }
-
+            //Regex numeroGDE = new Regex("IF-[0-9]{4}-[0-9]+-APN-[A-Z]+#[A-Z]+", RegexOptions.IgnoreCase);
+            //matches = numeroGDE.Matches(contenido);
+            //try
+            //{
+            //    //obtiene el primer resultado
+            //    dict.NroGDE = matches[0].Value;
+            //}
+            ////en caso de que no encuentre ninguna, no hace nada y deja el valor por defecto
+            //catch { }
 
             Regex numeroExpediente = new Regex("[E][X] *-* *[0-9]{4} *- *[0-9]+? ?- ?-? ?APN *- *[A-Z]+ *# *[A-Z]+|[E][X] *-* *[0-9]{4} *- *[0-9]+", RegexOptions.IgnoreCase);
-
             matches = numeroExpediente.Matches(contenido);
-
             try
             {
                 //obtiene el primer resultado y normaliza el campo
@@ -767,14 +794,15 @@ namespace Dictamenes.Controllers
                 dict.NroExpediente = matches[0].Value.Replace(" ", "").Replace("--", "-");
             }
             catch { }
-            Regex date = new Regex("[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", RegexOptions.IgnoreCase);
 
+            Regex date = new Regex("[0-9]{4}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}", RegexOptions.IgnoreCase);
             matches = date.Matches(contenido);
             try
             {
                 DateTime fecha;
                 //trata de parsear la fecha con ese formato
                 DateTime.TryParseExact(matches[0].Value, "yyyy.MM.dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out fecha);
+                //si la instruccion anterior no eleva una excepcion, guarda la fecha en el dictamen
                 dict.FechaCarga = fecha;
             }
             catch
@@ -783,8 +811,6 @@ namespace Dictamenes.Controllers
                 dict.FechaCarga = DateTime.Now;
             }
             return dict;
-
-
         }
     }
 }

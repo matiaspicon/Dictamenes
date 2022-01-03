@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Dictamenes.Database;
+using Dictamenes.Models;
+using System;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using Dictamenes.Database;
-using Dictamenes.Models;
 
 namespace Dictamenes.Controllers
 {
@@ -15,10 +13,10 @@ namespace Dictamenes.Controllers
     {
         private DictamenesDbContext db = new DictamenesDbContext();
 
-        // GET: SujetosObligados
+        // GET: SujetosControlados
         public ActionResult Index()
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -30,7 +28,7 @@ namespace Dictamenes.Controllers
         // GET: SujetosControlados/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -53,7 +51,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,CuilCuit,Nombre,Apellido,RazonSocial,IdTipoSujetoControlado, EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion, IdOriginal")] SujetoControlado SujetoControlado)
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -66,8 +64,8 @@ namespace Dictamenes.Controllers
 
             if (ModelState.IsValid)
             {
-                SujetoControladoLog SujetoControladoLog = new SujetoControladoLog 
-                {                    
+                SujetoControladoLog SujetoControladoLog = new SujetoControladoLog
+                {
                     CuilCuit = SujetoControladoViejo.CuilCuit,
                     Nombre = SujetoControladoViejo.Nombre,
                     Apellido = SujetoControladoViejo.Apellido,
@@ -78,8 +76,8 @@ namespace Dictamenes.Controllers
                     FechaModificacion = SujetoControladoViejo.FechaModificacion,
                     IdUsuarioModificacion = SujetoControladoViejo.IdUsuarioModificacion
                 };
-                sujetoObligado.IdUsuarioModificacion =  Framework.Security.LoginService.Current.UsuarioID;
-                sujetoObligado.FechaModificacion = DateTime.Now;
+                SujetoControlado.IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID;
+                SujetoControlado.FechaModificacion = DateTime.Now;
 
                 db.Entry(SujetoControlado).State = EntityState.Modified;
 

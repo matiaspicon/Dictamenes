@@ -1,121 +1,156 @@
 ﻿@model Dictamenes.Models.Dictamen
 
-@{
-    ViewBag.Title = "Cargar";
-}
+@{ ViewBag.Title = "Cargar"; }
 
 <h2>Cargar Dictamen</h2>
 
 
 @using (Html.BeginForm("Create", "Dictamenes"))
 {
-    @Html.AntiForgeryToken()
+@Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <hr />
-        @Html.HiddenFor(model => model.IdArchivoPDF)
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group row">
-            @Html.LabelFor(model => model.NroGDE, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.NroGDE, new { htmlAttributes = new { @class = "form-control col-auto" } })
-                @Html.ValidationMessageFor(model => model.NroGDE, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                <div class="form-horizontal">
+                    <hr />
+                    @Html.HiddenFor(model => model.IdArchivoPDF)
+                    @Html.HiddenFor(model => model.ArchivoPDF.Path)
 
-        <div class="form-group row">
-            @Html.LabelFor(model => model.NroExpediente, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.NroExpediente, new { htmlAttributes = new { @class = "form-control col-auto" } })
-                @Html.ValidationMessageFor(model => model.NroExpediente, "", new { @class = "text-danger" })
-            </div>
-        </div>
-        <div class="form-group row">
-            @Html.LabelFor(model => model.FechaCarga, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
-            <div class="col-md-9">
-                <input name="FechaCarga" type="datetime-local" class="form-control col-auto" value="@((Model != null && Model.FechaCarga != null) ? Model.FechaCarga.ToString("yyyy-MM-ddTHH:mm:ss") : DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"))" />
-                @Html.ValidationMessageFor(model => model.FechaCarga, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.NroGDE, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+                        <div class="col-md-9">
+                            @Html.EditorFor(model => model.NroGDE, new { htmlAttributes = new { @class = "form-control col-auto" } })
+                            @Html.ValidationMessageFor(model => model.NroGDE, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
-        <div class="form-group row">
-            @Html.LabelFor(model => model.Detalle, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
-            <div class="col-md-9">
-                @Html.EditorFor(model => model.Detalle, new { htmlAttributes = new { @class = "form-control col-auto" } })
-                @Html.ValidationMessageFor(model => model.Detalle, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.NroExpediente, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+                        <div class="col-md-9">
+                            @Html.EditorFor(model => model.NroExpediente, new { htmlAttributes = new { @class = "form-control col-auto" } })
+                            @Html.ValidationMessageFor(model => model.NroExpediente, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.FechaCarga, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+                        <div class="col-md-9">
+                            <input name="FechaCarga" type="datetime-local" class="form-control col-auto" value="@((Model.FechaCarga != new DateTime()) ? Model.FechaCarga.ToString("yyyy-MM-ddTHH:mm:ss") : DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss"))" />
+                            @Html.ValidationMessageFor(model => model.FechaCarga, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
-        <div class="form-group row">
-            @Html.LabelFor(model => model.IdAsunto, "Asunto", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
-            <div class="col-md-9">
-                @Html.DropDownList("IdAsunto", null, "Elija uno",htmlAttributes: new { @class = "form-control col-auto" })
-                @Html.ValidationMessageFor(model => model.IdAsunto, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.Detalle, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+                        <div class="col-md-9">
+                            @Html.EditorFor(model => model.Detalle, new { htmlAttributes = new { @class = "form-control col-auto" } })
+                            @Html.ValidationMessageFor(model => model.Detalle, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
-        <div class="form-group row ">
-            @Html.LabelFor(model => model.IdTipoDictamen, "Tipo de Dictamen", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
-            <div class="col-md-9">
-                @Html.DropDownList("IdTipoDictamen", (SelectList)ViewData["IdTipoDictamen"], htmlAttributes: new { @class = "form-control col-auto" })
-                @Html.ValidationMessageFor(model => model.IdTipoDictamen, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                    <div class="form-group row">
+                        @Html.LabelFor(model => model.IdAsunto, "Asunto", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+                        <div class="col-md-9">
+                            @Html.DropDownList("IdAsunto", null, "Elija uno", htmlAttributes: new { @class = "form-control col-auto" })
+                            @Html.ValidationMessageFor(model => model.IdAsunto, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
 
-        @*<div class="form-group row">
-            <div class="col-md-9">
-                <div class="checkbox">
-                    @Html.CheckBox("EsPublico", true) @Html.LabelFor(model => model.EsPublico, htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+                    <div class="form-group row ">
+                        @Html.LabelFor(model => model.IdTipoDictamen, "Tipo de Dictamen", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+                        <div class="col-md-9">
+                            @Html.DropDownList("IdTipoDictamen", (SelectList)ViewData["IdTipoDictamen"], "Sin Tipo de Dictamen", htmlAttributes: new { @class = "form-control col-auto" })
+                            @Html.ValidationMessageFor(model => model.IdTipoDictamen, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-md-9">
+                            <div class="checkbox">
+                                @Html.CheckBox("EsDenunciante", (Model != null && Model.SujetoControlado != null && Model.SujetoControlado.Nombre != null), new { id = "esDenunciante", name = "EsDenunciante", onclick = "setForm(this.checked)" }) @Html.Label("esDenunciante", "Sujeto Controlado es Denunciante", htmlAttributes: new { @class = "control-label col-md-9 align-self-end" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="FormEmpresas" style="display:block">
+                        <div class="form-group row">
+                            @Html.LabelFor(model => model.IdSujetoControlado, " Sujetos Controlados", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
+                            <div class="col-md-9">
+                                @Html.DropDownList("IdSujetoControlado", null, "Sin Sujeto Controlado", htmlAttributes: new { @class = "form-control col-auto", id = "InputEmpresas" })
+                                @Html.ValidationMessageFor(model => model.IdSujetoControlado, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="FormPersonas" style="display:none">
+                        <div class="form-group row">
+                            <label class="form-label col-md-3 align-self-end">Cuil/Cuit</label>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.SujetoControlado.CuilCuit, new { htmlAttributes = new { @class = "form-control col-auto", id = "InputCuilCuit", placeholder = "Ingrese el Cuil/Cuit del Sujeto Controlado" } })
+                                @Html.ValidationMessageFor(model => model.SujetoControlado.CuilCuit, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="form-label col-md-3 align-self-end">Nombre</label>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.SujetoControlado.Nombre, new { htmlAttributes = new { @class = "form-control col-auto", placeholder = "Ingrese el Nombre del Sujeto Controlado" } })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="form-label col-md-3 align-self-end">Apellido</label>
+                            <div class="col-md-9">
+                                @Html.EditorFor(model => model.SujetoControlado.Apellido, new { htmlAttributes = new { @class = "form-control col-auto", placeholder = "Ingrese el Apellido del Sujeto Controlado" } })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row align-content-center">
+                        @if (Model.ArchivoPDF == null)
+                        {
+                            <h5 class="form-label col-3 align-self-center">
+                                Archivo
+                            </h5>
+                            <div class="col-md-9">
+                                <h6 class="card p-2 col-12">
+                                    Este dictámen no tiene un archivo
+                                </h6>
+                            </div> }
+                        else
+                        {
+                            if (!System.IO.File.Exists(Server.MapPath(Model.ArchivoPDF.Path)))
+                            {
+                                <h5 class="form-label col-3 align-self-center">
+                                    Archivo
+                                </h5>
+                                <div class="col-md-9">
+                                    <h6 class="card alert-danger rounded p-2 col-12">
+                                        Hubo un error con la carga del archivo
+                                    </h6>
+                                </div> }
+                            else
+                            {
+                                <h5 class="form-label col-3 align-self-center">
+                                    Archivo
+                                </h5>
+                                <div class="col-md-9">
+                                    <a class="btn btn-dark col-12" data-toggle="collapse" href="#collapseOne" role="button" aria-expanded="false">
+                                        Ver el Achivo del Dictamen
+                                    </a>
+                                </div>}
+                        }
+                    </div>
                 </div>
-            </div>
-        </div>*@
 
-        <div class="form-group row">
-            <div class="col-md-9">
-                <div class="checkbox">
-                    @Html.CheckBox("EsDenunciante", (Model != null && Model.SujetoControlado != null && Model.SujetoControlado.Nombre != null), new { id = "esDenunciante", name = "EsDenunciante", onclick = "setForm(this.checked)" }) @Html.Label("esDenunciante","Sujeto Controlado es Denunciante", htmlAttributes: new { @class = "control-label col-md-9 align-self-end" }  )
+                <div id="collapseOne" class="collapse m-3">
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <embed src="@Url.Action("DownloadFile", "File", new { id = Model.IdArchivoPDF })" class="embed-responsive-item" />
+                    </div>
                 </div>
-            </div>
-        </div>
 
-        <div id="FormEmpresas" style="display:block">
-            <div class="form-group row">
-                @Html.LabelFor(model => model.IdSujetoControlado, "Sujetos Controlados", htmlAttributes: new { @class = "control-label col-md-3 align-self-end" })
-                <div class="col-md-9">
-                    @Html.DropDownList("IdSujetoControlado", null, "Sin Sujeto Controlado", htmlAttributes: new { @class = "form-control col-auto", id = "InputEmpresas" })
-                    @Html.ValidationMessageFor(model => model.IdSujetoControlado, "", new { @class = "text-danger" })
+                <div class="row justify-content-end mt-2">
+                    <div class="col-lg-6 col-md-8 row justify-content-end">
+                        <a class="col-4 btn btn-secondary m-1" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atrás</a>
+                        <button type="submit" class="btn btn-primary m-1 col-4"> <i class="bi bi-plus-lg"></i> Cargar </button>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <div id="FormPersonas" style="display:none">
-            <div class="form-group row">
-                <label class="form-label col-md-3 align-self-end">CUIL/CUIT </label>
-                <div class="col-md-9">
-                    @Html.EditorFor(model => model.SujetoControlado.CuilCuit, new { htmlAttributes = new { @class = "form-control col-auto", id = "InputCuilCuit", placeholder = "Ingrese el CUIL/CUIT del Sujeto Controlado" } })
-                    @Html.ValidationMessageFor(model => model.SujetoControlado.CuilCuit, "", new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="form-label col-md-3 align-self-end">Nombre</label>
-                <div class="col-md-9">
-                    @Html.EditorFor(model => model.SujetoControlado.Nombre, new { htmlAttributes = new { @class = "form-control col-auto", placeholder = "Ingrese el Nombre del Sujeto Controlado" } })
-                </div>
-            </div>
-            <div class="form-group row">
-                <label class="form-label col-md-3 align-self-end">Apellido</label>
-                <div class="col-md-9">
-                    @Html.EditorFor(model => model.SujetoControlado.Apellido, new { htmlAttributes = new { @class = "form-control col-auto", placeholder = "Ingrese el Apellido del Sujeto Controlado" } })
-                </div>
-            </div>            
-        </div>
-        <div class="row justify-content-end">
-            <div class="col-lg-6 col-md-8 row justify-content-end">
-                <a class="col-4 btn btn-secondary m-1" onclick="history.go(-1);"><i class="bi bi-arrow-left"></i>  Volver atrás</a>
-                <input type="submit" value="Cargar" class="btn btn-primary m-1 col-4" />
-            </div>
-        </div>
-    </div>
 }
 
 

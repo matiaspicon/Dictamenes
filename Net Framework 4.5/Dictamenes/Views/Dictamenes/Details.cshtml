@@ -6,7 +6,7 @@
 
 
 
-@{string rol = Dictamenes.Framework.Security.LoginService.Current.GrupoNombre;}
+@{string rol = FrameworkMVC.Security.LoginService.Current.GrupoNombre;}
 
 <h2>Detalles del Dictamen</h2>
 
@@ -51,7 +51,8 @@
         @Html.DisplayNameFor(model => model.TipoDictamen)
     </label>
     @if (Model.TipoDictamen != null)
-    {<p class="col-9 card p-2">
+    {
+        <p class="col-9 card p-2">
             @Html.DisplayFor(model => model.TipoDictamen.Descripcion)
         </p>
     }
@@ -100,45 +101,46 @@
     }
     else
     {
-
         <h5 class="form-label col-3 align-self-center">
             Sujeto Controlado
         </h5>
-        <h6 class="card p-2 col-9">Este dictámen no tiene un Sujeto Controlado</h6>
-
+        <h6 class="card p-2 col-9">
+            Este dictámen no tiene un Sujeto Controlado
+        </h6>
     }
 
-
+    
     @{ if (Model.ArchivoPDF == null)
         {
             <h5 class="form-label col-3 align-self-center">
                 Archivo
             </h5>
-            <h6 class="card p-2 col-9">Este dictámen no tiene un archivo</h6>
-
+            <h6 class="card p-2 col-9">
+                Este dictámen no tiene un archivo
+            </h6>
         }
         else
         {
             if (!System.IO.File.Exists(Server.MapPath(Model.ArchivoPDF.Path)))
             {
-
                 <h5 class="form-label col-3 align-self-center">
                     Archivo
                 </h5>
-                <h6 class="card alert-danger rounded p-2 col-9">Hubo un error con la carga del archivo</h6>
-
+                <h6 class="card alert-danger rounded p-2 col-9">
+                    Hubo un error con la carga del archivo
+                </h6>
             }
             else
             {
                 <h5 class="form-label col-3 align-self-center">
                     Archivo
                 </h5>
-                <a class="btn btn-dark col-9" data-toggle="collapse" href="#collapseOne" role="button" aria-expanded="false">Ver el Achivo del Dictamen</a>
-
+                <a class="btn btn-dark col-9" data-toggle="collapse" href="#collapseOne" role="button" aria-expanded="false">
+                    Ver el Achivo del Dictamen
+                </a>
             }
         }
     }
-
 </div>
 <div id="collapseOne" class="collapse m-3">
     <div class="embed-responsive embed-responsive-16by9">

@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Dictamenes.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
-using Dictamenes.Models;
-
 
 namespace Dictamenes.Database
-{
-    public class DictamenesDbContext : DbContext
+{ 
+    public class DictamenesDbContext : System.Data.Entity.DbContext
     {
         public DictamenesDbContext() : base("name=SQLServer") { }
 
@@ -58,7 +57,7 @@ namespace Dictamenes.Database
             var idTipoDictamenParameter = idTipoDictamen.HasValue ?
                 new SqlParameter("@IdTipoDictamen", idTipoDictamen) :
                 new SqlParameter("@IdTipoDictamen", DBNull.Value);
-           
+
             var idSujetoControladoParameter = idSujetoControlado.HasValue ?
                 new SqlParameter("@IdSujetoControlado", idSujetoControlado) :
                 new SqlParameter("@IdSujetoControlado", DBNull.Value);
@@ -78,17 +77,42 @@ namespace Dictamenes.Database
             var apellidoParameter = apellido != null ?
                 new SqlParameter("@Apellido", apellido) :
                 new SqlParameter("@Apellido", DBNull.Value);
-            
+
             var algo = this.Dictamenes.SqlQuery("sp_FiltrarDictamenes @NroGDE , @NroExpediente , @FechaInicio , @FechaFinal , @Detalle , @Contenido , @IdAsunto , @IdTipoDictamen , @IdSujetoControlado, @idTipoSujetoControlado , @CuilCuit , @Nombre , @Apellido",
             nroGDEParameter, nroExpedienteParameter, fechaInicioParameter, fechaFinalParameter, detalleParameter, contenidoParameter,
             idAsuntoParameter, idTipoDictamenParameter, idSujetoControladoParameter, idTipoSujetoControladoParameter, cuilCuitParameter, nombreParameter, apellidoParameter);
-            
-            var devolver = algo. AsQueryable<Dictamen>().Include(d => d.Asunto);
+
+            var devolver = algo.AsQueryable<Dictamen>().Include(d => d.Asunto);
             return devolver.ToList();
 
 
         }
 
-    }  
+        public class Algo
+        {
+            Int32 CompaniaID { get; set; }
+
+            String CiaID { get; set; }
+
+            String Denominacion { get; set; }
+
+            String CUIT { get; set; }
+
+            String DenominacionCorta { get; set; }
+        }
+
+
+        public virtual List<Algo> Sp_GetAseguradoras()
+        {
+            return this.Database.SqlQuery<Algo>("Traer_Aseguradoras").ToList();
+        }
+
+        public virtual List<Algo> Sp_GetReaseguradoras()
+        {
+            return this.Database.SqlQuery<Algo>("Traer_Reaseguradoras").ToList();
+        }
+
+
+    }
 
 }

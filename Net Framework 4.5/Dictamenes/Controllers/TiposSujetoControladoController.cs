@@ -15,7 +15,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoControlado
         public ActionResult Index()
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -26,7 +26,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoControlado/Create
         public ActionResult Create()
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -40,7 +40,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoControlado tipoSujetoControlado)
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -59,7 +59,7 @@ namespace Dictamenes.Controllers
         // GET: TiposSujetoControlado/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
@@ -82,7 +82,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,Descripcion,EstaHabilitado,EstaActivo,FechaModificacion,IdUsuarioModificacion")] TipoSujetoControlado tipoSujetoControlado)
         {
-            if (!Framework.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
+            if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
             }
