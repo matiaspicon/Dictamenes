@@ -23,7 +23,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamen
         public ActionResult Index()
         {
-            //El usuario que no sea tenga rol de Cargar o Consulta no podra acceder a esta opcion
+            //El usuario que no este en el rol de Cargar o Consulta no podra acceder a esta opcion
             if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString(), Models.Rol.CONSULTAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
@@ -40,7 +40,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Details/5
         public ActionResult Details(int? id)
         {
-            //El usuario que no sea tenga rol de Cargar o Consulta no podra acceder a esta opcion
+            //El usuario que no este en el rol de Cargar o Consulta no podra acceder a esta opcion
             if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString(), Models.Rol.CONSULTAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
@@ -67,7 +67,7 @@ namespace Dictamenes.Controllers
         public ActionResult CargarFile()
         {
 
-            //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
+            //El usuario que no este en el rol de Cargar no podra acceder a esta opcion
             if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
@@ -80,7 +80,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CargarFile(HttpPostedFileBase file)
         {
-            //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
+            //El usuario que no este en el rol de Cargar no podra acceder a esta opcion
             if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
@@ -156,7 +156,7 @@ namespace Dictamenes.Controllers
         // GET: Dictamen/Create
         public ActionResult Create()
         {
-            //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
+            //El usuario que no este en el rol de Cargar no podra acceder a esta opcion
             if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
@@ -177,7 +177,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ArchivoPDF, Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoControlado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion, SujetoControlado")] Dictamen dictamen)
         {
-            //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
+            //El usuario que no este en el rol de Cargar no podra acceder a esta opcion
             if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");
@@ -322,7 +322,7 @@ namespace Dictamenes.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "Id,NroGDE,NroExpediente,FechaCarga,Detalle,EsPublico,IdArchivoPDF,IdSujetoControlado,IdAsunto,IdTipoDictamen,Borrado,EstaActivo,FechaModificacion,IdUsuarioModificacion,IdOriginal, SujetoControlado, Archivo")] Dictamen dictamen, bool EsDenunciante, bool BorrarArchivo, HttpPostedFileBase file)
         {
-            //El usuario que no sea tenga rol de Cargar no podra acceder a esta opcion
+            //El usuario que no este en el rol de Cargar no podra acceder a esta opcion
             if (!FrameworkMVC.Security.LoginService.IsAllowed(new[] { Models.Rol.CARGAR.ToString() }))
             {
                 return RedirectToAction("ErrorNoPermisos", "Login");

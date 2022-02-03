@@ -218,8 +218,10 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Imagenes\dictamenes_logoSF.png" />
     <Content Include="Content\Imagenes\icon-ssn.png" />
     <Content Include="favicon.ico" />
+    <Content Include="FrameworkMVC.dll" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\bootstrap.bundle.js" />
@@ -370,7 +372,6 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\Dictamenes\CargarFile.cshtml" />
-    <Content Include="Views\Login\Login.cshtml" />
     <Content Include="Views\Login\ErrorNoPermisos.cshtml" />
     <Content Include="Views\_ViewImports.cshtml" />
     <Content Include="Views\Asuntos\CargarAsuntos.cshtml" />

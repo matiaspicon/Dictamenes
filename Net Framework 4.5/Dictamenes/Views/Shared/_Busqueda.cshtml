@@ -39,7 +39,7 @@
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Desde:</label>
                     <div class="col-sm-10">
-                        <input name="FechaCargaInicio" type="datetime-local" class="form-control col" value="@((Model != null && Model.FechaCargaInicio.HasValue) ? Model.FechaCargaInicio.Value.ToString("yyyy-MM-ddTHH:mm:ss"): (new DateTime(DateTime.Now.Year, 1, 1)).ToString("yyyy-MM-ddTHH:mm:ss") )")/>
+                        <input name="FechaCargaInicio" type="datetime-local" class="form-control col" value="@((Model != null && Model.FechaCargaInicio.HasValue) ? Model.FechaCargaInicio.Value.ToString("yyyy-MM-ddTHH:mm:ss"): "")")/>
                     </div>
                 </div>
                 <div class="form-group row">

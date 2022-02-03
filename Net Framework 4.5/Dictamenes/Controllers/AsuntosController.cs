@@ -88,13 +88,15 @@ namespace Dictamenes.Controllers
                     EstaHabilitado = true,
                     Descripcion = a,
                     FechaModificacion = DateTime.Now,
-                    IdUsuarioModificacion =  FrameworkMVC.Security.LoginService.Current.UsuarioID
+                    IdUsuarioModificacion = FrameworkMVC.Security.LoginService.Current.UsuarioID
                 };
 
                 if (ModelState.IsValid)
                 {
                     db.Asuntos.Add(asunto);
                 }
+
+                
             }
             try
             {

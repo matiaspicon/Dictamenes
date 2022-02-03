@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Dictamenes.Models.Dictamen>
 @using Dictamenes.Models
 @{
-    ViewBag.Title = "Listado de Dictámenes";
+    ViewBag.Title = ViewBag.Busqueda == null ? "Listado de Dictámenes " + DateTime.Now.Year : "Listado de filtrado de Dictámenes";
 }
 @{string rol = FrameworkMVC.Security.LoginService.Current.GrupoNombre;}
 
@@ -126,7 +126,7 @@ else
 {
     <hr />
     <div class="row justify-content-center">
-        <h4 class="text-danger">No se encontraron Dictámenes con los filtros actuales</h4>
+        <h4 class="text-danger">No se encontraron Dictámenes</h4>
     </div>
 
 }
