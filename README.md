@@ -1,4 +1,9 @@
 # Dictamenes
+
+# Aclaracion
+
+El proyecto cuenta con dos versiones del mismo, el realizado en .NET Core es una version inicial sin terminar ya que a mitad del desarrollo se tuvo que pasar a .NET Framework.
+
 # Información técnica del proyecto
 
 Nombre del proyecto: Dictámenes
